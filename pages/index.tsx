@@ -9,8 +9,6 @@ import AboutSection from '@/components/AboutSection'
 import SkillSection from '@/components/SkillSection'
 import PortfolioSection from '@/components/PortfolioSection'
 import ContactSection from '@/components/FooterSection'
-import FloatingSocialIcons from '@/components/FloatingSocialIcons'
-import FloatingMail from '@/components/FloatingMail'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,21 +20,21 @@ export default function Home() {
 			</Head>
 			<main>
 				<Navbar />
-				<FloatingSocialIcons />
-				<FloatingMail />
 				<HomeSection />
 				<section id='about'>
 					<AboutSection />
 				</section>
+				
 				<section id='skills'>
 					<SkillSection />
 				</section>
+				
 				<section id='portfolio'>
 					<PortfolioSection />
 				</section>
 				<section id='contact'>
 					<ContactSection />
-				</section>
+				</section> 
 			</main>
 		</>
 	)
