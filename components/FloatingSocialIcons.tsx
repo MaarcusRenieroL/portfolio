@@ -11,18 +11,18 @@ export default function FloatingSocialIcons() {
                 </Link>
 
 
-                <Link href="#" title="Share on WhatsApp">
-                <Image src={"/whatsapp.png"} width={40} height={40} alt='github-logo'/>
+                <Link href="#">
+                <Image src={"/whatsapp.png"} width={40} height={40} alt='whatsapp-logo'/>
                 </Link>
 
 
-                <Link href="#" title="Share on Twitter">
-                <Image src={"/linkedin.png"} width={40} height={40} alt='github-logo' className="opacity-50"/>
+                <Link href="#">
+                <Image src={"/linkedin.png"} width={40} height={40} alt='linkedin-logo'/>
                 </Link>
 
 
-                <Link href="#" title="Share on LinkedIn">
-                <Image src={"/mail.png"} width={40} height={40} alt='github-logo'/>
+                <Link href="mailto:maarcusreniero.l@gmail.com">
+                <Image src={"/mail.png"} width={40} height={40} alt='mail-logo'/>
                 </Link>
                 <div className="flex items-center justify-center rotate-180">
                     <hr className="h-64 w-0.5 bg-purple-500 rounded-lg" />

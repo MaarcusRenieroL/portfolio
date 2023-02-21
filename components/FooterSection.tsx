@@ -1,4 +1,4 @@
-export default function ContactSection() {
+export default function FooterSection() {
     return (
         <>
             <section>

@@ -1,9 +1,9 @@
 export default function AboutSection() {
     return (
         <>
-            <div className="h-screen p-12">
+            <div className="h-screen px-32">
                 <div className="flex items-center justify-start">
-                    <h1 className="text-4xl font-black opacity-50">
+                    <h1 className="text-4xl font-black opacity-50 mt-10">
                         <span className="text-purple-500">
                             01.
                         </span>
@@ -19,13 +19,13 @@ export default function AboutSection() {
                     <br />
                     <p className="text-xl">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
-                        Currently, I am pursuing my Bachelors of Technology in Computer Science with Business System at Rajalakshmi Engineering College and have been honing my skills in web development through various courses and projects. I have experience with C, C++, Python, Java, HTML, CSS, JavaScript, React JS, Node JS, Express JS, MongoDB, Oracle SQL, Next JS, Typescript and Tailwind CSS, and I'm always eager to learn new techniques and tools to expand my skillset.
+                        Currently, I am pursuing my Bachelors of Technology in Computer Science with Business System at Rajalakshmi Engineering College and have been honing my skills in web development through various courses and projects. I'm always eager to learn new techniques and tools to expand my skillset.
                     </p>
                     <br />
                     <br />
                     <p className="text-xl">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
-                        When I'm not coding, I love to watch anime ,listen to music, play badminton and also keyboard and guitar. I find that these hobbies not only help me unwind, but they also inspire me to approach things with fresh perspectives and creativity.
+                        When I'm not coding, I love to watch anime ,listen to music, play badminton and also keyboard and guitar. I find that these hobbies not only help me unwind, but they help me stay more healthier and inspire me to approach things with fresh perspectives and creativity.
                     </p>
                     <br />
                     <br />

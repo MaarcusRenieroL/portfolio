@@ -1,19 +1,11 @@
-import Image from "next/image";
 import PortfolioCard from "./PortfolioCard";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper";
-
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 export default function PortfolioSection() {
     return (
         <>
-            <div className="h-screen p-12">
+            <div className="h-screen px-32">
                 <div className="flex items-center justify-start">
-                    <h1 className="text-4xl font-black opacity-50">
+                    <h1 className="text-4xl font-black opacity-50 mt-10">
                         <span className="text-purple-500">
                             02.
                         </span>
@@ -30,7 +22,7 @@ export default function PortfolioSection() {
                     <PortfolioCard title="Secure Track" content="Fleet Management System to montior the bus routes and to let the students and parents know where their transport is" tag1="Next JS" tag2="Typescript" tag3="Tailwind CSS" image="/secure-track.png" width={1500} height={1500}/>
                     </div>
                 </div>
-                <div className="flex items-end justify-end">
+                <div className="flex items-end justify-end -mt-12">
                     <h1 className="text-4xl font-black opacity-50">
                         &lt;/portfolio&gt;
                     </h1>

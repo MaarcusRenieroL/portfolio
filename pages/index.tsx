@@ -6,8 +6,9 @@ import styles from '@/styles/Home.module.css'
 import Navbar from '@/components/Navbar'
 import HomeSection from '@/components/HomeSection'
 import AboutSection from '@/components/AboutSection'
+import SkillSection from '@/components/SkillSection'
 import PortfolioSection from '@/components/PortfolioSection'
-import ContactSection from '@/components/ContactSection'
+import ContactSection from '@/components/FooterSection'
 import FloatingSocialIcons from '@/components/FloatingSocialIcons'
 import FloatingMail from '@/components/FloatingMail'
 
@@ -26,6 +27,9 @@ export default function Home() {
 				<HomeSection />
 				<section id='about'>
 					<AboutSection />
+				</section>
+				<section id='skills'>
+					<SkillSection />
 				</section>
 				<section id='portfolio'>
 					<PortfolioSection />
