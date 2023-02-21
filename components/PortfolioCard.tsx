@@ -27,7 +27,7 @@ export default function PortfolioCard(props: {
                     <div className="flex items-center">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img className="hidden object-cover w-10 h-10 mx-4 rounded-full sm:block" src="/github.png" alt="avatar" />
-                            <Link className="font-bold text-gray-700 cursor-pointer" href={props.url} role="link">Khatab wedaa</Link>
+                            <Link className="font-bold text-gray-700 cursor-pointer" href={props.url} role="link"></Link>
                     </div>
                 </div>
             </div>
