@@ -7,7 +7,6 @@ import Navbar from '@/components/Navbar'
 import HomeSection from '@/components/HomeSection'
 import AboutSection from '@/components/AboutSection'
 import PortfolioSection from '@/components/PortfolioSection'
-import CareerSection from '@/components/CareerSection'
 import ContactSection from '@/components/ContactSection'
 import FloatingSocialIcons from '@/components/FloatingSocialIcons'
 import FloatingMail from '@/components/FloatingMail'
@@ -30,9 +29,6 @@ export default function Home() {
 				</section>
 				<section id='portfolio'>
 					<PortfolioSection />
-				</section>
-				<section id='career'>
-					<CareerSection />
 				</section>
 				<section id='contact'>
 					<ContactSection />

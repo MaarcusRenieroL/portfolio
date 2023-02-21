@@ -13,14 +13,6 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li>
-                    <Link href={"#skills"}>
-                        <span className="text-purple-500 pr-2">
-                            02.
-                        </span>
-                        &lt;skills&gt;
-                    </Link>
-                </li>
-                <li>
                     <Link href={"#portfolio"}>
                         <span className="text-purple-500 pr-2">
                             03.
@@ -29,17 +21,9 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li>
-                    <Link href={"#career"}>
-                        <span className="text-purple-500 pr-2">
-                            04.
-                        </span>
-                        &lt;career&gt;
-                    </Link>
-                </li>
-                <li>
                     <Link href={"#contact"}>
                         <span className="text-purple-500 pr-2">
-                            05.
+                            03.
                         </span>
                         &lt;contact&gt;
                     </Link>
