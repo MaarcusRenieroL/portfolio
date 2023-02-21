@@ -67,7 +67,7 @@ export default function Navbar() {
                                         </Link>
                                     </li>
                                     <li className="">
-                                        <Link href={"#about"}>
+                                        <Link href={"#skills"}>
                                             <span className="text-purple-500 pr-2">
                                                 02.
                                             </span>
@@ -75,7 +75,7 @@ export default function Navbar() {
                                         </Link>
                                     </li>
                                     <li className="">
-                                        <Link href={"#about"}>
+                                        <Link href={"#portfolio"}>
                                             <span className="text-purple-500 pr-2">
                                                 03.
                                             </span>
@@ -83,7 +83,7 @@ export default function Navbar() {
                                         </Link>
                                     </li>
                                     <li className="">
-                                        <Link href={"#about"}>
+                                        <Link href={"#contact"}>
                                             <span className="text-purple-500 pr-2">
                                                 04.
                                             </span>
