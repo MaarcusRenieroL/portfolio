@@ -1,10 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { motion } from "framer-motion";
+
 export default function FooterSection() {
     return (
         <>
-            <section className="bg-white">
+            <motion.section
+                initial={{ x: -100, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 1 }}
+                viewport={{once:true}}
+            >
                 <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
                     <div className="flex justify-center mt-8 space-x-6">
                         <Link href="https://www.linkedin.com/in/maarcus-reniero-l/" className="text-gray-400 hover:text-gray-500" target={"_blank"}>
@@ -29,10 +36,10 @@ export default function FooterSection() {
                         </Link>
                     </div>
                     <p className="mt-8 text-base leading-6 text-center text-gray-400">
-                        © 2021 Maarcus Reniero L. All rights reserved.
+                        © 2023 Maarcus Reniero L. All rights reserved.
                     </p>
                 </div>
-            </section>
+            </motion.section>
         </>
     );
 }
