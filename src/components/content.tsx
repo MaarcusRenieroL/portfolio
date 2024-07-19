@@ -17,11 +17,11 @@ export const Content: FC<Props> = ({ children }) => {
 
   return (
     <main className="max-w-[1200px] h-full lg:grid lg:grid-cols-4 gap-10 lg:py-20 md:py-10 py-4 w-full">
-      <div className="h-full flex flex-col justify-between items-center w-full relative">
+      <div className="h-full flex flex-col justify-between items-center w-full">
         <UserInfo />
         <div className="lg:hidden flex flex-col h-full lg:px-20 md:px-10 w-full ">
           <UserCard isMobile={isMobile ?? false} />
-          <div className="w-full mt-5 px-4">
+          <div className="w-full mt-5 px-4 relative">
             <div className="border rounded-xl p-4 relative">
               {!isMobile && (
                 <div className="absolute top-0 right-0">
@@ -31,15 +31,15 @@ export const Content: FC<Props> = ({ children }) => {
               {children}
             </div>
           </div>
+          {isMobile && (
+            <div className="bottom-0 right-0 left-0 sticky w-full mt-5">
+              <BottomBar />
+            </div>
+          )}
         </div>
-        {isMobile && (
-          <div className="bottom-0 right-0 left-0 sticky w-full">
-            <BottomBar />
-          </div>
-        )}
       </div>
-      <div className="col-span-3 lg:block hidden h-full border rounded-xl w-full max-w-full">
-        <ScrollArea className="h-full max-w-full">
+      <div className="col-span-3 lg:block hidden h-full border rounded-xl w-full max-w-full overflow-hidden">
+        <ScrollArea className="h-full">
           <div className="relative">
             <div className="absolute top-0 right-0 w-3/5">
               <MidNav />
