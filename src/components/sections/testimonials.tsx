@@ -2,7 +2,6 @@ import { FC } from "react";
 import { Header } from "../header";
 import { TestimonialCard } from "./testimonial-card";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import GlamModel from "../../../public/client-logos/glam-model.png";
 
 export const Testimonials: FC = () => {
   return (
