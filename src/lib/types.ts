@@ -9,3 +9,10 @@ export type Project = {
   category: string;
   skills: string[];
 };
+
+export type Skill = {
+  id: number;
+  title: string;
+  imageUrl: string;
+  category: string;
+};

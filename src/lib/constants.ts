@@ -1,4 +1,4 @@
-import { Project } from "./types";
+import { Project, Skill } from "./types";
 
 export const PROJECTS: Project[] = [
   {
@@ -345,5 +345,164 @@ export const PROJECTS: Project[] = [
     endDate: "16 Feb 2022",
     category: "Miscellaneous",
     skills: ["Python"],
+  },
+];
+
+export const SKILLS: Skill[] = [
+  {
+    id: 1,
+    title: "HTML",
+    category: "Front End",
+    imageUrl: "/skill-logos/html.png",
+  },
+  {
+    id: 2,
+    title: "CSS",
+    category: "Front End",
+    imageUrl: "/skill-logos/css.png",
+  },
+  {
+    id: 3,
+    title: "JavaScript",
+    category: "Programming Language",
+    imageUrl: "/skill-logos/javascript.png",
+  },
+  {
+    id: 4,
+    title: "TypeScript",
+    category: "Programming Language",
+    imageUrl: "/skill-logos/typescript.png",
+  },
+  {
+    id: 5,
+    title: "React JS",
+    category: "Front End",
+    imageUrl: "/skill-logos/reactjs.png",
+  },
+  {
+    id: 6,
+    title: "Next.js",
+    category: "Front End",
+    imageUrl: "/skill-logos/nextjs.png",
+  },
+  {
+    id: 7,
+    title: "Tailwind CSS",
+    category: "Front End",
+    imageUrl: "/skill-logos/tailwindcss.png",
+  },
+  {
+    id: 8,
+    title: "tRPC",
+    category: "Back End",
+    imageUrl: "/skill-logos/trpc.png",
+  },
+  {
+    id: 9,
+    title: "Prisma",
+    category: "Back End",
+    imageUrl: "/skill-logos/prisma.png",
+  },
+  {
+    id: 10,
+    title: "Drizzle ORM",
+    category: "Back End",
+    imageUrl: "/skill-logos/drizzle.png",
+  },
+  {
+    id: 11,
+    title: "MySQL",
+    category: "Database",
+    imageUrl: "/skill-logos/mysql.png",
+  },
+  {
+    id: 12,
+    title: "Mongo DB",
+    category: "Database",
+    imageUrl: "/skill-logos/mongodb.png",
+  },
+  {
+    id: 13,
+    title: "PostgreSQL",
+    category: "Database",
+    imageUrl: "/skill-logos/postgres.png",
+  },
+  {
+    id: 14,
+    title: "Java",
+    category: "Programming Language",
+    imageUrl: "/skill-logos/java.png",
+  },
+  {
+    id: 15,
+    title: "Git",
+    category: "Miscellaneous",
+    imageUrl: "/skill-logos/git.png",
+  },
+  {
+    id: 16,
+    title: "Figma",
+    category: "Tools",
+    imageUrl: "/skill-logos/figma.png",
+  },
+  {
+    id: 17,
+    title: "Postman",
+    category: "Tools",
+    imageUrl: "/skill-logos/postman.png",
+  },
+  {
+    id: 18,
+    title: "Insomnia",
+    category: "Tools",
+    imageUrl: "/skill-logos/insomnia.png",
+  },
+  {
+    id: 19,
+    title: "Vercel",
+    category: "Miscellaneous",
+    imageUrl: "/skill-logos/vercel.png",
+  },
+  {
+    id: 20,
+    title: "GitKraken",
+    category: "Tools",
+    imageUrl: "/skill-logos/gitkraken.png",
+  },
+  {
+    id: 21,
+    title: "Strapi",
+    category: "Miscellaneous",
+    imageUrl: "/skill-logos/strapi.png",
+  },
+  {
+    id: 22,
+    title: "Neovim",
+    category: "Tools",
+    imageUrl: "/skill-logos/neovim.png",
+  },
+  {
+    id: 23,
+    title: "VS Code",
+    category: "Tools",
+    imageUrl: "/skill-logos/vscode.png",
+  },
+  {
+    id: 24,
+    title: "JetBrains",
+    category: "Tools",
+    imageUrl: "/skill-logos/jetbrains.png",
+  },
+  {
+    id: 25,
+    title: "Netlify",
+    category: "Miscellaneous",
+    imageUrl: "/skill-logos/netlify.png",
+  },
+  {
+    id: 26,
+    title: "Redis",
+    category: "Database",
+    imageUrl: "/skill-logos/redis.png",
   },
 ];
