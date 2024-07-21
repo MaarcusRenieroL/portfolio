@@ -4,6 +4,7 @@ import "./globals.css";
 import { Content } from "~/components/content";
 import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/sonner";
+import { ThemeProvider } from "~/components/theme-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,11 +26,13 @@ export default function RootLayout({
       <body
         className={cn(
           poppins.className,
-          "h-full w-full flex justify-center items-center",
+          "h-full flex justify-center items-center",
         )}
       >
-        <Content children={children} />
-        <Toaster />
+        <ThemeProvider attribute="class" disableTransitionOnChange>
+          <Content children={children} />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

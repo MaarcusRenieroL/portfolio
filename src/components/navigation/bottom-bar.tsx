@@ -8,13 +8,11 @@ export const BottomBar: FC = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex w-full items-center justify-evenly text-sm h-14 border-t rounded-t-2xl bg-white">
+    <div className="flex w-full items-center justify-evenly text-sm h-14 border-t rounded-t-2xl bg-background">
       <Link
-        href="/about"
+        href="/"
         className={
-          pathname === "/about"
-            ? "underline underline-offset-4 text-red-500"
-            : ""
+          pathname === "/" ? "underline underline-offset-4 font-bold" : ""
         }
       >
         About
@@ -22,9 +20,7 @@ export const BottomBar: FC = () => {
       <Link
         href="/resume"
         className={
-          pathname === "/resume"
-            ? "underline underline-offset-4 text-red-500"
-            : ""
+          pathname === "/resume" ? "underline underline-offset-4 font-bold" : ""
         }
       >
         Resume
@@ -33,7 +29,7 @@ export const BottomBar: FC = () => {
         href="/portfolio"
         className={
           pathname === "/portfolio"
-            ? "underline underline-offset-4 text-red-500"
+            ? "underline underline-offset-4 font-bold"
             : ""
         }
       >
@@ -42,9 +38,7 @@ export const BottomBar: FC = () => {
       <Link
         href="/blog"
         className={
-          pathname === "/blog"
-            ? "underline underline-offset-4 text-red-500"
-            : ""
+          pathname === "/blog" ? "underline underline-offset-4 font-bold" : ""
         }
       >
         Blog
@@ -53,7 +47,7 @@ export const BottomBar: FC = () => {
         href="/contact"
         className={
           pathname === "/contact"
-            ? "underline underline-offset-4 text-red-500"
+            ? "underline underline-offset-4 font-bold"
             : ""
         }
       >

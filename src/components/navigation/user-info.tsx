@@ -10,7 +10,7 @@ import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 
 export const UserInfo: FC = () => {
   return (
-    <aside className="hidden lg:block h-full mb-0 z-10 max-h-full border rounded-xl p-10 space-y-10 overflow-hidden max-w-fit w-full">
+    <aside className="hidden lg:block h-full mb-0 z-10 max-h-full border rounded-xl p-10 space-y-10 overflow-hidden w-full">
       <div className="flex flex-col items-center justify-center space-y-5">
         <div className="w-full flex items-center justify-center">
           <div className="border border-black p-4 rounded-xl">

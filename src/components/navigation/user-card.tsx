@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
@@ -21,6 +22,7 @@ import {
   IoPhonePortraitOutline,
 } from "react-icons/io5";
 import Link from "next/link";
+import { ThemeToggle } from "../theme-toggle";
 
 type Props = {
   isMobile: boolean;
@@ -133,6 +135,11 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
             </CardContent>
           )}
         </div>
+        <CardFooter className="relative">
+          <div className="absolute bottom-4 right-4">
+            <ThemeToggle />
+          </div>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -43,7 +43,7 @@ export default function PorfolioPage() {
         <TabsContent value="all" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PROJECTS.map((project) => (
-              <ProjectCard project={project} />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </TabsContent>
@@ -51,7 +51,7 @@ export default function PorfolioPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PROJECTS.filter((project) => project.category === "Front End").map(
               (project) => (
-                <ProjectCard project={project} />
+                <ProjectCard key={project.id} project={project} />
               ),
             )}
           </div>
@@ -61,7 +61,7 @@ export default function PorfolioPage() {
             {PROJECTS.filter(
               (project) => project.category === "Full Stack",
             ).map((project) => (
-              <ProjectCard project={project} />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </TabsContent>
@@ -69,7 +69,7 @@ export default function PorfolioPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PROJECTS.filter((project) => project.category === "Freelance").map(
               (project) => (
-                <ProjectCard project={project} />
+                <ProjectCard key={project.id} project={project} />
               ),
             )}
           </div>
@@ -79,7 +79,7 @@ export default function PorfolioPage() {
             {PROJECTS.filter(
               (project) => project.category === "Miscellaneous",
             ).map((project) => (
-              <ProjectCard project={project} />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </TabsContent>
