@@ -1,4 +1,4 @@
-import { Project, Skill } from "./types";
+import { Blog, Project, Skill } from "./types";
 
 export const PROJECTS: Project[] = [
   {
@@ -504,5 +504,24 @@ export const SKILLS: Skill[] = [
     title: "Redis",
     category: "Database",
     imageUrl: "/skill-logos/redis.png",
+  },
+];
+
+export const BLOGS: Blog[] = [
+  {
+    id: 1,
+    title: "Design Conferences in 2022",
+    description:
+      "Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.",
+    date: "28 Jun 2024",
+    imageUrl: "/blogs/blog-1.png",
+  },
+  {
+    id: 2,
+    title: "Best Fonts Every Designer Use",
+    description:
+      "Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.",
+    date: "28 Jun 2024",
+    imageUrl: "/blogs/blog-2.png",
   },
 ];
