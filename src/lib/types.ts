@@ -16,11 +16,3 @@ export type Skill = {
   imageUrl: string;
   category: string;
 };
-
-export type Blog = {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  imageUrl: string;
-};

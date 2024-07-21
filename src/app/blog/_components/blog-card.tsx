@@ -1,37 +1,49 @@
 import Link from "next/link";
 import { FC } from "react";
-import { Blog } from "~/lib/types";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
+import { Button } from "~/components/ui/button";
+import { FaArrowRight, FaCalendarAlt } from "react-icons/fa";
+import { z } from "velite";
+import { posts } from "../../../../velite.config";
 import Image from "next/image";
 
 type Props = {
-  blog: Blog;
+  blog: z.infer<typeof posts.schema>;
 };
 
 export const BlogCard: FC<Props> = ({ blog }) => {
-  const url = blog.title.toLowerCase().split(" ").join("-");
   return (
-    <Link href={url}>
-      <Card className="rounded-2xl">
-        <Image
-          src={blog.imageUrl}
-          alt={blog.title}
-          height={100}
-          width={100}
-          className="h-64 w-full rounded-2xl object-cover"
-        />
-        <CardHeader>
-          <CardTitle>{blog.title}</CardTitle>
-          <CardDescription>{blog.date}</CardDescription>
-        </CardHeader>
-        <CardContent>{blog.description}</CardContent>
-      </Card>
-    </Link>
+    <Card className="rounded-2xl">
+      <Image
+        src={blog.imageUrl}
+        alt={blog.slugAsParams}
+        width={100}
+        height={100}
+        className="h-64 w-full object-couver rounded-2xl"
+      />
+      <CardHeader>
+        <CardTitle>{blog.title}</CardTitle>
+        <CardDescription className="flex space-x-2">
+          <FaCalendarAlt className="h-4 w-4" />
+          <p>{new Date(blog.date).toDateString()}</p>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>{blog.description}</CardContent>
+      <CardFooter className="w-full items-center justify-end">
+        <Link href={`/blog/${blog.slugAsParams}`}>
+          <Button variant="outline" className="space-x-4">
+            <p>Read More</p>
+            <FaArrowRight className="h-4 w-4" />
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
   );
 };
