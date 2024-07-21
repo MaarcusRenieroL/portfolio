@@ -20,13 +20,13 @@ type Props = {
 
 export const BlogCard: FC<Props> = ({ blog }) => {
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-2xl flex flex-col justify-between">
       <Image
         src={blog.imageUrl}
         alt={blog.slugAsParams}
         width={100}
         height={100}
-        className="h-64 w-full object-couver rounded-2xl"
+        className="h-64 w-full object-cover rounded-2xl"
       />
       <CardHeader>
         <CardTitle>{blog.title}</CardTitle>
