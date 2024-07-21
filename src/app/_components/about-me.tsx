@@ -4,16 +4,11 @@ export const AboutMe: FC = () => {
   return (
     <div className="space-y-5">
       <p>
-        I&apos;m Creative Director and UI/UX Designer from Sydney, Australia,
-        working in web development and print media. I enjoy turning complex
-        problems into simple, beautiful and intuitive designs.
-      </p>
-      <p>
-        My job is to build your website so that it is functional and
-        user-friendly but at the same time attractive. Moreover, I add personal
-        touch to your product and make sure that is eye-catching and easy to
-        use. My aim is to bring across your message and identity in the most
-        creative way. I created web design for many famous brand companies.
+        I&apos;m Maarcus. I am a Full Stack Web Developer based in Chennai,
+        India. I finished my schooling in St.John&apos;s English School and
+        Junior College and my Bachelors of Technology in Computer Science and
+        Business Systems at Rajalakshmi Engineering College. I enjoy my time
+        developing new full stack web applications and playing my guitar
       </p>
     </div>
   );

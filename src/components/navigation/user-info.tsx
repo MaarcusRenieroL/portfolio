@@ -7,6 +7,7 @@ import {
   IoLocationOutline,
 } from "react-icons/io5";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { Badge } from "../ui/badge";
 
 export const UserInfo: FC = () => {
   return (
@@ -25,9 +26,7 @@ export const UserInfo: FC = () => {
           <h1 className="text-xl font-bold" title="Richard hanrick">
             Maarcus Reniero L
           </h1>
-          <p className="text-sm font-semibold bg-gray-200 px-2 py-1 rounded-full">
-            Full Stack Developer
-          </p>
+          <Badge>Full Stack Developer</Badge>
         </div>
       </div>
 

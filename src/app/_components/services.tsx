@@ -6,6 +6,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Header } from "~/components/header";
+import Image from "next/image";
 
 export const Services: FC = () => {
   return (
@@ -14,7 +15,7 @@ export const Services: FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <Card>
           <div className="w-full flex items-center gap-5 p-4">
-            <div>Icon</div>
+            <Image src="/icon-design.svg" alt="design" width={25} height={25} />
             <CardHeader className="p-0">
               <CardTitle>Web Design</CardTitle>
               <CardDescription>
@@ -26,7 +27,7 @@ export const Services: FC = () => {
         </Card>
         <Card>
           <div className="w-full flex items-center gap-5 p-4">
-            <div>Icon</div>
+            <Image src="/icon-dev.svg" alt="design" width={25} height={25} />
             <CardHeader className="p-0">
               <CardTitle>Full Stack Web Apps</CardTitle>
               <CardDescription>
