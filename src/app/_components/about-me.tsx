@@ -4,9 +4,9 @@ export const AboutMe: FC = () => {
   return (
     <div className="space-y-5">
       <p>
-        I'm Creative Director and UI/UX Designer from Sydney, Australia, working
-        in web development and print media. I enjoy turning complex problems
-        into simple, beautiful and intuitive designs.
+        I&apos;m Creative Director and UI/UX Designer from Sydney, Australia,
+        working in web development and print media. I enjoy turning complex
+        problems into simple, beautiful and intuitive designs.
       </p>
       <p>
         My job is to build your website so that it is functional and

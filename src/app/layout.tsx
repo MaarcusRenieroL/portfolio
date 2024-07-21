@@ -30,7 +30,7 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <Content children={children} />
+          <Content>{children}</Content>
           <Toaster />
         </ThemeProvider>
       </body>
