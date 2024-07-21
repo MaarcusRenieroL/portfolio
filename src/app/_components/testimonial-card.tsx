@@ -5,8 +5,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import Image, { StaticImageData } from "next/image";
+} from "~/components/ui/card";
+import Image from "next/image";
 import { cn } from "~/lib/utils";
 
 type Props = {

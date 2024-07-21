@@ -22,7 +22,7 @@ import {
   IoPhonePortraitOutline,
 } from "react-icons/io5";
 import Link from "next/link";
-import { ThemeToggle } from "../theme-toggle";
+import { ThemeToggle } from "~/components/themes/theme-toggle";
 
 type Props = {
   isMobile: boolean;

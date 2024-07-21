@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Header } from "../header";
+import { Header } from "~/components/header";
 
 export const Services: FC = () => {
   return (

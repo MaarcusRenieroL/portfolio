@@ -6,10 +6,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
+} from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
 import { TbBrandGithub, TbWorldWww } from "react-icons/tb";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import Link from "next/link";
 import { Project } from "~/lib/types";
 
@@ -30,7 +30,7 @@ export const ProjectCard: FC<Props> = ({ project }) => {
         <div>{project.description}</div>
         <div className="mt-5">
           {project.skills.map((skill) => (
-            <Badge>{skill}</Badge>
+            <Badge key={skill}>{skill}</Badge>
           ))}
         </div>
       </CardContent>

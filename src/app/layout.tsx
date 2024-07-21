@@ -4,7 +4,7 @@ import "./globals.css";
 import { Content } from "~/components/content";
 import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/sonner";
-import { ThemeProvider } from "~/components/theme-provider";
+import { ThemeProvider } from "~/components/themes/theme-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],

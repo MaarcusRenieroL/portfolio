@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { z } from "zod";
-import { Input } from "./ui/input";
+import { Input } from "../../../components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -12,10 +12,10 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-} from "./ui/form";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+} from "../../../components/ui/form";
+import { Label } from "../../../components/ui/label";
+import { Textarea } from "../../../components/ui/textarea";
+import { Button } from "../../../components/ui/button";
 import { toast } from "sonner";
 
 export const contactFormSchema = z.object({

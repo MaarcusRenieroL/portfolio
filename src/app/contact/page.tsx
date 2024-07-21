@@ -1,4 +1,4 @@
-import { ContactForm } from "~/components/contact-form";
+import { ContactForm } from "./_components/contact-form";
 import { Header } from "~/components/header";
 
 export default function ContactPage() {

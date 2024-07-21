@@ -1,8 +1,8 @@
 import { Header } from "~/components/header";
-import { AboutMe } from "~/components/sections/about-me";
-import { Services } from "~/components/sections/services";
-import { Clients } from "~/components/sections/clients";
-import { Testimonials } from "~/components/sections/testimonials";
+import { AboutMe } from "./_components/about-me";
+import { Services } from "./_components/services";
+import { Testimonials } from "./_components/testimonials";
+import { Clients } from "./_components/clients";
 
 export default function Home() {
   return (

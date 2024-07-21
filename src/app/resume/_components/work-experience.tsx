@@ -1,15 +1,15 @@
 import { FC } from "react";
-import { FaBook } from "react-icons/fa";
-import { Button } from "../ui/button";
+import { Button } from "../../../components/ui/button";
+import { FaLaptop } from "react-icons/fa";
 
-export const Education: FC = () => {
+export const WorkExperience: FC = () => {
   return (
     <div>
       <div className="flex gap-5 items-center">
         <Button variant="outline" size="icon">
-          <FaBook className="h-4 w-4" />
+          <FaLaptop className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold">Education</h1>
+        <h1 className="text-2xl font-bold">Work Experience</h1>
       </div>
       <div className="ml-4">
         <ol className="relative border-s border-gray-200 dark:border-gray-700">

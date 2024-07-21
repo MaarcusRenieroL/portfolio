@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { Header } from "../header";
+import { Header } from "~/components/header";
 import GlamModel from "../../../public/client-logos/glam-model.png";
 import Image from "next/image";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 
 export const Clients: FC = () => {
   return (

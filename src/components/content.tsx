@@ -7,7 +7,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { BottomBar } from "~/components/navigation/bottom-bar";
 import { ScrollArea } from "./ui/scroll-area";
 import { MidNav } from "./navigation/mid-nav";
-import { ThemeToggle } from "./theme-toggle";
+import { ThemeToggle } from "./themes/theme-toggle";
 
 type Props = {
   children?: ReactNode;

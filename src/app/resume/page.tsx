@@ -1,7 +1,7 @@
 import { Header } from "~/components/header";
-import { Education } from "~/components/resume/education";
-import { Skills } from "~/components/resume/skills";
-import { WorkExperience } from "~/components/resume/work-experience";
+import { Education } from "~/app/resume/_components/education";
+import { Skills } from "~/app/resume/_components/skills";
+import { WorkExperience } from "~/app/resume/_components/work-experience";
 
 export default function ResumePage() {
   return (

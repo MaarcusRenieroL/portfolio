@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { Header } from "../header";
+import { Header } from "~/components/header";
 import { TestimonialCard } from "./testimonial-card";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 
 export const Testimonials: FC = () => {
   return (

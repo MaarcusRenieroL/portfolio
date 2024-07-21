@@ -1,5 +1,5 @@
 import { Header } from "~/components/header";
-import { ProjectCard } from "~/components/project-card";
+import { ProjectCard } from "./_components/project-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { PROJECTS } from "~/lib/constants";
 

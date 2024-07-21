@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { FC } from "react";
 import { Skill } from "~/lib/types";
-import { Card } from "../ui/card";
+import { Card } from "../../../components/ui/card";
 
 type Props = {
   skill: Skill;
