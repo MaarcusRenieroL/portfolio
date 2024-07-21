@@ -32,7 +32,7 @@ export const BlogCard: FC<Props> = ({ blog }) => {
         <CardTitle>{blog.title}</CardTitle>
         <CardDescription className="flex space-x-2">
           <FaCalendarAlt className="h-4 w-4" />
-          <p>{new Date(blog.date).toDateString()}</p>
+          <span>{new Date(blog.date).toDateString()}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>{blog.description}</CardContent>

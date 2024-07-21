@@ -37,15 +37,13 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
         <div className="flex w-full justify-between">
           <CardHeader>
             <div className="flex gap-5 items-center">
-              <div className="border border-black p-4 rounded-xl">
-                <Image
-                  src="https://github.com/MaarcusRenieroL.png"
-                  alt="Maarcus Reniero L"
-                  width={100}
-                  height={100}
-                  className="h-14 w-14 object-cover rounded-full"
-                />
-              </div>
+              <Image
+                src="/me.png"
+                alt="Maarcus Reniero L"
+                width={100}
+                height={100}
+                className="object-cover rounded-full"
+              />
               <div>
                 <CardTitle>Maarcus Reniero L</CardTitle>
                 <CardDescription>Full Stack Developer</CardDescription>

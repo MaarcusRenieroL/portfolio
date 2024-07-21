@@ -13,15 +13,13 @@ export const UserInfo: FC = () => {
     <aside className="hidden lg:block h-full mb-0 z-10 max-h-full border rounded-xl p-10 space-y-10 overflow-hidden w-full">
       <div className="flex flex-col items-center justify-center space-y-5">
         <div className="w-full flex items-center justify-center">
-          <div className="border border-black p-4 rounded-xl">
-            <Image
-              src="https://github.com/MaarcusRenieroL.png"
-              alt="Maarcus Reniero L"
-              width={100}
-              height={100}
-              className="h-20 w-20 object-cover rounded-full"
-            />
-          </div>
+          <Image
+            src="/me.png"
+            alt="Maarcus Reniero L"
+            width={200}
+            height={200}
+            className="object-cover rounded-full"
+          />
         </div>
         <div className="w-full flex flex-col items-center justify-center space-y-2">
           <h1 className="text-xl font-bold" title="Richard hanrick">
