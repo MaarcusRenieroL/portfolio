@@ -17,7 +17,7 @@ export const Content: FC<Props> = ({ children }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <main className="max-w-[1200px] h-full lg:grid lg:grid-cols-7 gap-10 lg:py-20 md:py-10 py-4 w-full">
+    <main className="max-w-[1400px] h-full lg:grid lg:grid-cols-7 gap-10 lg:py-20 md:py-10 py-4 w-full">
       <div className="h-full flex flex-col justify-between items-center w-full col-span-2">
         <UserInfo />
         <div className="lg:hidden flex flex-col h-full lg:px-20 md:px-10 w-full">
