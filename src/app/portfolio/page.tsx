@@ -23,23 +23,25 @@ export default function PorfolioPage() {
     <div className="w-full">
       <Header title="Portfolio" />
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="all" className="w-full">
-            All
-          </TabsTrigger>
-          <TabsTrigger value="full-stack" className="w-full">
-            Full Stack Applications
-          </TabsTrigger>
-          <TabsTrigger value="front-end" className="w-full">
-            Front End Applications
-          </TabsTrigger>
-          <TabsTrigger value="freelance" className="w-full">
-            Freelance
-          </TabsTrigger>
-          <TabsTrigger value="misc" className="w-full">
-            Miscellaneous
-          </TabsTrigger>
-        </TabsList>
+        <div className="relative rounded-sm overflow-x-scroll h-10 bg-muted">
+          <TabsList className="w-full absolute flex flex-row justify-stretch">
+            <TabsTrigger value="all" className="w-full">
+              All
+            </TabsTrigger>
+            <TabsTrigger value="full-stack" className="w-full">
+              Full Stack Applications
+            </TabsTrigger>
+            <TabsTrigger value="front-end" className="w-full">
+              Front End Applications
+            </TabsTrigger>
+            <TabsTrigger value="freelance" className="w-full">
+              Freelance
+            </TabsTrigger>
+            <TabsTrigger value="misc" className="w-full">
+              Miscellaneous
+            </TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="all" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PROJECTS.map((project) => (
