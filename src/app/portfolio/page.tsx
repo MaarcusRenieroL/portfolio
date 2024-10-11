@@ -44,43 +44,43 @@ export default function PorfolioPage() {
         </div>
         <TabsContent value="all" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {PROJECTS.map((project) => (
+            {PROJECTS.map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="front-end" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {PROJECTS.filter((project) => project.category === "Front End").map(
-              (project) => (
+            {PROJECTS.filter(project => project.category === "Front End").map(
+              project => (
                 <ProjectCard key={project.id} project={project} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
         <TabsContent value="full-stack" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {PROJECTS.filter(
-              (project) => project.category === "Full Stack",
-            ).map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+            {PROJECTS.filter(project => project.category === "Full Stack").map(
+              project => (
+                <ProjectCard key={project.id} project={project} />
+              )
+            )}
           </div>
         </TabsContent>
         <TabsContent value="freelance" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {PROJECTS.filter((project) => project.category === "Freelance").map(
-              (project) => (
+            {PROJECTS.filter(project => project.category === "Freelance").map(
+              project => (
                 <ProjectCard key={project.id} project={project} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
         <TabsContent value="misc" className="mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PROJECTS.filter(
-              (project) => project.category === "Miscellaneous",
-            ).map((project) => (
+              project => project.category === "Miscellaneous"
+            ).map(project => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>

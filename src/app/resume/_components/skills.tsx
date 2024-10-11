@@ -33,53 +33,51 @@ export const Skills: FC = () => {
         </div>
         <TabsContent value="all" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.map((skill) => (
+            {SKILLS.map(skill => (
               <SkillCard key={skill.id} skill={skill} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="front-end" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.filter((skill) => skill.category === "Front End").map(
-              (skill) => (
+            {SKILLS.filter(skill => skill.category === "Front End").map(
+              skill => (
                 <SkillCard key={skill.id} skill={skill} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
         <TabsContent value="back-end" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.filter((skill) => skill.category === "Back End").map(
-              (skill) => (
+            {SKILLS.filter(skill => skill.category === "Back End").map(
+              skill => (
                 <SkillCard key={skill.id} skill={skill} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
         <TabsContent value="databases" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.filter((skill) => skill.category === "Database").map(
-              (skill) => (
+            {SKILLS.filter(skill => skill.category === "Database").map(
+              skill => (
                 <SkillCard key={skill.id} skill={skill} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
         <TabsContent value="tools" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.filter((skill) => skill.category === "Tools").map(
-              (skill) => (
-                <SkillCard key={skill.id} skill={skill} />
-              ),
-            )}
+            {SKILLS.filter(skill => skill.category === "Tools").map(skill => (
+              <SkillCard key={skill.id} skill={skill} />
+            ))}
           </div>
         </TabsContent>
         <TabsContent value="misc" className="mt-5">
           <div className="grid grid-cols-2 md:grid-cols-6 gap-5">
-            {SKILLS.filter((skill) => skill.category === "Miscellaneous").map(
-              (skill) => (
+            {SKILLS.filter(skill => skill.category === "Miscellaneous").map(
+              skill => (
                 <SkillCard key={skill.id} skill={skill} />
-              ),
+              )
             )}
           </div>
         </TabsContent>

@@ -29,7 +29,7 @@ export const ProjectCard: FC<Props> = ({ project }) => {
       <CardContent>
         <div>{project.description}</div>
         <div className="mt-5">
-          {project.skills.map((skill) => (
+          {project.skills.map(skill => (
             <Badge key={skill}>{skill}</Badge>
           ))}
         </div>

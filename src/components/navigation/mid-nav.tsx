@@ -3,7 +3,7 @@
 import { FC } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {cn} from "~/lib/utils"
+import { cn } from "~/lib/utils";
 
 type Props = {
   className?: string;
@@ -16,7 +16,7 @@ export const MidNav: FC<Props> = ({ className }) => {
     <div
       className={cn(
         className,
-        "h-20 flex items-center justify-evenly space-x-5 p-4 border-l border-b rounded-bl-3xl",
+        "h-20 flex items-center justify-evenly space-x-5 p-4 border-l border-b rounded-bl-3xl"
       )}
     >
       <Link

@@ -29,7 +29,7 @@ export default function BlogPage({ searchParams }: Props) {
 
   const displayPosts = posts.slice(
     POSTS_PER_PAGE * (currentPage - 1),
-    POSTS_PER_PAGE * currentPage,
+    POSTS_PER_PAGE * currentPage
   );
 
   return (
@@ -37,7 +37,7 @@ export default function BlogPage({ searchParams }: Props) {
       <Header title="Blog" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {displayPosts.map((blog) => (
+        {displayPosts.map(blog => (
           <BlogCard key={blog.slug} blog={blog} />
         ))}
       </div>

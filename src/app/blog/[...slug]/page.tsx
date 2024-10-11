@@ -11,13 +11,13 @@ interface Props {
 async function getPost(params: Props["params"]) {
   const slug = params.slug.join("/");
 
-  const post = posts.find((post) => post.slugAsParams === slug);
+  const post = posts.find(post => post.slugAsParams === slug);
 
   return post;
 }
 
 export async function generateStaticParams(): Promise<Props["params"][]> {
-  return posts.map((post) => ({ slug: post.slugAsParams.split("/") }));
+  return posts.map(post => ({ slug: post.slugAsParams.split("/") }));
 }
 
 export default async function BlogContentPage({ params }: Props) {
