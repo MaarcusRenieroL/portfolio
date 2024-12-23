@@ -3,11 +3,7 @@ import { ReactNode } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { Button } from "~/components/ui/button";
 
-export default function BlogPageLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function BlogPageLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <Link href="/blog">

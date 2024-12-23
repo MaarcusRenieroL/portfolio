@@ -8,10 +8,17 @@ import {
 } from "react-icons/io5";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { Badge } from "../ui/badge";
+import { cn } from "~/lib/utils";
+import { geistMono } from "~/lib/font";
 
 export const UserInfo: FC = () => {
   return (
-    <aside className="hidden lg:block h-full mb-0 z-10 max-h-full border rounded-xl p-10 space-y-10 overflow-hidden w-full">
+    <aside
+      className={cn(
+        "hidden lg:block h-full mb-0 z-10 max-h-full border rounded-xl p-10 space-y-10 overflow-hidden w-full",
+        geistMono.className
+      )}
+    >
       <div className="flex flex-col items-center justify-center space-y-5">
         <div className="w-full flex items-center justify-center">
           <Image

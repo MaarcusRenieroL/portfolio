@@ -8,10 +8,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: email,
-      to: "maarcusreniero.l@gmail.com",
+      from: process.env.RESEND_EMAIL!,
+      to: process.env.MY_EMAIL!,
+      replyTo: email,
       subject: name + " " + subject,
-      text: message,
+      text: "From: " + email + "\n\n" + message,
     });
 
     if (error) {

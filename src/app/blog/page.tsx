@@ -11,7 +11,11 @@ interface Props {
 
 const POSTS_PER_PAGE = 4;
 
-export default function BlogPage({ searchParams }: Props) {
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<Props>;
+}) {
   posts.sort((a, b) => {
     if (a.date > b.date) {
       return -1;
@@ -24,7 +28,11 @@ export default function BlogPage({ searchParams }: Props) {
     return 0;
   });
 
-  const currentPage = Number(searchParams?.page) || 1;
+  const {
+    searchParams: { page },
+  } = await searchParams;
+
+  const currentPage = Number(page) || 1;
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
 
   const displayPosts = posts.slice(

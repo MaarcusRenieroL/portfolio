@@ -23,6 +23,8 @@ import {
 } from "react-icons/io5";
 import Link from "next/link";
 import { ThemeToggle } from "~/components/themes/theme-toggle";
+import { cn } from "~/lib/utils";
+import { geistMono } from "~/lib/font";
 
 type Props = {
   isMobile: boolean;
@@ -45,7 +47,9 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                 className="object-cover rounded-full"
               />
               <div>
-                <CardTitle>Maarcus Reniero L</CardTitle>
+                <CardTitle className={cn(geistMono.className)}>
+                  Maarcus Reniero L
+                </CardTitle>
                 <CardDescription>Full Stack Developer</CardDescription>
               </div>
             </div>
@@ -74,10 +78,12 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                     <IoMailOutline fontSize={14} />
                   </div>
                   <div>
-                    <p className="uppercase text-sm">Email</p>
+                    <p className={cn("uppercase", geistMono.className)}>
+                      Email
+                    </p>
                     <Link
                       href="mailto:maarcusreniero.l@gmail.com"
-                      className="text-xs"
+                      className="text-sm"
                     >
                       maarcusreniero.l@gmail.com
                     </Link>
@@ -89,8 +95,10 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                     <IoPhonePortraitOutline fontSize={14} />
                   </div>
                   <div>
-                    <p className="uppercase text-sm">Phone</p>
-                    <Link href="tel:+917299954472" className="text-xs">
+                    <p className={cn("uppercase", geistMono.className)}>
+                      Phone
+                    </p>
+                    <Link href="tel:+917299954472" className="text-sm">
                       +917299954472
                     </Link>
                   </div>
@@ -101,8 +109,10 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                     <IoLocationOutline fontSize={14} />
                   </div>
                   <div>
-                    <p className="uppercase text-sm">Location</p>
-                    <Link href="#" className="text-xs">
+                    <p className={cn("uppercase", geistMono.className)}>
+                      Location
+                    </p>
+                    <Link href="#" className="text-sm">
                       Chennai, India
                     </Link>
                   </div>
@@ -117,7 +127,7 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                     href="https://github.com/MaarcusRenieroL"
                     className="social-link"
                   >
-                    <FaGithub fontSize={14} />
+                    <FaGithub fontSize={20} />
                   </Link>
                 </li>
 
@@ -126,7 +136,7 @@ export const UserCard: FC<Props> = ({ isMobile }) => {
                     href="https://www.linkedin.com/in/maarcus-reniero-l"
                     className="social-link"
                   >
-                    <FaLinkedinIn fontSize={14} />
+                    <FaLinkedinIn fontSize={20} />
                   </Link>
                 </li>
               </ul>

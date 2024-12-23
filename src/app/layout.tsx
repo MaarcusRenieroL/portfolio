@@ -4,6 +4,7 @@ import { Content } from "~/components/content";
 import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/themes/theme-provider";
+import { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "Maarcus Reniero L",
@@ -14,15 +15,11 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          "h-full flex justify-center items-center"
-        )}
-      >
+      <body className={cn("h-full flex justify-center items-center")}>
         <ThemeProvider attribute="class" disableTransitionOnChange>
           <Content>{children}</Content>
           <Toaster />

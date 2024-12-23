@@ -3,25 +3,17 @@ import { redirect } from "next/navigation";
 import { MDXContent } from "./_components/mdx-content";
 
 interface Props {
-  params: {
-    slug: string[];
-  };
+  slug: string[];
 }
 
-async function getPost(params: Props["params"]) {
-  const slug = params.slug.join("/");
+export default async function BlogContentPage({
+  params,
+}: {
+  params: Promise<Props>;
+}) {
+  const { slug } = await params;
 
-  const post = posts.find(post => post.slugAsParams === slug);
-
-  return post;
-}
-
-export async function generateStaticParams(): Promise<Props["params"][]> {
-  return posts.map(post => ({ slug: post.slugAsParams.split("/") }));
-}
-
-export default async function BlogContentPage({ params }: Props) {
-  const post = await getPost(params);
+  const post = posts.find(post => post.slugAsParams === slug.join("/"));
 
   if (!post) {
     redirect("/blog");

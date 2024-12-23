@@ -1,5 +1,5 @@
 export type Project = {
-  id: number;
+  id: string;
   title: string;
   description: string;
   githubLink?: string;
@@ -15,4 +15,16 @@ export type Skill = {
   title: string;
   imageUrl: string;
   category: string;
+};
+
+export type Education = {
+  time: string;
+  name: string;
+  degree: string;
+};
+
+export type WorkExperience = {
+  time: string;
+  companyName: string;
+  role: string;
 };

@@ -2,12 +2,14 @@ import { FC } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { SKILLS } from "~/lib/constants";
 import { SkillCard } from "./skills-card";
+import { cn } from "~/lib/utils";
+import { geistMono } from "~/lib/font";
 
 export const Skills: FC = () => {
   SKILLS.sort((a, b) => a.title.localeCompare(b.title));
   return (
     <div>
-      <h1 className="text-2xl font-bold">Skills</h1>
+      <h1 className={cn("text-2xl font-bold", geistMono.className)}>Skills</h1>
       <Tabs defaultValue="all" className="w-full mt-5">
         <div className="relative rounded-sm overflow-x-scroll h-10 bg-muted">
           <TabsList className="w-full absolute flex flex-row justify-stretch">

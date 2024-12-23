@@ -1,8 +1,8 @@
-import { Project, Skill } from "./types";
+import { Education, Project, Skill, WorkExperience } from "./types";
 
 export const PROJECTS: Project[] = [
   {
-    id: 1,
+    id: "next-auth-masterclass",
     title: "Next Auth MasterClass",
     description:
       "Built features like authentication using credentials, and OAuth provider (Google & GitHub), forgot password, email verification, two-factor authentication, user roles, login and register components, role gates, middleware, session and callback extensions, and various hooks and utilities for user and role management.",
@@ -25,7 +25,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 2,
+    id: "e-commerce-admin",
     title: "E Commerce Admin Dashboard",
     description:
       "Built features like managing multiple vendors/stores, create/update/delete categories and products, manage images and filters, handle billboards, enable search with pagination, control featured products, view orders and sales, and show revenue graphs.",
@@ -50,7 +50,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 3,
+    id: "productivity-management-tool",
     title: "Productivity Management Tool",
     description:
       "Implement CRUD for tasks and projects, add relations between projects, tasks, and users, add theme toggle and seed the application with actual data from the database, and invite team members and manage project-specific access",
@@ -74,28 +74,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 4,
-    title: "Role Based Authentication",
-    description: "Built authentication with role based access control feature",
-    githubLink: "https://github.com/MaarcusRenieroL/nextjs-rbac",
-    hostedLink: "https://next-js-rbac.vercel.app/",
-    startDate: "21 Oct 2023",
-    endDate: "29 Oct 2023",
-    category: "Full Stack",
-    skills: [
-      "Next.js",
-      "TypeScript",
-      "Next Auth",
-      "Tailwind CSS",
-      "ShadCN UI",
-      "MongoDB",
-      "Prisma",
-      "React Hook Form",
-      "Zod",
-    ],
-  },
-  {
-    id: 5,
+    id: "portfolio",
     title: "Portfolio",
     description:
       "Crafted a dynamic portfolio showcasing expertise in full stack development.",
@@ -115,19 +94,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 6,
-    title: "HealthX",
-    description:
-      "Complete process flow for registration, unique ID assignment, test, clinical details, invoice and billing for IP and OP visits. Delivering information to patients and archiving of visit data.",
-    githubLink: "https://github.com/MaarcusRenieroL/healthX",
-    hostedLink: "health-x-seven.vercel.app",
-    startDate: "1 Nov 2022",
-    endDate: "20 Nov 2022",
-    category: "Front End",
-    skills: ["React JS", "JavaScript", "Tailwind CSS"],
-  },
-  {
-    id: 7,
+    id: "hovirreal",
     title: "Hovirreal",
     description: "Built a website for a startup named Hovirreal",
     githubLink: "https://github.com/MaarcusRenieroL/hovirreal",
@@ -138,7 +105,7 @@ export const PROJECTS: Project[] = [
     skills: ["HTML", "CSS", "JS"],
   },
   {
-    id: 8,
+    id: "list-leap",
     title: "List Leap",
     description:
       "Built features like authentication, organization management, board creation with Unsplash API for cover images, and activity logs. Features include renaming and deleting boards, creating and managing lists and cards with drag-and-drop reorder, board limits, and Stripe subscriptions for unlimited boards.",
@@ -158,7 +125,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 9,
+    id: "password-manager",
     title: "Password Manager",
     description:
       "Built a secure application for managing and storing passwords. Features include encrypted storage, password generation, and user authentication. Designed to enhance security and convenience, this tool helps users keep track of their credentials safely while providing an intuitive interface for easy management and retrieval.",
@@ -181,7 +148,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 10,
+    id: "real-time-chat-app",
     title: "Real Time Chat Application",
     description:
       "A full-stack app featuring authentication, a friends list, and real-time messaging. Users can send and receive messages instantly, manage friend requests, and stay connected through an intuitive interface. Designed for seamless communication and dynamic interactions, ensuring a robust and engaging user experience.",
@@ -199,7 +166,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 11,
+    id: "duolingo-clone",
     title: "Duolingo Clone",
     description:
       "Built features like AI voices (ElevenLabs), sound effects, hearts and points/XP systems, popups for no hearts and exit confirmation, practice old lessons to regain hearts, leaderboard, quest milestones, shop for exchanging points for hearts, Pro tier for unlimited hearts (Stripe subscription), landing page, admin dashboard, Drizzle ORM, NeonDB Postgres database, Vercel deployment, cartoonish components with Shadcn UI, and original characters and mascot.",
@@ -219,7 +186,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 12,
+    id: "dotfiles",
     title: "Dotfiles",
     description:
       "A personalized set of configuration files for optimizing my development environment. This includes custom settings for shell environments, editors, and various tools, enhancing productivity and consistency across applications. Designed to streamline workflows and ensure a tailored, efficient coding experience.",
@@ -231,33 +198,13 @@ export const PROJECTS: Project[] = [
     skills: ["Lua", "YML", "TOML"],
   },
   {
-    id: 13,
-    title: "Blog",
-    description:
-      "Building a clean and user-friendly blog featuring recent posts, full content views, categories, search functionality, and social media integration. Includes an about page, contact form, and newsletter signup, all designed with a responsive layout for optimal viewing on any device.",
-    githubLink: "https://github.com/MaarcusRenieroL/blog-post",
-    hostedLink: "",
-    startDate: "19 Aug 2023",
-    endDate: "Ongoing",
-    category: "Full Stack",
-    skills: [
-      "Next.js",
-      "TypeScript",
-      "Next Auth",
-      "Taiwlind CSS",
-      "ShadCN UI",
-      "Prisma",
-      "MongoDB",
-    ],
-  },
-  {
-    id: 14,
+    id: "threads-clone",
     title: "Threads Clone",
     description:
       "Built features like authentication, onboarding page, fetching posts, thread card structure, replies/comments, and user profile, search, activity, and community pages, API deployment, and final deployment, showcasing a comprehensive web application development process.",
     githubLink: "https://github.com/MaarcusRenieroL/threads-clone",
     hostedLink: "",
-    startDate: "12 Aug 2023",
+    startDate: "22 Dec 2024",
     endDate: "Ongoing",
     category: "Full Stack",
     skills: [
@@ -275,7 +222,7 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: 15,
+    id: "mern-social-media-app",
     title: "MERN Socal Media App",
     description:
       "Built a responsive social media application from scratch using the MERN stack. It includes backend setup with Node.js and MongoDB, authentication, user and post routes, and frontend development with React, Redux, and styling, culminating in a fully functional app.",
@@ -287,7 +234,7 @@ export const PROJECTS: Project[] = [
     skills: ["Node.js", "JavaScript", "MongoDB", "ExpressJS"],
   },
   {
-    id: 16,
+    id: "mern-finance-dashboard",
     title: "MERN Finance Dashboard",
     description:
       "Built a MERN Finance Dashboard App that has Machine Learning Predictions. The frontend will consist of Vite for our starter application, Redux Toolkit for state management, Material UI for our component library, and Recharts for our Charts. For the backend we will be using Node Js as our runtime, Express Js as our backend framework, and MongoDB for our database.",
@@ -299,43 +246,7 @@ export const PROJECTS: Project[] = [
     skills: ["Node.js", "JavaScript", "MongoDB", "ExpressJS"],
   },
   {
-    id: 17,
-    title: "AyurSeva",
-    description:
-      "Developed a mobile application to deliver ayurvedic products and meet with doctors for checkups",
-    githubLink: "https://github.com/MaarcusRenieroL/ayurseva",
-    hostedLink: "",
-    startDate: "31 Mar 2023",
-    endDate: "19 Apr 2023",
-    category: "Miscellaneous",
-    skills: ["Flutter", "Dart"],
-  },
-  {
-    id: 18,
-    title: "Cryptopass",
-    description:
-      "Developed a secure password manager using Python. This application features encrypted password storage and a built-in password generator. Designed to simplify credential management, it ensures high security and ease of use, helping users safely store and retrieve their passwords.",
-    githubLink: "https://github.com/MaarcusRenieroL/ayurseva",
-    hostedLink: "",
-    startDate: "22 Oct 2022",
-    endDate: "22 Oct 2022",
-    category: "Miscellaneous",
-    skills: ["Python"],
-  },
-  {
-    id: 19,
-    title: "EDA on top 1000 movies",
-    description:
-      "Conducted a detailed exploratory data analysis on the top 1000 movies, uncovering insights into trends, ratings, genres, and box office performance. The analysis highlights patterns and correlations, providing a comprehensive overview of the film industry’s most successful and influential titles.",
-    githubLink: "https://github.com/MaarcusRenieroL/EDA-on-top-1000-movies",
-    hostedLink: "",
-    startDate: "16 Feb 2022",
-    endDate: "16 Feb 2022",
-    category: "Miscellaneous",
-    skills: ["Python"],
-  },
-  {
-    id: 20,
+    id: "glam-model-agency",
     title: "The Glam Model Agency Website",
     description:
       "Revamped their previous landing page to Shopify with HTML, CSS, JS and Liquid",
@@ -345,6 +256,42 @@ export const PROJECTS: Project[] = [
     endDate: "16 Feb 2022",
     category: "Miscellaneous",
     skills: ["Python"],
+  },
+];
+
+export const educationList: Education[] = [
+  {
+    time: "Nov 2020 - May 2024",
+    name: "Rajalakshmi Engineering College",
+    degree: "Bachelors in Computer Science and Business Systems (CGPA - 7.9)",
+  },
+  {
+    time: "Apr 2019 - Apr 2020",
+    name: "St. John's English School and Junior College",
+    degree: "HSLC (CGPA - 6.03)",
+  },
+  {
+    time: "Apr 2017 - Apr 2018",
+    name: "St. John's English School and Junior College",
+    degree: "SSLC (CGPA - 7.04)",
+  },
+];
+
+export const workExperienceList: WorkExperience[] = [
+  {
+    time: "Nov 2020 - May 2024",
+    companyName: "Rajalakshmi Engineering College",
+    role: "Bachelors in Computer Science and Business Systems (CGPA - 7.9)",
+  },
+  {
+    time: "Apr 2019 - Apr 2020",
+    companyName: "St. John's English School and Junior College",
+    role: "HSLC (CGPA - 6.03)",
+  },
+  {
+    time: "Apr 2017 - Apr 2018",
+    companyName: "St. John's English School and Junior College",
+    role: "SSLC (CGPA - 7.04)",
   },
 ];
 
