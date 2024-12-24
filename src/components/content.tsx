@@ -8,6 +8,7 @@ import { BottomBar } from "~/components/navigation/bottom-bar";
 import { ScrollArea } from "./ui/scroll-area";
 import { MidNav } from "./navigation/mid-nav";
 import { ThemeToggle } from "./themes/theme-toggle";
+import { motion } from "framer-motion";
 
 type Props = {
   children?: ReactNode;
@@ -18,7 +19,12 @@ export const Content: FC<Props> = ({ children }) => {
 
   return (
     <main className="max-w-[1400px] h-full lg:grid lg:grid-cols-7 gap-10 lg:py-20 md:py-10 py-4 w-full">
-      <div className="h-full flex flex-col justify-between items-center w-full col-span-2">
+      <motion.div
+        className="h-full flex flex-col justify-between items-center w-full col-span-2"
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <UserInfo />
         <div className="lg:hidden flex flex-col h-full lg:px-20 md:px-10 w-full">
           <UserCard isMobile={isMobile ?? false} />
@@ -43,8 +49,13 @@ export const Content: FC<Props> = ({ children }) => {
             </div>
           )}
         </div>
-      </div>
-      <div className="col-span-5 lg:block hidden h-full border rounded-xl w-full max-w-full overflow-hidden">
+      </motion.div>
+      <motion.div
+        className="col-span-5 lg:block hidden h-full border rounded-xl w-full max-w-full overflow-hidden"
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <ScrollArea className="h-full">
           <div className="relative">
             <div className="grid grid-cols-5 gap-5 w-3/5 absolute top-0 right-0">
@@ -58,7 +69,7 @@ export const Content: FC<Props> = ({ children }) => {
           </div>
           <div className="p-8 max-w-full">{children}</div>
         </ScrollArea>
-      </div>
+      </motion.div>
     </main>
   );
 };

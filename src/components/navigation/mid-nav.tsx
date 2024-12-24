@@ -4,6 +4,7 @@ import { FC } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "~/lib/utils";
+import { geistMono } from "~/lib/font";
 
 type Props = {
   className?: string;
@@ -21,45 +22,52 @@ export const MidNav: FC<Props> = ({ className }) => {
     >
       <Link
         href="/"
-        className={
-          pathname === "/" ? "underline underline-offset-4 font-bold" : ""
-        }
+        className={cn(
+          pathname === "/" ? "underline underline-offset-4 font-bold" : "",
+          geistMono.className
+        )}
       >
         About
       </Link>
       <Link
         href="/resume"
-        className={
-          pathname === "/resume" ? "underline underline-offset-4 font-bold" : ""
-        }
+        className={cn(
+          pathname === "/resume"
+            ? "underline underline-offset-4 font-bold"
+            : "",
+          geistMono.className
+        )}
       >
         Resume
       </Link>
       <Link
         href="/portfolio"
-        className={
+        className={cn(
           pathname === "/portfolio"
             ? "underline underline-offset-4 font-bold"
-            : ""
-        }
+            : "",
+          geistMono.className
+        )}
       >
         Portfolio
       </Link>
       <Link
         href="/blog"
-        className={
-          pathname === "/blog" ? "underline underline-offset-4 font-bold" : ""
-        }
+        className={cn(
+          pathname === "/blog" ? "underline underline-offset-4 font-bold" : "",
+          geistMono.className
+        )}
       >
         Blog
       </Link>
       <Link
         href="/contact"
-        className={
+        className={cn(
           pathname === "/contact"
             ? "underline underline-offset-4 font-bold"
-            : ""
-        }
+            : "",
+          geistMono.className
+        )}
       >
         Contact
       </Link>

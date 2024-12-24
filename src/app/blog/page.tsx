@@ -1,7 +1,7 @@
-import { BlogCard } from "./_components/blog-card";
 import { Header } from "~/components/header";
 import { posts } from "#site/content";
 import { QueryPagination } from "./_components/pagination";
+import BlogList from "./_components/blog-list";
 
 interface Props {
   searchParams: {
@@ -44,11 +44,8 @@ export default async function BlogPage({
     <div>
       <Header title="Blog" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {displayPosts.map(blog => (
-          <BlogCard key={blog.slug} blog={blog} />
-        ))}
-      </div>
+      <BlogList posts={displayPosts} />
+
       <QueryPagination totalPages={totalPages} className="justify-end mt-4" />
     </div>
   );

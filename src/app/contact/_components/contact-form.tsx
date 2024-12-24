@@ -15,8 +15,10 @@ import {
 } from "../../../components/ui/form";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
-import { Button } from "../../../components/ui/button";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { cn } from "~/lib/utils";
+import { geistMono } from "~/lib/font";
 
 export const contactFormSchema = z.object({
   email: z
@@ -80,15 +82,26 @@ export const ContactForm: FC = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="w-full">
-        <div className="flex justify-between gap-5">
+      <motion.form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="w-full"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
+        <motion.div
+          className="flex justify-between gap-5"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5, delay: 0.1 }}
+        >
           <FormField
             name="email"
             control={form.control}
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>
-                  <Label>Email</Label>
+                  <Label className={cn(geistMono.className)}>Email</Label>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="Enter your email" {...field} />
@@ -103,7 +116,7 @@ export const ContactForm: FC = () => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>
-                  <Label>Name</Label>
+                  <Label className={cn(geistMono.className)}>Name</Label>
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="Enter your name" {...field} />
@@ -112,30 +125,44 @@ export const ContactForm: FC = () => {
               </FormItem>
             )}
           />
-        </div>
-        <FormField
-          name="subject"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="w-full mt-5">
-              <FormLabel>
-                <Label>Subject</Label>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your subject" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="w-full mt-5">
+        </motion.div>
+
+        <motion.div
+          className="w-full mt-5"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5, delay: 0.2 }}
+        >
+          <FormField
+            name="subject"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>
+                  <Label className={cn(geistMono.className)}>Subject</Label>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your subject" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
+
+        <motion.div
+          className="w-full mt-5"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.5, delay: 0.3 }}
+        >
           <FormField
             name="message"
             control={form.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label>Message</Label>
+                  <Label className={cn(geistMono.className)}>Message</Label>
                 </FormLabel>
                 <FormControl>
                   <Textarea
@@ -148,11 +175,27 @@ export const ContactForm: FC = () => {
               </FormItem>
             )}
           />
-        </div>
-        <div className="w-full flex justify-end items-center mt-5">
-          <Button type="submit">Send Message</Button>
-        </div>
-      </form>
+        </motion.div>
+
+        <motion.div
+          className="w-full flex justify-end items-center mt-5"
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, delay: 0.4 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className={cn(
+              "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2",
+              geistMono.className
+            )}
+            type="submit"
+          >
+            Send Message
+          </motion.button>
+        </motion.div>
+      </motion.form>
     </Form>
   );
 };

@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { FC } from "react";
+import { motion } from "framer-motion";
 import {
   Pagination,
   PaginationContent,
@@ -35,31 +36,50 @@ export const QueryPagination: FC<Props> = ({ totalPages, className }) => {
     <Pagination className={className}>
       <PaginationContent>
         {prevPage >= 1 ? (
-          <PaginationItem>
-            <PaginationPrevious href={createPageURL(prevPage)} />
-          </PaginationItem>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <PaginationItem>
+              <PaginationPrevious href={createPageURL(prevPage)} />
+            </PaginationItem>
+          </motion.div>
         ) : null}
 
         {Array(totalPages)
           .fill("")
           .map((_, index) => (
-            <PaginationItem
-              className="inline-block"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.3,
+                delay: index * 0.1, // Staggered animation
+              }}
               key={`page-button-${index}`}
             >
-              <PaginationLink
-                isActive={currentPage === index + 1}
-                href={createPageURL(index + 1)}
-              >
-                {index + 1}
-              </PaginationLink>
-            </PaginationItem>
+              <PaginationItem className="inline-block">
+                <PaginationLink
+                  isActive={currentPage === index + 1}
+                  href={createPageURL(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            </motion.div>
           ))}
 
         {nextPage <= totalPages ? (
-          <PaginationItem>
-            <PaginationNext href={createPageURL(nextPage)} />
-          </PaginationItem>
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <PaginationItem>
+              <PaginationNext href={createPageURL(nextPage)} />
+            </PaginationItem>
+          </motion.div>
         ) : null}
       </PaginationContent>
     </Pagination>

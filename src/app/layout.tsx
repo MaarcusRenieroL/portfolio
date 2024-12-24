@@ -5,6 +5,7 @@ import { cn } from "~/lib/utils";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/themes/theme-provider";
 import { ReactNode } from "react";
+import { geistSans } from "~/lib/font";
 
 export const metadata: Metadata = {
   title: "Maarcus Reniero L",
@@ -19,7 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("h-full flex justify-center items-center")}>
+      <body
+        className={cn(
+          "h-full flex justify-center items-center",
+          geistSans.className
+        )}
+      >
         <ThemeProvider attribute="class" disableTransitionOnChange>
           <Content>{children}</Content>
           <Toaster />
