@@ -1,5 +1,6 @@
 import { Blog } from "~/components/sections/blog"
 import { Header } from "~/components/sections/header"
+import { Projects } from "~/components/sections/projects";
 import { WorkExperience } from "~/components/sections/work-experience"
 
 export default function Home() {
@@ -9,7 +10,7 @@ export default function Home() {
       <Header />
       <WorkExperience />
       <Blog />
-      <p>projects</p>
+      <Projects />
     </div>
   );
 }
