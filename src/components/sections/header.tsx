@@ -4,7 +4,6 @@ import { FC } from "react";
 export const Header: FC = () => {
   return (
     <div className="flex flex-col gap-10">
-      {/* Top Section: Name, Location, Title */}
       <div className="flex flex-col gap-3">
         <h1 className="text-4xl font-bold tracking-tight">
           maarcus reniero l
@@ -21,10 +20,9 @@ export const Header: FC = () => {
         </div>
       </div>
 
-      {/* Bio Section */}
       <div>
-        <p className="text-md leading-relaxed text-foreground">
-          I’m a 22-year-old full-stack dev from Chennai with a full-stack dream: to run an entire IT firm end to end. Sounds delusional? Maybe. But I’ll get there. Off duty, I’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. Becoming the jack of all trades — one repo, one rep, one revelation at a time.
+        <p className="text-md leading-relaxed text-foreground text-justify">
+          I’m a 22-year-old full-stack dev from Chennai with a full-stack dream: to run an entire IT firm end to end. Off duty, I’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. Becoming the jack of all trades — one repo, one rep, one revelation at a time.
         </p>
       </div>
     </div>

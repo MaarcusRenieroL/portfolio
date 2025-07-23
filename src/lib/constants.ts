@@ -167,7 +167,7 @@ export const PROJECTS = [
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js 14", "drizzle orm", "postgresql", "server actions", "stripe",
+      "next.js", "drizzle orm", "postgresql", "server actions", "stripe",
       "shadcnui", "tailwind css"
     ],
   },

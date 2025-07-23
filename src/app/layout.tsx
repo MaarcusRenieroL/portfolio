@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Maarcus Reniero L",
   description: "Trying to be the jack of all trades",
+
+  openGraph: {
+    title: "Maarcus Reniero L",
+    description: "Trying to be the jack of all trades",
+    url: "https://maarcus.dev", // ⬅️ Replace with your real domain
+    siteName: "Maarcus Reniero L",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
