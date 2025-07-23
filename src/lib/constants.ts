@@ -3,9 +3,9 @@ export const PROJECTS = [
     id: "next-auth-masterclass",
     title: "next auth masterclass",
     features: [
-      "authentication using credentials and OAuth (Google & GitHub)",
+      "authentication using credentials and oauth (google & github)",
       "forgot password and email verification",
-      "two-factor authentication (2FA)",
+      "two-factor authentication (2fa)",
       "user roles and access gates",
       "login and register components",
       "middleware and session callbacks",
@@ -26,7 +26,7 @@ export const PROJECTS = [
     title: "e commerce admin dashboard",
     features: [
       "manage multiple vendors/stores",
-      "CRUD for categories, products, and billboards",
+      "crud for categories, products, and billboards",
       "upload and manage product images",
       "filters, featured product toggling",
       "search with pagination",
@@ -46,7 +46,7 @@ export const PROJECTS = [
     id: "productivity-management-tool",
     title: "productivity management tool",
     features: [
-      "CRUD for tasks and projects",
+      "crud for tasks and projects",
       "relational linking between users, tasks, and projects",
       "theme toggle support",
       "invite members and manage access",
@@ -99,10 +99,10 @@ export const PROJECTS = [
     title: "list leap",
     features: [
       "authentication and org management",
-      "board creation with Unsplash API for covers",
+      "board creation with unsplash api for covers",
       "activity logs and drag-drop reordering",
-      "card/list CRUD with limits",
-      "Stripe subscription for unlimited boards"
+      "card/list crud with limits",
+      "stripe subscription for unlimited boards"
     ],
     githubLink: "https://github.com/maarcusrenierol/secure-track",
     hostedLink: "https://list-leap.vercel.app",
@@ -140,7 +140,7 @@ export const PROJECTS = [
       "real-time messaging with friends list",
       "send/receive messages instantly",
       "friend request management",
-      "authentication with intuitive UI"
+      "authentication with intuitive ui"
     ],
     githubLink: "https://github.com/maarcusrenierol/real-time-chat-app",
     hostedLink: "",
@@ -155,9 +155,9 @@ export const PROJECTS = [
     id: "duolingo-clone",
     title: "duolingo clone",
     features: [
-      "AI voices with ElevenLabs and sound effects",
-      "XP, hearts system, and quests",
-      "leaderboard, shop, and pro tier with Stripe",
+      "ai voices with elevenlabs and sound effects",
+      "xp, hearts system, and quests",
+      "leaderboard, shop, and pro tier with stripe",
       "admin dashboard and landing page",
       "custom characters and mascot design"
     ],
@@ -176,7 +176,7 @@ export const PROJECTS = [
     title: "dotfiles",
     features: [
       "customized shell and editor configurations",
-      "streamlined CLI workflows",
+      "streamlined cli workflows",
       "boosts productivity and consistency"
     ],
     githubLink: "https://github.com/maarcusrenierol/dotfiles",
@@ -193,7 +193,7 @@ export const PROJECTS = [
       "authentication and onboarding",
       "post, comment, and thread system",
       "search, activity, and community pages",
-      "deployed API and full web app experience"
+      "deployed api and full web app experience"
     ],
     githubLink: "https://github.com/maarcusrenierol/threads-clone",
     hostedLink: "",
@@ -207,12 +207,12 @@ export const PROJECTS = [
   },
   {
     id: "mern-social-media-app",
-    title: "mern socal media app",
+    title: "mern social media app",
     features: [
-      "responsive UI built with React and Redux",
-      "user and post CRUD routes",
+      "responsive ui built with react and redux",
+      "user and post crud routes",
       "authentication and secure login",
-      "MERN stack backend setup"
+      "mern stack backend setup"
     ],
     githubLink: "https://github.com/maarcusrenierol/mern-social-media-app",
     hostedLink: "",
@@ -225,10 +225,10 @@ export const PROJECTS = [
     id: "mern-finance-dashboard",
     title: "mern finance dashboard",
     features: [
-      "ML-powered financial predictions",
-      "dashboard UI with Material UI and Recharts",
-      "Vite frontend with Redux Toolkit",
-      "MERN backend with MongoDB"
+      "ml-powered financial predictions",
+      "dashboard ui with material ui and recharts",
+      "vite frontend with redux toolkit",
+      "mern backend with mongodb"
     ],
     githubLink: "https://github.com/maarcusrenierol/mern-finance-dashboard",
     hostedLink: "",
@@ -241,8 +241,8 @@ export const PROJECTS = [
     id: "glam-model-agency",
     title: "the glam model agency website",
     features: [
-      "revamped landing page using Shopify",
-      "custom Liquid, HTML, CSS, and JS integration"
+      "revamped landing page using shopify",
+      "custom liquid, html, css, and js integration"
     ],
     githubLink: "https://github.com/anonymous-sherlock/the-glam-model",
     hostedLink: "https://theglammodel.com",
@@ -270,7 +270,7 @@ export const WORK_EXPERIENCE = [
     id: 2,
     title: "full stack developer intern",
     company: "steam troops innovation labs",
-    href: "https://systech.com",
+    href: "https://steamtroops.com/",
     duration: "aug 2023 - dec 2023",
     highlights: [
       "Played a pivotal role in the company’s first product development using Next.js, TypeScript, Tailwind CSS, and Strapi.",
@@ -282,7 +282,7 @@ export const WORK_EXPERIENCE = [
     id: 3,
     title: "full stack developer intern",
     company: "matlync",
-    href: "https://systech.com",
+    href: "https://matlync.com/",
     duration: "jan 2024 - feb 2024",
     highlights: [
       "Coordinated with teams on multiple ongoing projects.",
@@ -310,3 +310,6 @@ export const LINKS = [
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
 ]
 
+export const NAV_LINKS = [
+  "home", "projects"
+]

@@ -14,8 +14,8 @@ export const Projects = () => {
     return bDate.getTime() - aDate.getTime();
   });
 
-  const [hoveredGithub, setHoveredGithub] = useState<string | null>(null);
-  const [hoveredGlobe, setHoveredGlobe] = useState<string | null>(null);
+  const [hoveredGithub, setHoveredGithub] = useState<boolean>(false);
+  const [hoveredGlobe, setHoveredGlobe] = useState<boolean>(false);
   const [hovered, setHovered] = useState<boolean>(false);
 
   return (
@@ -54,14 +54,20 @@ export const Projects = () => {
 
             <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
               <Link href={project.githubLink} target="_blank" aria-label="GitHub Repository">
-                <Button size="icon" variant="outline" className="hover:scale-105 transition-transform">
+                <Button variant={hoveredGithub ? "default" : "outline"}
+                  onMouseEnter={() => setHoveredGithub(true)}
+                  onMouseLeave={() => setHoveredGithub(false)}
+                  size="icon" className="hover:scale-105 transition-transform">
                   <GithubIcon className="h-4 w-4" />
                 </Button>
               </Link>
 
               {project.hostedLink && (
                 <Link href={project.hostedLink} target="_blank" aria-label="Live Project">
-                  <Button size="icon" variant="outline" className="hover:scale-105 transition-transform">
+                  <Button variant={hoveredGlobe ? "default" : "outline"}
+                    onMouseEnter={() => setHoveredGlobe(true)}
+                    onMouseLeave={() => setHoveredGlobe(false)}
+                    size="icon" className="hover:scale-105 transition-transform">
                     <GlobeIcon className="h-4 w-4" />
                   </Button>
                 </Link>
