@@ -2,99 +2,91 @@ export const PROJECTS = [
   {
     id: "next-auth-masterclass",
     title: "next auth masterclass",
-    description:
-      "built features like authentication using credentials, and oauth provider (google & github), forgot password, email verification, two-factor authentication, user roles, login and register components, role gates, middleware, session and callback extensions, and various hooks and utilities for user and role management.",
+    features: [
+      "authentication using credentials and OAuth (Google & GitHub)",
+      "forgot password and email verification",
+      "two-factor authentication (2FA)",
+      "user roles and access gates",
+      "login and register components",
+      "middleware and session callbacks",
+      "hooks and utilities for user/role management"
+    ],
     githubLink: "https://github.com/maarcusrenierol/next-auth-masterclass",
     hostedLink: "https://next-auth-masterclass-tan.vercel.app/",
     startDate: "05 jan 2024",
     endDate: "16 jan 2024",
     category: "full stack",
     skills: [
-      "next.js",
-      "typescript",
-      "next auth",
-      "tailwind css",
-      "shadcn ui",
-      "zod",
-      "react hook form",
-      "resend",
-      "prisma",
-      "postgresql",
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "zod",
+      "react hook form", "resend", "prisma", "postgresql"
     ],
   },
   {
     id: "e-commerce-admin",
     title: "e commerce admin dashboard",
-    description:
-      "built features like managing multiple vendors/stores, create/update/delete categories and products, manage images and filters, handle billboards, enable search with pagination, control featured products, view orders and sales, and show revenue graphs.",
+    features: [
+      "manage multiple vendors/stores",
+      "CRUD for categories, products, and billboards",
+      "upload and manage product images",
+      "filters, featured product toggling",
+      "search with pagination",
+      "view orders, sales data, and revenue graphs"
+    ],
     githubLink: "https://github.com/maarcusrenierol/e-commerce-admin",
     hostedLink: "https://e-commerce-admin-neon-omega.vercel.app",
     startDate: "24 june 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js",
-      "typescript",
-      "next auth",
-      "tailwind css",
-      "shadcn ui",
-      "react hook form",
-      "zod",
-      "trpc",
-      "prisma",
-      "postgresql",
-      "resend",
-      "upload thing",
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "react hook form",
+      "zod", "trpc", "prisma", "postgresql", "resend", "upload thing"
     ],
   },
   {
     id: "productivity-management-tool",
     title: "productivity management tool",
-    description:
-      "implement crud for tasks and projects, add relations between projects, tasks, and users, add theme toggle and seed the application with actual data from the database, and invite team members and manage project-specific access",
-    githubLink:
-      "https://github.com/maarcusrenierol/productivity-management-tool",
+    features: [
+      "CRUD for tasks and projects",
+      "relational linking between users, tasks, and projects",
+      "theme toggle support",
+      "invite members and manage access",
+      "seed database with initial data"
+    ],
+    githubLink: "https://github.com/maarcusrenierol/productivity-management-tool",
     hostedLink: "https://productivity-management-tool.vercel.app",
     startDate: "18 june 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js",
-      "typescript",
-      "next auth",
-      "tailwind css",
-      "shadcn ui",
-      "trpc",
-      "postgresql",
-      "prisma",
-      "react hook form",
-      "zod",
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "trpc",
+      "postgresql", "prisma", "react hook form", "zod"
     ],
   },
   {
     id: "portfolio",
     title: "portfolio",
-    description:
-      "crafted a dynamic portfolio showcasing expertise in full stack development.",
+    features: [
+      "dynamic portfolio site",
+      "showcases full-stack development skills",
+      "smooth, responsive design"
+    ],
     githubLink: "https://github.com/maarcusrenierol/portfolio",
     hostedLink: "",
     startDate: "18 jul 2024",
     endDate: "22 jul 2024",
     category: "front end",
     skills: [
-      "next.js",
-      "typescript",
-      "tailwind css",
-      "shadcn ui",
-      "resend",
-      "react hook form",
-      "zod",
+      "next.js", "typescript", "tailwind css", "shadcn ui",
+      "resend", "react hook form", "zod"
     ],
   },
   {
     id: "hovirreal",
     title: "hovirreal",
-    description: "built a website for a startup named hovirreal",
+    features: [
+      "built a company website for a startup",
+      "responsive static site using vanilla stack"
+    ],
     githubLink: "https://github.com/maarcusrenierol/hovirreal",
     hostedLink: "",
     startDate: "10 dec 2021",
@@ -105,89 +97,88 @@ export const PROJECTS = [
   {
     id: "list-leap",
     title: "list leap",
-    description:
-      "built features like authentication, organization management, board creation with unsplash api for cover images, and activity logs. features include renaming and deleting boards, creating and managing lists and cards with drag-and-drop reorder, board limits, and stripe subscriptions for unlimited boards.",
+    features: [
+      "authentication and org management",
+      "board creation with Unsplash API for covers",
+      "activity logs and drag-drop reordering",
+      "card/list CRUD with limits",
+      "Stripe subscription for unlimited boards"
+    ],
     githubLink: "https://github.com/maarcusrenierol/secure-track",
     hostedLink: "https://list-leap.vercel.app",
     startDate: "16 feb 2024",
     endDate: "01 mar 2024",
     category: "full stack",
     skills: [
-      "next.js",
-      "server actions",
-      "typescript",
-      "tailwind css",
-      "shadcn ui",
-      "mongo db",
-      "unsplash api",
+      "next.js", "server actions", "typescript", "tailwind css",
+      "shadcn ui", "mongo db", "unsplash api"
     ],
   },
   {
     id: "password-manager",
     title: "password manager",
-    description:
-      "built a secure application for managing and storing passwords. features include encrypted storage, password generation, and user authentication. designed to enhance security and convenience, this tool helps users keep track of their credentials safely while providing an intuitive interface for easy management and retrieval.",
+    features: [
+      "secure password storage with encryption",
+      "password generation tool",
+      "user authentication",
+      "clean and intuitive interface"
+    ],
     githubLink: "https://github.com/maarcusrenierol/password-manager",
     hostedLink: "",
     startDate: "8 jul 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js",
-      "typescript",
-      "next auth",
-      "tailwind css",
-      "shadcn ui",
-      "trpc",
-      "postgresql",
-      "prisma",
-      "react hook form",
-      "zod",
+      "next.js", "typescript", "next auth", "tailwind css",
+      "shadcn ui", "trpc", "postgresql", "prisma", "react hook form", "zod"
     ],
   },
   {
     id: "real-time-chat-app",
     title: "real time chat application",
-    description:
-      "a full-stack app featuring authentication, a friends list, and real-time messaging. users can send and receive messages instantly, manage friend requests, and stay connected through an intuitive interface. designed for seamless communication and dynamic interactions, ensuring a robust and engaging user experience.",
+    features: [
+      "real-time messaging with friends list",
+      "send/receive messages instantly",
+      "friend request management",
+      "authentication with intuitive UI"
+    ],
     githubLink: "https://github.com/maarcusrenierol/real-time-chat-app",
     hostedLink: "",
     startDate: "28 jun 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js",
-      "next auth",
-      "shadcn ui",
-      "tailwind css",
-      "upstash redis",
+      "next.js", "next auth", "shadcn ui", "tailwind css", "upstash redis"
     ],
   },
   {
     id: "duolingo-clone",
     title: "duolingo clone",
-    description:
-      "built features like ai voices (elevenlabs), sound effects, hearts and points/xp systems, popups for no hearts and exit confirmation, practice old lessons to regain hearts, leaderboard, quest milestones, shop for exchanging points for hearts, pro tier for unlimited hearts (stripe subscription), landing page, admin dashboard, drizzle orm, neondb postgres database, vercel deployment, cartoonish components with shadcn ui, and original characters and mascot.",
+    features: [
+      "AI voices with ElevenLabs and sound effects",
+      "XP, hearts system, and quests",
+      "leaderboard, shop, and pro tier with Stripe",
+      "admin dashboard and landing page",
+      "custom characters and mascot design"
+    ],
     githubLink: "https://github.com/maarcusrenierol/duolingo-clone",
     hostedLink: "",
     startDate: "24 apr 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js 14",
-      "drizzle orm",
-      "postgresql",
-      "server actions",
-      "stripe",
-      "shadcnui",
-      "tailwind css",
+      "next.js 14", "drizzle orm", "postgresql", "server actions", "stripe",
+      "shadcnui", "tailwind css"
     ],
   },
   {
     id: "dotfiles",
     title: "dotfiles",
-    description:
-      "a personalized set of configuration files for optimizing my development environment. this includes custom settings for shell environments, editors, and various tools, enhancing productivity and consistency across applications. designed to streamline workflows and ensure a tailored, efficient coding experience.",
+    features: [
+      "customized shell and editor configurations",
+      "streamlined CLI workflows",
+      "boosts productivity and consistency"
+    ],
     githubLink: "https://github.com/maarcusrenierol/dotfiles",
     hostedLink: "",
     startDate: "03 jun 2024",
@@ -198,32 +189,31 @@ export const PROJECTS = [
   {
     id: "threads-clone",
     title: "threads clone",
-    description:
-      "built features like authentication, onboarding page, fetching posts, thread card structure, replies/comments, and user profile, search, activity, and community pages, api deployment, and final deployment, showcasing a comprehensive web application development process.",
+    features: [
+      "authentication and onboarding",
+      "post, comment, and thread system",
+      "search, activity, and community pages",
+      "deployed API and full web app experience"
+    ],
     githubLink: "https://github.com/maarcusrenierol/threads-clone",
     hostedLink: "",
     startDate: "22 dec 2024",
     endDate: "ongoing",
     category: "full stack",
     skills: [
-      "next.js",
-      "mongodb",
-      "tailwindcss",
-      "clerk",
-      "uploadthing",
-      "shadcn components",
-      "webhooks",
-      "middleware",
-      "zod",
-      "react hook form",
-      "vercel",
+      "next.js", "mongodb", "tailwindcss", "clerk", "uploadthing",
+      "shadcn components", "webhooks", "middleware", "zod", "react hook form", "vercel"
     ],
   },
   {
     id: "mern-social-media-app",
     title: "mern socal media app",
-    description:
-      "built a responsive social media application from scratch using the mern stack. it includes backend setup with node.js and mongodb, authentication, user and post routes, and frontend development with react, redux, and styling, culminating in a fully functional app.",
+    features: [
+      "responsive UI built with React and Redux",
+      "user and post CRUD routes",
+      "authentication and secure login",
+      "MERN stack backend setup"
+    ],
     githubLink: "https://github.com/maarcusrenierol/mern-social-media-app",
     hostedLink: "",
     startDate: "12 jul 2023",
@@ -234,8 +224,12 @@ export const PROJECTS = [
   {
     id: "mern-finance-dashboard",
     title: "mern finance dashboard",
-    description:
-      "built a mern finance dashboard app that has machine learning predictions. the frontend will consist of vite for our starter application, redux toolkit for state management, material ui for our component library, and recharts for our charts. for the backend we will be using node js as our runtime, express js as our backend framework, and mongodb for our database.",
+    features: [
+      "ML-powered financial predictions",
+      "dashboard UI with Material UI and Recharts",
+      "Vite frontend with Redux Toolkit",
+      "MERN backend with MongoDB"
+    ],
     githubLink: "https://github.com/maarcusrenierol/mern-finance-dashboard",
     hostedLink: "",
     startDate: "10 jul 2023",
@@ -246,8 +240,10 @@ export const PROJECTS = [
   {
     id: "glam-model-agency",
     title: "the glam model agency website",
-    description:
-      "revamped their previous landing page to shopify with html, css, js and liquid",
+    features: [
+      "revamped landing page using Shopify",
+      "custom Liquid, HTML, CSS, and JS integration"
+    ],
     githubLink: "https://github.com/anonymous-sherlock/the-glam-model",
     hostedLink: "https://theglammodel.com",
     startDate: "16 feb 2022",
@@ -264,37 +260,49 @@ export const WORK_EXPERIENCE = [
     company: "systech",
     href: "https://systech.com",
     duration: "jan 2023 - feb 2023",
-    description: "completed ccna and ccnp courses, applying theoretical knowledge to configure and troubleshoot network are tools, showcasing hands-on expertise in optimizing network performance."
+    highlights: [
+      "Completed CCNA and CCNP certifications.",
+      "Applied theoretical knowledge to configure and troubleshoot network devices.",
+      "Showcased hands-on expertise in optimizing network performance.",
+    ],
   },
-
   {
     id: 2,
     title: "full stack developer intern",
     company: "steam troops innovation labs",
     href: "https://systech.com",
     duration: "aug 2023 - dec 2023",
-    description: "played a pivotal role in the company's first product development using next.js, typescript, tailwind css and strapi by actively managing daily sprints, collaborating with a team."
+    highlights: [
+      "Played a pivotal role in the company’s first product development using Next.js, TypeScript, Tailwind CSS, and Strapi.",
+      "Managed daily sprints and collaborated closely with cross-functional teams.",
+      "Contributed across the full stack in a fast-paced startup environment.",
+    ],
   },
-
   {
     id: 3,
     title: "full stack developer intern",
     company: "matlync",
     href: "https://systech.com",
     duration: "jan 2024 - feb 2024",
-    description: "co-ordinating with teams on multiple projects taken up by the organization, emphasizing on strapi cms, postbytz and next.js, testing and resolving issues iteratively."
+    highlights: [
+      "Coordinated with teams on multiple ongoing projects.",
+      "Worked extensively with Strapi CMS, Postbytz, and Next.js.",
+      "Handled iterative testing, debugging, and issue resolution across modules.",
+    ],
   },
-
   {
     id: 4,
     title: "developer 1 - software engineering",
     company: "ust healthproof",
     href: "https://systech.com",
     duration: "jan 2025 - present",
-    description: "currently engaged in building a new internal project from the ground up, collaborating with cross-functional teams to architect and implement scalable solutions."
+    highlights: [
+      "Building a new internal project from the ground up.",
+      "Collaborating with cross-functional teams to design and implement scalable solutions.",
+      "Focusing on clean architecture, maintainability, and performance.",
+    ],
   },
-
-]
+];
 
 export const LINKS = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },
