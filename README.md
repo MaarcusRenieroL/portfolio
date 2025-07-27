@@ -12,7 +12,7 @@
 
 - [ ] Lenis (smooth scrolling)
 - [ ] Lanyard (Discord status)
-- [ ] Spotify Integration
+- [x] Spotify Integration
 - [ ] Open Graph support (dynamic per page)
 - [ ] Favicon + Manifest setup
 - [ ] Sitemap & robots.txt
