@@ -30,9 +30,8 @@ export const Projects = () => {
     })
     .slice(0, 3);
 
-  const [hoveredGithub, setHoveredGithub] = useState(false);
-  const [hoveredGlobe, setHoveredGlobe] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [hoveredButtonId, setHoveredButtonId] = useState<string | null>(null);
+  const [hoveredViewAll, setHoveredViewAll] = useState(false);
 
   return (
     <section className="flex flex-col w-full gap-16">
@@ -45,18 +44,48 @@ export const Projects = () => {
             step={index + 1}
             className="group relative group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:not-last:pb-12"
           >
-            <TimelineHeader>
-              <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+            <TimelineHeader className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
 
-              <TimelineTitle className="text-xl font-semibold transition-colors duration-300 group-hover:text-primary">
-                {project.title}
-              </TimelineTitle>
+                <TimelineTitle className="text-xl font-semibold transition-colors duration-300 group-hover:text-primary">
+                  {project.title}
+                </TimelineTitle>
 
-              <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
-                <span className="text-xs font-bold uppercase">
-                  {project.title[0]}
-                </span>
-              </TimelineIndicator>
+                <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
+                  <span className="text-xs font-bold uppercase">
+                    {project.title[0]}
+                  </span>
+                </TimelineIndicator>
+              </div>
+
+              <div className="flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                <Link href={project.githubLink} target="_blank" aria-label="GitHub Repository">
+                  <Button
+                    variant={hoveredButtonId === `${project.id}-github` ? "default" : "outline"}
+                    onMouseEnter={() => setHoveredButtonId(`${project.id}-github`)}
+                    onMouseLeave={() => setHoveredButtonId(null)}
+                    size="icon"
+                    className="hover:scale-105 transition-transform"
+                  >
+                    <GithubIcon className="h-4 w-4" />
+                  </Button>
+                </Link>
+
+                {project.hostedLink && (
+                  <Link href={project.hostedLink} target="_blank" aria-label="Live Project">
+                    <Button
+                      variant={hoveredButtonId === `${project.id}-live` ? "default" : "outline"}
+                      onMouseEnter={() => setHoveredButtonId(`${project.id}-live`)}
+                      onMouseLeave={() => setHoveredButtonId(null)}
+                      size="icon"
+                      className="hover:scale-105 transition-transform"
+                    >
+                      <GlobeIcon className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </TimelineHeader>
 
             <TimelineContent className="p-0 mt-5">
@@ -86,34 +115,6 @@ export const Projects = () => {
                     ))}
                   </div>
                 </div>
-
-                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                  <Link href={project.githubLink} target="_blank" aria-label="GitHub Repository">
-                    <Button
-                      variant={hoveredGithub ? "default" : "outline"}
-                      onMouseEnter={() => setHoveredGithub(true)}
-                      onMouseLeave={() => setHoveredGithub(false)}
-                      size="icon"
-                      className="hover:scale-105 transition-transform"
-                    >
-                      <GithubIcon className="h-4 w-4" />
-                    </Button>
-                  </Link>
-
-                  {project.hostedLink && (
-                    <Link href={project.hostedLink} target="_blank" aria-label="Live Project">
-                      <Button
-                        variant={hoveredGlobe ? "default" : "outline"}
-                        onMouseEnter={() => setHoveredGlobe(true)}
-                        onMouseLeave={() => setHoveredGlobe(false)}
-                        size="icon"
-                        className="hover:scale-105 transition-transform"
-                      >
-                        <GlobeIcon className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  )}
-                </div>
               </div>
             </TimelineContent>
           </TimelineItem>
@@ -123,9 +124,9 @@ export const Projects = () => {
       <div className="flex items-center justify-end w-full pt-4">
         <Link href="/projects">
           <Button
-            variant={hovered ? "default" : "outline"}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            variant={hoveredViewAll ? "default" : "outline"}
+            onMouseEnter={() => setHoveredViewAll(true)}
+            onMouseLeave={() => setHoveredViewAll(false)}
             className="transition-all duration-500 ease-in-out hover:scale-105 hover:border-primary"
           >
             View all
