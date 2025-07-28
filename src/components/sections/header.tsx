@@ -26,8 +26,6 @@ export const Header: FC = () => {
           I’m a 22-year-old full-stack dev from Chennai with a full-stack dream: to run an entire IT firm end to end. Off duty, I’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. Becoming the jack of all trades — one repo, one rep, one revelation at a time.
         </p>
       </div>
-
-      <SpotifyPlayer />
     </div>
   );
 };

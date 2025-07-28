@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: 'i.scdn.co',
       },
     ],
+    domains: [
+      'cdn.discordapp.com',
+      'media.discordapp.net',
+    ]
   },
 };
 

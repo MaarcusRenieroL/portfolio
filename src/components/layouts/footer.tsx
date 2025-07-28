@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { LINKS } from "~/lib/constants"
+import { DiscordStatus } from "../misc/discord-status"
 
 export const Footer = () => {
 
@@ -12,6 +13,7 @@ export const Footer = () => {
             {link.name}
           </Link>
         ))}
+        <DiscordStatus />
       </div>
     </div>
   )
