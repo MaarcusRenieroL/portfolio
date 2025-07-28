@@ -16,6 +16,7 @@ export const Footer = () => {
         ))}
         <DiscordStatus />
         <SpotifyStatus />
+        <Link href="" target="_blank" className="hover:text-primary duration-500 transition-colors text-sm">resume</Link>
       </div>
     </div>
   )

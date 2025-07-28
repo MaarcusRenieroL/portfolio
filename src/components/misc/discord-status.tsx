@@ -41,11 +41,11 @@ export const DiscordStatus = () => {
   const activity = activities?.[0];
 
   return (
-    <HoverCard>
+    <HoverCard openDelay={50} closeDelay={50}>
       <HoverCardTrigger asChild>
         <span className="cursor-pointer text-sm hover:text-green-500 transition-colors duration-500">discord</span>
       </HoverCardTrigger>
-      <HoverCardContent className="w-80">
+      <HoverCardContent className="w-80" align="start">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="relative">
