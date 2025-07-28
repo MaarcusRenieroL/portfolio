@@ -37,16 +37,16 @@ export const DiscordStatus = () => {
   if (error || !data?.result || data?.error) return null;
 
   const { status, user, activities } = data.result;
+  console.log(user)
   const activity = activities?.[0];
 
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <span className="text-sm hover:cursor-pointer hover:text-green-500 transition-colors duration-500">discord</span>
+        <span className="cursor-pointer text-sm hover:text-green-500 transition-colors duration-500">discord</span>
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="space-y-4">
-          {/* Avatar + Status */}
           <div className="flex items-center gap-3">
             <div className="relative">
               {user?.avatar ? (
@@ -75,7 +75,6 @@ export const DiscordStatus = () => {
             </div>
           </div>
 
-          {/* Activity */}
           {activity && (
             <div className="flex gap-3 items-center">
               {activity.assets?.large_image && (
@@ -107,9 +106,8 @@ export const DiscordStatus = () => {
             </div>
           )}
 
-          {/* Guild / Extra Info */}
           <div className="text-xs text-muted-foreground">
-            Guild: <span className="text-foreground font-medium">Altern</span>
+            Guild: <span className="text-foreground font-medium">{user.guild}</span>
           </div>
         </div>
       </HoverCardContent>

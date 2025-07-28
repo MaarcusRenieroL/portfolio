@@ -24,6 +24,7 @@ export async function GET() {
     }
 
     const data = await response.json();
+
     const { discord_status: status = "offline", activities = [], discord_user } = data.data;
 
     const filteredActivities = activities.filter((activity: any) =>
@@ -38,6 +39,7 @@ export async function GET() {
       avatar: discord_user?.avatar
         ? `https://cdn.discordapp.com/avatars/${discord_user.id}/${discord_user.avatar}.png`
         : null,
+      guild: discord_user?.primary_guild.tag
     };
 
     return NextResponse.json({

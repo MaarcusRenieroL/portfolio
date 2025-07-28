@@ -4,12 +4,14 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { FC } from "react";
 import { ModeToggle } from "../misc/theme-switcher";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NAV_LINKS } from "~/lib/constants";
+import { cn } from "~/lib/utils";
 
 export const Navbar: FC = () => {
 
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -40,7 +42,7 @@ export const Navbar: FC = () => {
       <div className="flex items-center gap-5">
         {NAV_LINKS.map((link) => {
           return (
-            <Link key={link} href={`/${link === "home" ? "" : link}`} className="text-sm hover:text-green-500 transition-colors duration-500">{"[" + link.at(0) + "] " + link}</Link>
+            <Link key={link} href={`/${link === "home" ? "" : link}`} className={cn("text-sm hover:text-green-500 transition-colors duration-500", pathname === link ? "text-green-500" : "")}>{"[" + link.at(0) + "] " + link}</Link>
           )
         })}
 
