@@ -265,6 +265,7 @@ export const WORK_EXPERIENCE = [
       "Applied theoretical knowledge to configure and troubleshoot network devices.",
       "Showcased hands-on expertise in optimizing network performance.",
     ],
+    skills: ["networking", "ccna", "ccnp", "network configuration", "troubleshooting"],
   },
   {
     id: 2,
@@ -277,6 +278,7 @@ export const WORK_EXPERIENCE = [
       "Managed daily sprints and collaborated closely with cross-functional teams.",
       "Contributed across the full stack in a fast-paced startup environment.",
     ],
+    skills: ["next.js", "typescript", "tailwind css", "strapi", "next-auth", "shadcn ui", "prisma", "postgresql", "aws", "docker"],
   },
   {
     id: 3,
@@ -289,6 +291,7 @@ export const WORK_EXPERIENCE = [
       "Worked extensively with Strapi CMS, Postbytz, and Next.js.",
       "Handled iterative testing, debugging, and issue resolution across modules.",
     ],
+    skills: ["next.js", "typescript", "tailwind css", "strapi", "postbytz", "three js"],
   },
   {
     id: 4,
@@ -301,6 +304,7 @@ export const WORK_EXPERIENCE = [
       "Collaborating with cross-functional teams to design and implement scalable solutions.",
       "Focusing on clean architecture, maintainability, and performance.",
     ],
+    skills: ["angular", "typescript", "java", "spring boot", "mysql server"],
   },
 ];
 

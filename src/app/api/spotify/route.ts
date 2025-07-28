@@ -61,7 +61,6 @@ export async function GET() {
       }
     }
 
-    // Fallback to currently-playing endpoint
     const response = await fetch(NOW_PLAYING_ENDPOINT, {
       headers: {
         Authorization: `Bearer ${access_token}`,

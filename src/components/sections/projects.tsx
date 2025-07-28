@@ -45,7 +45,7 @@ export const Projects = () => {
               <p className="text-sm font-semibold text-muted-foreground">technologies</p>
               <div className="flex flex-wrap gap-2">
                 {project.skills.map((skill, index) => (
-                  <Badge key={index} variant="secondary" className="capitalize">
+                  <Badge key={index} variant="secondary">
                     {skill}
                   </Badge>
                 ))}

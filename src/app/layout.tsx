@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Maarcus Reniero L",
     description: "Trying to be the jack of all trades",
-    url: "https://maarcus.dev", // ⬅️ Replace with your real domain
+    url: "https://maarcus.dev",
     siteName: "Maarcus Reniero L",
     locale: "en_US",
     type: "website",

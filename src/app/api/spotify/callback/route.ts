@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   try {
     const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64");
-    
+
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
@@ -40,13 +40,12 @@ export async function GET(request: Request) {
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: "Failed to exchange code for tokens",
-        details: data 
+        details: data
       });
     }
 
-    // Return the tokens (in production, you'd want to store these securely)
     return NextResponse.json({
       success: true,
       access_token: data.access_token,
@@ -57,7 +56,7 @@ export async function GET(request: Request) {
 
   } catch (error) {
     console.error("Token exchange error:", error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: "Failed to exchange authorization code",
       details: error instanceof Error ? error.message : "Unknown error"
     });

@@ -37,7 +37,6 @@ export const DiscordStatus = () => {
   if (error || !data?.result || data?.error) return null;
 
   const { status, user, activities } = data.result;
-  console.log(user)
   const activity = activities?.[0];
 
   return (
