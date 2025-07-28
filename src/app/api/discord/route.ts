@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { DISCORD_ACTIVITY } from "~/lib/types";
 
 const DISCORD_STATUS_FETCH_URL = process.env.DISCORD_STATUS_FETCH_URL;
 
@@ -25,9 +26,11 @@ export async function GET() {
 
     const data = await response.json();
 
+    console.log(data)
+
     const { discord_status: status = "offline", activities = [], discord_user } = data.data;
 
-    const filteredActivities = activities.filter((activity: any) =>
+    const filteredActivities = activities.filter((activity: DISCORD_ACTIVITY) =>
       activity.name !== "Spotify" && activity.name !== "Custom Status"
     );
 

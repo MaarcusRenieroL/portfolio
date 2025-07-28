@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ARTIST } from "~/lib/types";
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SECRET_ID = process.env.SPOTIFY_CLIENT_SECRET;
@@ -47,11 +48,14 @@ export async function GET() {
     if (playbackResponse.status === 200) {
       const playbackData = await playbackResponse.json();
 
+      console.log("playback data: ")
+      console.log(playbackData.item.artists)
+
       if (playbackData.is_playing && playbackData.item) {
         return NextResponse.json({
           isPlaying: true,
           title: playbackData.item.name,
-          artist: playbackData.item.artists.map((artist: any) => artist.name).join(", "),
+          artist: playbackData.item.artists.map((artist: ARTIST) => artist.name).join(", "),
           album: playbackData.item.album.name,
           albumImageUrl: playbackData.item.album.images[0]?.url || "",
           songUrl: playbackData.item.external_urls.spotify,
@@ -84,7 +88,7 @@ export async function GET() {
     return NextResponse.json({
       isPlaying: song.is_playing || false,
       title: song.item.name,
-      artist: song.item.artists.map((artist: any) => artist.name).join(", "),
+      artist: song.item.artists.map((artist: ARTIST) => artist.name).join(", "),
       album: song.item.album.name,
       albumImageUrl: song.item.album.images[0]?.url || "",
       songUrl: song.item.external_urls.spotify,

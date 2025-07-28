@@ -1,4 +1,6 @@
-export const PROJECTS = [
+import { NAV_LINK, PROJECT, SOCIAL_LINKS, WORK_EXPERIENCE } from "./types";
+
+export const PROJECTS: PROJECT[] = [
   {
     id: "next-auth-masterclass",
     title: "next auth masterclass",
@@ -253,7 +255,7 @@ export const PROJECTS = [
   },
 ];
 
-export const WORK_EXPERIENCE = [
+export const WORK_EXPERIENCES: WORK_EXPERIENCE[] = [
   {
     id: 1,
     title: "hardware and network engineering intern",
@@ -308,12 +310,12 @@ export const WORK_EXPERIENCE = [
   },
 ];
 
-export const LINKS = [
+export const LINKS: SOCIAL_LINKS[] = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },
   { name: "github", url: "https://github.com/maarcusrenierol" },
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
 ]
 
-export const NAV_LINKS = [
+export const NAV_LINKS: NAV_LINK = [
   "home", "projects"
 ]

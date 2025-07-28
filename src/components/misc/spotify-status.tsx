@@ -5,6 +5,7 @@ import { Progress } from "~/components/ui/progress";
 import useSWR from "swr";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { SPOTIFY_DATA, SPOTIFY_ERROR } from "~/lib/types";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -15,7 +16,7 @@ const formatTime = (ms: number) => {
 };
 
 export const SpotifyStatus = () => {
-  const { data } = useSWR("/api/spotify", fetcher, { refreshInterval: 5000 });
+  const { data } = useSWR<SPOTIFY_DATA>("/api/spotify", fetcher, { refreshInterval: 5000 });
   const [localProgress, setLocalProgress] = useState(0);
 
   useEffect(() => {
