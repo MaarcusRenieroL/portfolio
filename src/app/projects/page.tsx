@@ -5,7 +5,6 @@ import { useState } from "react";
 import { GithubIcon, GlobeIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
-import { PROJECTS } from "~/lib/constants";
 
 import {
   Timeline,
@@ -18,18 +17,10 @@ import {
 } from "~/components/ui/timeline";
 import { ScrollFadeIn } from "~/components/misc/scroll-fade";
 import { ScrambleText } from "~/components/misc/scramble-text";
+import { formatDuration, getProjects } from "~/lib/data/projects";
 
 export default function ProjectsPage() {
-  const sortedProjects = [...PROJECTS]
-    .map(p => ({
-      ...p,
-      endDate: p.endDate.toLowerCase(),
-    }))
-    .sort((a, b) => {
-      const aDate = a.endDate === "ongoing" ? new Date(3000, 0, 1) : new Date(a.endDate);
-      const bDate = b.endDate === "ongoing" ? new Date(3000, 0, 1) : new Date(b.endDate);
-      return bDate.getTime() - aDate.getTime();
-    });
+  const sortedProjects = getProjects();
 
   const [hoveredButtonId, setHoveredButtonId] = useState<string | null>(null);
   const [hoveredViewAll, setHoveredViewAll] = useState(false);
@@ -95,7 +86,7 @@ export default function ProjectsPage() {
                 <div className="group relative w-full flex flex-col gap-6 border p-6 transition-all duration-200 hover:border-primary">
                   <div className="flex flex-col gap-1">
                     <p className="text-sm text-muted-foreground">
-                      {project.startDate} – {project.endDate}
+                      {formatDuration(project)}
                     </p>
                   </div>
 

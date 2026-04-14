@@ -1,5 +1,3 @@
-import { StringToBoolean } from "class-variance-authority/types";
-
 export type ARTIST = {
   spotify: string;
   href: string;
@@ -44,7 +42,8 @@ export type PROJECT = {
   githubLink: string;
   hostedLink: string;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
+  isOngoing: boolean;
   category: string;
   skills: string[];
 }
