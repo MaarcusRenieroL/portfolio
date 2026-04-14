@@ -37,11 +37,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono max-w-4xl mx-auto flex flex-col gap-10 p-5 md:p-10`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono max-w-4xl mx-auto flex flex-col gap-10 p-5 md:p-10 min-h-screen`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Navbar />
-          {children}
+          <main className="flex flex-1">
+            {children}
+          </main>
           <Footer />
         </ThemeProvider>
       </body>
