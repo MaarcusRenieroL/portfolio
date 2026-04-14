@@ -1,4 +1,3 @@
-import { Footer } from "~/components/layouts/footer";
 import { Header } from "~/components/sections/header";
 import { Projects } from "~/components/sections/projects";
 import { WorkExperience } from "~/components/sections/work-experience";
@@ -9,7 +8,6 @@ export default function Home() {
       <Header />
       <WorkExperience />
       <Projects />
-      <Footer />
     </main>
   );
 }

@@ -34,4 +34,3 @@ function sortProjects(a: PROJECT, b: PROJECT) {
 
   return getSafeTime(b.endDate) - getSafeTime(a.endDate);
 }
-

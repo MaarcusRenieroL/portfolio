@@ -21,7 +21,6 @@ import { formatDuration, getProjects } from "~/lib/data/projects";
 export default function ProjectsPage() {
   const sortedProjects = getProjects();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [hoveredViewAll, setHoveredViewAll] = useState(false);
 
   return (
     <section className="flex flex-col w-full gap-10">
@@ -108,19 +107,6 @@ export default function ProjectsPage() {
           </TimelineItem>
         ))}
       </Timeline>
-
-      <div className="flex items-center justify-end w-full pt-4">
-        <Link href="/projects">
-          <Button
-            variant={hoveredViewAll ? "default" : "outline"}
-            onMouseEnter={() => setHoveredViewAll(true)}
-            onMouseLeave={() => setHoveredViewAll(false)}
-            className="transition-all hover:scale-105"
-          >
-            View all
-          </Button>
-        </Link>
-      </div>
     </section>
   );
 }
