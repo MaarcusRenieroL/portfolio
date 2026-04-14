@@ -12,7 +12,7 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 const formatTime = (ms: number) => {
   const minutes = Math.floor(ms / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
 export const SpotifyStatus = () => {
@@ -28,7 +28,7 @@ export const SpotifyStatus = () => {
       setBaseProgress(data.progress);
       setLastUpdated(Date.now());
     }
-  }, [data?.progress, data?.title]);
+  }, [data?.progress, data?.title, data?.isPlaying]);
 
   const [, forceUpdate] = useState(0);
 
@@ -36,6 +36,7 @@ export const SpotifyStatus = () => {
     let raf: number;
 
     const tick = () => {
+      if (!data?.isPlaying) return;
       forceUpdate((n) => n + 1);
       raf = requestAnimationFrame(tick);
     };
@@ -48,14 +49,14 @@ export const SpotifyStatus = () => {
   }, [data?.isPlaying]);
 
   const currentProgress = (() => {
-    if (!data) return 0;
+    if (!data?.duration) return 0;
 
     if (!data.isPlaying) return baseProgress;
 
     const elapsed = Date.now() - lastUpdated;
-    const value = baseProgress + elapsed;
+    const next = baseProgress + elapsed;
 
-    return Math.min(value, data.duration ?? 0);
+    return Math.max(0, Math.min(next, data.duration));
   })();
 
   const progressPercentage = data?.duration
