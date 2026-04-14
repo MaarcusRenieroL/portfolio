@@ -5,7 +5,7 @@ import { Progress } from "~/components/ui/progress";
 import useSWR from "swr";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { SPOTIFY_DATA, SPOTIFY_ERROR } from "~/lib/types";
+import { SPOTIFY_DATA } from "~/lib/types";
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -16,27 +16,50 @@ const formatTime = (ms: number) => {
 };
 
 export const SpotifyStatus = () => {
-  const { data } = useSWR<SPOTIFY_DATA>("/api/spotify", fetcher, { refreshInterval: 5000 });
-  const [localProgress, setLocalProgress] = useState(0);
+  const { data } = useSWR<SPOTIFY_DATA>("/api/spotify", fetcher, {
+    refreshInterval: 5000,
+  });
+
+  const [baseProgress, setBaseProgress] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState(0);
 
   useEffect(() => {
-    if (data?.progress) {
-      setLocalProgress(data.progress);
+    if (data?.progress != null) {
+      setBaseProgress(data.progress);
+      setLastUpdated(Date.now());
     }
-  }, [data?.progress]);
+  }, [data?.progress, data?.title]);
+
+  const [, forceUpdate] = useState(0);
 
   useEffect(() => {
-    if (!data?.isPlaying) return;
+    let raf: number;
 
-    const interval = setInterval(() => {
-      setLocalProgress(prev => prev + 1000);
-    }, 1000);
+    const tick = () => {
+      forceUpdate((n) => n + 1);
+      raf = requestAnimationFrame(tick);
+    };
 
-    return () => clearInterval(interval);
+    if (data?.isPlaying) {
+      raf = requestAnimationFrame(tick);
+    }
+
+    return () => cancelAnimationFrame(raf);
   }, [data?.isPlaying]);
 
+  const currentProgress = (() => {
+    if (!data) return 0;
+
+    if (!data.isPlaying) return baseProgress;
+
+    const elapsed = Date.now() - lastUpdated;
+    const value = baseProgress + elapsed;
+
+    return Math.min(value, data.duration ?? 0);
+  })();
+
   const progressPercentage = data?.duration
-    ? (localProgress / data.duration) * 100
+    ? Math.min((currentProgress / data.duration) * 100, 100)
     : 0;
 
   return (
@@ -67,16 +90,20 @@ export const SpotifyStatus = () => {
             </div>
 
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{formatTime(localProgress)}</span>
+              <span>{formatTime(currentProgress)}</span>
+
               <Progress
                 value={progressPercentage}
                 className="h-1 bg-neutral-700 [&>div]:bg-green-500"
               />
+
               <span>{formatTime(data.duration)}</span>
             </div>
           </div>
         ) : (
-          <div className="text-sm text-muted-foreground">not playing anything</div>
+          <div className="text-sm text-muted-foreground">
+            not playing anything
+          </div>
         )}
       </HoverCardContent>
     </HoverCard>
