@@ -26,23 +26,25 @@ export async function GET() {
 
     const data = await response.json();
 
-    console.log(data)
+    const payload = data?.data ?? {};
 
-    const { discord_status: status = "offline", activities = [], discord_user } = data.data;
+    const status = payload.discord_status ?? "offline";
+    const activities = Array.isArray(payload.activities) ? payload.activities : [];
+    const discord_user = payload.discord_user ?? {};
 
-    const filteredActivities = activities.filter((activity: DISCORD_ACTIVITY) =>
-      activity.name !== "Spotify" && activity.name !== "Custom Status"
-    );
+    const filteredActivities = activities?.filter?.((activity: DISCORD_ACTIVITY) =>
+      activity?.name !== "Spotify" && activity?.name !== "Custom Status"
+    ) ?? [];
 
     const user = {
-      username: discord_user?.global_name,
+      username: discord_user?.global_name ?? discord_user?.username ?? null,
       tag: discord_user?.username
         ? `${discord_user.username}#${discord_user.discriminator}`
         : null,
       avatar: discord_user?.avatar
         ? `https://cdn.discordapp.com/avatars/${discord_user.id}/${discord_user.avatar}.png`
         : null,
-      guild: discord_user?.primary_guild.tag
+      guild: discord_user?.primary_guild?.tag ?? null
     };
 
     return NextResponse.json({
