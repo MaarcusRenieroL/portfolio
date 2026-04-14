@@ -1,6 +1,6 @@
 import { PROJECTS } from "../constants";
 import { PROJECT } from "../types";
-import { formatMonthYear } from "../utils/date";
+import { formatMonthYear, getSafeTime } from "../utils/date";
 
 export function getProjects() {
   return [...PROJECTS].sort(sortProjects);
@@ -29,9 +29,9 @@ function sortProjects(a: PROJECT, b: PROJECT) {
   if (!a.isOngoing && b.isOngoing) return 1;
 
   if (a.isOngoing && b.isOngoing) {
-    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+    return getSafeTime(b.startDate) - getSafeTime(a.startDate);
   }
 
-  return new Date(b.endDate!).getTime() - new Date(a.endDate!).getTime();
+  return getSafeTime(b.endDate) - getSafeTime(a.endDate);
 }
 
