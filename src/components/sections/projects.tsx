@@ -20,7 +20,7 @@ import { Project } from "~/lib/types";
 import { formatDuration, getFeaturedProjects } from "~/lib/data/projects";
 
 export const Projects = () => {
-  const sortedProjects: PROJECT[] = getFeaturedProjects();
+  const sortedProjects: Project[] = getFeaturedProjects();
 
   const [hoveredButtonId, setHoveredButtonId] = useState<string | null>(null);
   const [hoveredViewAll, setHoveredViewAll] = useState(false);

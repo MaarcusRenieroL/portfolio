@@ -10,7 +10,7 @@ export function getFeaturedProjects() {
   return getProjects().slice(0, 3);
 }
 
-export function formatDuration(project: PROJECT) {
+export function formatDuration(project: Project) {
   const start = formatMonthYear(project.startDate);
 
   if (project.isOngoing) {
@@ -24,7 +24,7 @@ export function formatDuration(project: PROJECT) {
   return start;
 }
 
-function sortProjects(a: PROJECT, b: PROJECT) {
+function sortProjects(a: Project, b: Project) {
   if (a.isOngoing && !b.isOngoing) return -1;
   if (!a.isOngoing && b.isOngoing) return 1;
 

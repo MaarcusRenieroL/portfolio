@@ -43,7 +43,7 @@ export const PROJECTS: Project[] = [
     category: "full stack",
     skills: [
       "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "react hook form",
-      "zod", "trpc", "prisma", "postgresql", "resend", "upload thing"
+      "zod", "trpc", "prisma", "postgresql", "resend", "uploadthing"
     ],
   },
   {
