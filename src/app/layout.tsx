@@ -5,6 +5,7 @@ import { ThemeProvider } from "~/components/providers/theme-provider";
 import { Navbar } from "~/components/layouts/navbar";
 import { Footer } from "~/components/layouts/footer";
 import { LenisProvider } from "~/components/providers/lenis-provider";
+import { PageTransitionProvider } from "~/components/providers/page-transition-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,7 +64,9 @@ export default function RootLayout({
           <LenisProvider>
             <Navbar />
             <main className="flex flex-1">
-              {children}
+              <PageTransitionProvider>
+                {children}
+              </PageTransitionProvider>
             </main>
             <Footer />
           </LenisProvider>
