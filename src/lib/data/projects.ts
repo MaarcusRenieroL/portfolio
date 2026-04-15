@@ -1,5 +1,5 @@
 import { PROJECTS } from "../constants";
-import { PROJECT } from "../types";
+import { Project } from "../types";
 import { formatMonthYear, getSafeTime } from "../utils/date";
 
 export function getProjects() {
@@ -32,5 +32,8 @@ function sortProjects(a: PROJECT, b: PROJECT) {
     return getSafeTime(b.startDate) - getSafeTime(a.startDate);
   }
 
-  return getSafeTime(b.endDate) - getSafeTime(a.endDate);
+  const aTime = getSafeTime(a.endDate ?? a.startDate);
+  const bTime = getSafeTime(b.endDate ?? b.startDate);
+
+  return bTime - aTime;
 }

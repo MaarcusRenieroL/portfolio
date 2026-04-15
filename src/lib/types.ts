@@ -1,4 +1,4 @@
-export type ARTIST = {
+export type Artist = {
   spotify: string;
   href: string;
   id: string;
@@ -35,7 +35,7 @@ export type DISCORD_ACTIVITY = {
   }
 }
 
-export type PROJECT = {
+export type Project = {
   id: string;
   title: string;
   features: string[];
@@ -44,11 +44,11 @@ export type PROJECT = {
   startDate: string;
   endDate: string | null;
   isOngoing: boolean;
-  category: string;
+  category: CATEGORY;
   skills: string[];
 }
 
-export type WORK_EXPERIENCE = {
+export type WorkExperience = {
   id: number;
   title: string;
   company: string;
@@ -58,9 +58,11 @@ export type WORK_EXPERIENCE = {
   skills: string[];
 }
 
-export type SOCIAL_LINKS = {
+export type SocialLink = {
   name: string;
   url: string;
 }
 
-export type NAV_LINK = string[];
+export type NavLink = string[];
+
+export type CATEGORY = "full stack" | "front end" | "miscellaneous" | "freelance";

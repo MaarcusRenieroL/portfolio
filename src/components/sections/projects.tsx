@@ -16,7 +16,7 @@ import {
   TimelineTitle,
 } from "~/components/ui/timeline";
 import { ScrambleText } from "../misc/scramble-text";
-import { PROJECT } from "~/lib/types";
+import { Project } from "~/lib/types";
 import { formatDuration, getFeaturedProjects } from "~/lib/data/projects";
 
 export const Projects = () => {

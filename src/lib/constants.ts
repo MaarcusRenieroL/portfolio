@@ -1,6 +1,6 @@
-import { NAV_LINK, PROJECT, SOCIAL_LINKS, WORK_EXPERIENCE } from "./types";
+import { NavLink, Project, SocialLink, WorkExperience } from "./types";
 
-export const PROJECTS: PROJECT[] = [
+export const PROJECTS: Project[] = [
   {
     id: "next-auth-masterclass",
     title: "next auth masterclass",
@@ -269,7 +269,7 @@ export const PROJECTS: PROJECT[] = [
   },
 ];
 
-export const WORK_EXPERIENCES: WORK_EXPERIENCE[] = [
+export const WORK_EXPERIENCES: WorkExperience[] = [
   {
     id: 1,
     title: "hardware and network engineering intern",
@@ -324,12 +324,12 @@ export const WORK_EXPERIENCES: WORK_EXPERIENCE[] = [
   },
 ];
 
-export const LINKS: SOCIAL_LINKS[] = [
+export const LINKS: SocialLink[] = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },
   { name: "github", url: "https://github.com/maarcusrenierol" },
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
 ]
 
-export const NAV_LINKS: NAV_LINK = [
+export const NAV_LINKS: NavLink = [
   "home", "projects"
 ]

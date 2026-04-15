@@ -1,6 +1,10 @@
 export function formatMonthYear(date: string) {
   const d = new Date(date);
 
+  if (isNaN(d.getTime())) {
+    return "";
+  }
+
   return d.toLocaleString("en-US", {
     month: "short",
     year: "numeric",
