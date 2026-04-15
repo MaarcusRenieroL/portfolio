@@ -118,8 +118,13 @@ export const PROJECTS: Project[] = [
     isOngoing: false,
     category: "full stack",
     skills: [
-      "next.js", "server actions", "typescript", "tailwind css",
-      "shadcn ui", "mongo db", "unsplash api"
+      "next.js",
+      "server actions",
+      "typescript",
+      "tailwind css",
+      "shadcn ui",
+      "mongodb",
+      "unsplash api"
     ],
   },
   {
@@ -178,8 +183,13 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "drizzle orm", "postgresql", "server actions", "stripe",
-      "shadcnui", "tailwind css"
+      "next.js",
+      "drizzle orm",
+      "postgresql",
+      "server actions",
+      "stripe",
+      "shadcn ui",
+      "tailwind css"
     ],
   },
   {
@@ -214,8 +224,17 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "mongodb", "tailwindcss", "clerk", "uploadthing",
-      "shadcn components", "webhooks", "middleware", "zod", "react hook form", "vercel"
+      "next.js",
+      "mongodb",
+      "tailwind css",
+      "clerk",
+      "uploadthing",
+      "shadcn ui",
+      "webhooks",
+      "middleware",
+      "zod",
+      "react hook form",
+      "vercel"
     ],
   },
   {

@@ -44,8 +44,8 @@ export type Project = {
   startDate: string;
   endDate: string | null;
   isOngoing: boolean;
-  category: CATEGORY;
-  skills: string[];
+  category: Category;
+  skills: Skill[];
 }
 
 export type WorkExperience = {
@@ -65,4 +65,39 @@ export type SocialLink = {
 
 export type NavLink = string[];
 
-export type CATEGORY = "full stack" | "front end" | "miscellaneous" | "freelance";
+export type Category = "full stack" | "front end" | "miscellaneous" | "freelance";
+
+export type Skill =
+  | "next.js"
+  | "typescript"
+  | "next auth"
+  | "tailwind css"
+  | "shadcn ui"
+  | "zod"
+  | "react hook form"
+  | "resend"
+  | "prisma"
+  | "postgresql"
+  | "trpc"
+  | "uploadthing"
+  | "html"
+  | "css"
+  | "js"
+  | "server actions"
+  | "mongodb"
+  | "unsplash api"
+  | "upstash redis"
+  | "drizzle orm"
+  | "stripe"
+  | "lua"
+  | "yml"
+  | "toml"
+  | "clerk"
+  | "webhooks"
+  | "middleware"
+  | "vercel"
+  | "node.js"
+  | "javascript"
+  | "expressjs"
+  | "liquid"
+  | "shopify";
