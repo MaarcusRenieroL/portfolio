@@ -350,5 +350,5 @@ export const LINKS: SocialLink[] = [
 ]
 
 export const NAV_LINKS: NavLink = [
-  "home", "projects"
+  "home", "projects", "blogs"
 ]

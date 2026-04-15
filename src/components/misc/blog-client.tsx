@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Input } from "../ui/input";
+import { ScrambleText } from "./scramble-text";
 
 type Post = {
   slug: string;
@@ -52,7 +53,9 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
   return (
     <section className="flex flex-col gap-8">
 
-      <h1 className="text-3xl font-semibold">blog</h1>
+      <h1 className="text-4xl font-bold tracking-tight">
+        <ScrambleText text="blogs" />
+      </h1>
 
       <p className="text-sm text-muted-foreground">
         press / to search · enter to open
@@ -68,8 +71,6 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
       <div className="flex flex-col">
         {posts.map((post, index) => {
-          const isActive = index === selected;
-
           const date = new Date(post.date).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -82,8 +83,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
                 ref={(el) => {
                   refs.current[index] = el;
                 }}
-                className={`w-full cursor-pointer ${isActive ? "bg-muted/50" : "hover:bg-muted/40"
-                  }`}
+                className="w-full cursor-pointer hover:bg-muted/50 transition duration-500"
               >
                 <div className="flex items-center gap-6 p-3">
 

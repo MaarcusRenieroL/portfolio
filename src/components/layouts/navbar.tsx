@@ -29,6 +29,9 @@ export const Navbar: FC = () => {
         case "p":
           router.push("/projects");
           break;
+        case "b":
+          router.push("/blogs");
+          break;
         // Add more shortcuts if needed
       }
     };
