@@ -24,6 +24,7 @@ export const PageTransitionProvider = ({ children }: { children: React.ReactNode
       style={{
         transition: "opacity 200ms cubic-bezier(0.4, 0, 0.2, 1)",
         opacity,
+        width: "100%"
       }}
     >
       {displayChildren}
