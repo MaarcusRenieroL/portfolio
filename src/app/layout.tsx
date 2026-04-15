@@ -16,16 +16,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Maarcus Reniero L",
+  title: {
+    default: "Maarcus Reniero L",
+    template: "%s | Maarcus Reniero L",
+  },
   description: "Trying to be the jack of all trades",
+
+  metadataBase: new URL(
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://maarcus.dev"
+  ),
 
   openGraph: {
     title: "Maarcus Reniero L",
     description: "Trying to be the jack of all trades",
     url: "https://maarcus.dev",
     siteName: "Maarcus Reniero L",
-    locale: "en_US",
+    images: [
+      {
+        url: "/me.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
     type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
   },
 };
 
