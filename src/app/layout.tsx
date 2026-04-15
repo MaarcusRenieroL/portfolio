@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { Navbar } from "~/components/layouts/navbar";
 import { Footer } from "~/components/layouts/footer";
+import { LenisProvider } from "~/components/providers/lenis-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,11 +60,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono max-w-4xl mx-auto flex flex-col gap-10 p-5 md:p-10 min-h-screen`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Navbar />
-          <main className="flex flex-1">
-            {children}
-          </main>
-          <Footer />
+          <LenisProvider>
+            <Navbar />
+            <main className="flex flex-1">
+              {children}
+            </main>
+            <Footer />
+          </LenisProvider>
         </ThemeProvider>
       </body>
     </html>
