@@ -67,10 +67,6 @@ export const SpotifyStatus = () => {
     return <div className="text-sm text-muted-foreground">loading...</div>;
   }
 
-  if (!data.isPlaying) {
-    return <div className="text-sm text-muted-foreground">nothing playing</div>;
-  }
-
   return (
     <HoverCard openDelay={50} closeDelay={50}>
       <HoverCardTrigger asChild>
@@ -80,39 +76,44 @@ export const SpotifyStatus = () => {
       </HoverCardTrigger>
 
       <HoverCardContent className="w-72" align="start">
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-3 items-start">
-            {data.albumImageUrl ? (
-              <Image
-                src={data.albumImageUrl}
-                alt="Album cover"
-                width={50}
-                height={50}
-                className="rounded"
-              />
-            ) : (
-              <div className="w-[50px] h-[50px] bg-muted rounded" />
-            )}
+        {data.isPlaying ?
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-3 items-start">
+              {data.albumImageUrl ? (
+                <Image
+                  src={data.albumImageUrl}
+                  alt="Album cover"
+                  width={50}
+                  height={50}
+                  className="rounded"
+                />
+              ) : (
+                <div className="w-[50px] h-[50px] bg-muted rounded" />
+              )}
 
-            <div className="flex flex-col min-w-0">
-              <p className="font-medium truncate">{data.title}</p>
-              <p className="text-xs text-muted-foreground truncate">
-                {data.artist}
-              </p>
+              <div className="flex flex-col min-w-0">
+                <p className="font-medium truncate">{data.title}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {data.artist}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{formatTime(currentProgress)}</span>
+
+              <Progress
+                value={progressPercentage}
+                className="h-1 bg-neutral-700 [&>div]:bg-green-500"
+              />
+
+              <span>{formatTime(data.duration)}</span>
             </div>
           </div>
-
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>{formatTime(currentProgress)}</span>
-
-            <Progress
-              value={progressPercentage}
-              className="h-1 bg-neutral-700 [&>div]:bg-green-500"
-            />
-
-            <span>{formatTime(data.duration)}</span>
+          : <div>
+            <p className="text-xs text-muted-foreground truncate">not playing</p>
           </div>
-        </div>
+        }
       </HoverCardContent>
     </HoverCard>
   );
