@@ -5,7 +5,7 @@ export type Artist = {
   name: string;
   type: string;
   uri: string;
-}
+};
 
 export type SPOTIFY_DATA = {
   isPlaying: boolean;
@@ -16,11 +16,11 @@ export type SPOTIFY_DATA = {
   songUrl: string;
   progress: number;
   duration: number;
-}
+};
 
 export type SPOTIFY_ERROR = {
   isPlaying: boolean;
-}
+};
 
 export type DISCORD_ACTIVITY = {
   id: string;
@@ -32,8 +32,8 @@ export type DISCORD_ACTIVITY = {
     large_text: string;
     small_image: string;
     small_text: string;
-  }
-}
+  };
+};
 
 export type Project = {
   id: string;
@@ -46,8 +46,8 @@ export type Project = {
   isOngoing: boolean;
   category: Category;
   skills: Skill[];
-  hightlight?: boolean;
-}
+  highlight?: boolean;
+};
 
 export type WorkExperience = {
   id: number;
@@ -57,16 +57,20 @@ export type WorkExperience = {
   duration: string;
   highlights: string[];
   skills: string[];
-}
+};
 
 export type SocialLink = {
   name: string;
   url: string;
-}
+};
 
 export type NavLink = string[];
 
-export type Category = "full stack" | "front end" | "miscellaneous" | "freelance";
+export type Category =
+  | "full stack"
+  | "front end"
+  | "miscellaneous"
+  | "freelance";
 
 export type Skill =
   | "next.js"

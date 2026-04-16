@@ -9,7 +9,7 @@ export const PROJECTS: Project[] = [
       "forgot password and email verification",
       "two-factor authentication (2fa)",
       "user roles and access gates",
-      "middleware and session callbacks"
+      "middleware and session callbacks",
     ],
     githubLink: "https://github.com/maarcusrenierol/next-auth-masterclass",
     hostedLink: "https://next-auth-masterclass-tan.vercel.app/",
@@ -18,10 +18,19 @@ export const PROJECTS: Project[] = [
     isOngoing: false,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
-      "zod", "react hook form", "resend", "prisma", "postgresql", "vercel"
+      "next.js",
+      "typescript",
+      "next auth",
+      "tailwind css",
+      "shadcn ui",
+      "zod",
+      "react hook form",
+      "resend",
+      "prisma",
+      "postgresql",
+      "vercel",
     ],
-    hightlight: true
+    highlight: true,
   },
 
   {
@@ -29,10 +38,10 @@ export const PROJECTS: Project[] = [
     title: "e commerce admin dashboard",
     features: [
       "multi-store/vendor management",
-      "product, category, and billboard crud",
+      "product, category, and billboard management",
       "image uploads and asset management",
       "filters, search, pagination",
-      "sales analytics and revenue tracking"
+      "sales analytics and revenue tracking",
     ],
     githubLink: "https://github.com/maarcusrenierol/e-commerce-admin",
     hostedLink: "https://e-commerce-admin-neon-omega.vercel.app",
@@ -41,8 +50,19 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
-      "react hook form", "zod", "trpc", "prisma", "postgresql", "resend", "uploadthing", "vercel"
+      "next.js",
+      "typescript",
+      "next auth",
+      "tailwind css",
+      "shadcn ui",
+      "react hook form",
+      "zod",
+      "trpc",
+      "prisma",
+      "postgresql",
+      "resend",
+      "uploadthing",
+      "vercel",
     ],
   },
 
@@ -50,22 +70,32 @@ export const PROJECTS: Project[] = [
     id: "productivity-management-tool",
     title: "productivity management tool",
     features: [
-      "task and project crud",
+      "task and project management",
       "relational data modeling",
       "team collaboration and access control",
-      "theme support and seeded data"
+      "theme support and seeded data",
     ],
-    githubLink: "https://github.com/maarcusrenierol/productivity-management-tool",
+    githubLink:
+      "https://github.com/maarcusrenierol/productivity-management-tool",
     hostedLink: "https://productivity-management-tool.vercel.app",
     startDate: "2024-06-18",
     endDate: null,
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
-      "trpc", "postgresql", "prisma", "react hook form", "zod", "vercel"
+      "next.js",
+      "typescript",
+      "next auth",
+      "tailwind css",
+      "shadcn ui",
+      "trpc",
+      "postgresql",
+      "prisma",
+      "react hook form",
+      "zod",
+      "vercel",
     ],
-    hightlight: true
+    highlight: true,
   },
 
   {
@@ -76,7 +106,7 @@ export const PROJECTS: Project[] = [
       "drag and drop reordering",
       "unsplash integration",
       "activity logs",
-      "stripe subscriptions"
+      "stripe subscriptions",
     ],
     githubLink: "https://github.com/maarcusrenierol/secure-track",
     hostedLink: "https://list-leap.vercel.app",
@@ -85,10 +115,17 @@ export const PROJECTS: Project[] = [
     isOngoing: false,
     category: "full stack",
     skills: [
-      "next.js", "server actions", "typescript", "tailwind css",
-      "shadcn ui", "mongodb", "unsplash api", "stripe", "vercel"
+      "next.js",
+      "server actions",
+      "typescript",
+      "tailwind css",
+      "shadcn ui",
+      "mongodb",
+      "unsplash api",
+      "stripe",
+      "vercel",
     ],
-    hightlight: true
+    highlight: true,
   },
 
   {
@@ -98,7 +135,7 @@ export const PROJECTS: Project[] = [
       "secure password storage",
       "password generator",
       "authentication system",
-      "clean ui"
+      "clean ui",
     ],
     githubLink: "https://github.com/maarcusrenierol/password-manager",
     hostedLink: "",
@@ -107,8 +144,16 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css",
-      "shadcn ui", "trpc", "postgresql", "prisma", "react hook form", "zod"
+      "next.js",
+      "typescript",
+      "next auth",
+      "tailwind css",
+      "shadcn ui",
+      "trpc",
+      "postgresql",
+      "prisma",
+      "react hook form",
+      "zod",
     ],
   },
 
@@ -119,7 +164,7 @@ export const PROJECTS: Project[] = [
       "real-time messaging",
       "friend system",
       "instant updates",
-      "auth flow"
+      "auth flow",
     ],
     githubLink: "https://github.com/maarcusrenierol/real-time-chat-app",
     hostedLink: "",
@@ -128,7 +173,11 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "next auth", "shadcn ui", "tailwind css", "upstash redis"
+      "next.js",
+      "next auth",
+      "shadcn ui",
+      "tailwind css",
+      "upstash redis",
     ],
   },
 
@@ -139,7 +188,7 @@ export const PROJECTS: Project[] = [
       "gamified learning system",
       "xp, hearts, leaderboard",
       "stripe subscriptions",
-      "admin dashboard"
+      "admin dashboard",
     ],
     githubLink: "https://github.com/maarcusrenierol/duolingo-clone",
     hostedLink: "",
@@ -148,8 +197,13 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "drizzle orm", "postgresql", "server actions",
-      "stripe", "shadcn ui", "tailwind css"
+      "next.js",
+      "drizzle orm",
+      "postgresql",
+      "server actions",
+      "stripe",
+      "shadcn ui",
+      "tailwind css",
     ],
   },
 
@@ -160,7 +214,7 @@ export const PROJECTS: Project[] = [
       "post and thread system",
       "authentication and onboarding",
       "activity and search",
-      "community features"
+      "community features",
     ],
     githubLink: "https://github.com/maarcusrenierol/threads-clone",
     hostedLink: "",
@@ -169,8 +223,16 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "mongodb", "tailwind css", "clerk", "uploadthing",
-      "webhooks", "middleware", "zod", "react hook form", "vercel"
+      "next.js",
+      "mongodb",
+      "tailwind css",
+      "clerk",
+      "uploadthing",
+      "webhooks",
+      "middleware",
+      "zod",
+      "react hook form",
+      "vercel",
     ],
   },
 
@@ -180,7 +242,7 @@ export const PROJECTS: Project[] = [
     features: [
       "custom dev environment",
       "optimized cli workflows",
-      "config automation"
+      "config automation",
     ],
     githubLink: "https://github.com/maarcusrenierol/dotfiles",
     hostedLink: "",
@@ -197,7 +259,7 @@ export const PROJECTS: Project[] = [
     features: [
       "startup website",
       "responsive design",
-      "vanilla implementation"
+      "vanilla implementation",
     ],
     githubLink: "https://github.com/maarcusrenierol/hovirreal",
     hostedLink: "",
@@ -221,7 +283,13 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
       "Applied theoretical knowledge to configure and troubleshoot network devices.",
       "Showcased hands-on expertise in optimizing network performance.",
     ],
-    skills: ["networking", "ccna", "ccnp", "network configuration", "troubleshooting"],
+    skills: [
+      "networking",
+      "ccna",
+      "ccnp",
+      "network configuration",
+      "troubleshooting",
+    ],
   },
   {
     id: 2,
@@ -234,7 +302,18 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
       "Managed daily sprints and collaborated closely with cross-functional teams.",
       "Contributed across the full stack in a fast-paced startup environment.",
     ],
-    skills: ["next.js", "typescript", "tailwind css", "strapi", "next-auth", "shadcn ui", "prisma", "postgresql", "aws", "docker"],
+    skills: [
+      "next.js",
+      "typescript",
+      "tailwind css",
+      "strapi",
+      "next-auth",
+      "shadcn ui",
+      "prisma",
+      "postgresql",
+      "aws",
+      "docker",
+    ],
   },
   {
     id: 3,
@@ -247,7 +326,14 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
       "Worked extensively with Strapi CMS, Postbytz, and Next.js.",
       "Handled iterative testing, debugging, and issue resolution across modules.",
     ],
-    skills: ["next.js", "typescript", "tailwind css", "strapi", "postbytz", "three js"],
+    skills: [
+      "next.js",
+      "typescript",
+      "tailwind css",
+      "strapi",
+      "postbytz",
+      "three js",
+    ],
   },
   {
     id: 4,
@@ -268,8 +354,6 @@ export const LINKS: SocialLink[] = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },
   { name: "github", url: "https://github.com/maarcusrenierol" },
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
-]
+];
 
-export const NAV_LINKS: NavLink = [
-  "home", "projects", "blogs"
-]
+export const NAV_LINKS: NavLink = ["home", "projects", "blogs"];
