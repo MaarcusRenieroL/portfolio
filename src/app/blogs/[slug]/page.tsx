@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getPost } from "~/lib/blogs";
 
 export default async function BlogPost({
@@ -9,6 +10,10 @@ export default async function BlogPost({
   const { slug } = await params;
   const post = await getPost(slug);
 
+  if (!post) {
+    return notFound();
+  }
+
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -17,9 +22,7 @@ export default async function BlogPost({
 
   return (
     <article className="w-full flex">
-
       <div className="w-full flex flex-col gap-8">
-
         <Link
           href="/blogs"
           className="text-sm text-muted-foreground hover:underline"
@@ -28,9 +31,7 @@ export default async function BlogPost({
         </Link>
 
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">
-            {post.title}
-          </h1>
+          <h1 className="text-2xl font-semibold">{post.title}</h1>
 
           <p className="text-sm text-muted-foreground">
             {formattedDate.toLowerCase()}
@@ -43,9 +44,7 @@ export default async function BlogPost({
           className="text-sm leading-relaxed text-foreground space-y-4"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
-
       </div>
-
     </article>
   );
 }
