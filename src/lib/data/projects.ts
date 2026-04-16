@@ -7,7 +7,7 @@ export function getProjects() {
 }
 
 export function getFeaturedProjects() {
-  return getProjects().slice(0, 3);
+  return getProjects().filter(project => project.hightlight);
 }
 
 export function formatDuration(project: Project) {

@@ -9,9 +9,7 @@ export const PROJECTS: Project[] = [
       "forgot password and email verification",
       "two-factor authentication (2fa)",
       "user roles and access gates",
-      "login and register components",
-      "middleware and session callbacks",
-      "hooks and utilities for user/role management"
+      "middleware and session callbacks"
     ],
     githubLink: "https://github.com/maarcusrenierol/next-auth-masterclass",
     hostedLink: "https://next-auth-masterclass-tan.vercel.app/",
@@ -20,20 +18,21 @@ export const PROJECTS: Project[] = [
     isOngoing: false,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "zod",
-      "react hook form", "resend", "prisma", "postgresql"
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
+      "zod", "react hook form", "resend", "prisma", "postgresql", "vercel"
     ],
+    hightlight: true
   },
+
   {
     id: "e-commerce-admin",
     title: "e commerce admin dashboard",
     features: [
-      "manage multiple vendors/stores",
-      "crud for categories, products, and billboards",
-      "upload and manage product images",
-      "filters, featured product toggling",
-      "search with pagination",
-      "view orders, sales data, and revenue graphs"
+      "multi-store/vendor management",
+      "product, category, and billboard crud",
+      "image uploads and asset management",
+      "filters, search, pagination",
+      "sales analytics and revenue tracking"
     ],
     githubLink: "https://github.com/maarcusrenierol/e-commerce-admin",
     hostedLink: "https://e-commerce-admin-neon-omega.vercel.app",
@@ -42,19 +41,19 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "react hook form",
-      "zod", "trpc", "prisma", "postgresql", "resend", "uploadthing"
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
+      "react hook form", "zod", "trpc", "prisma", "postgresql", "resend", "uploadthing", "vercel"
     ],
   },
+
   {
     id: "productivity-management-tool",
     title: "productivity management tool",
     features: [
-      "crud for tasks and projects",
-      "relational linking between users, tasks, and projects",
-      "theme toggle support",
-      "invite members and manage access",
-      "seed database with initial data"
+      "task and project crud",
+      "relational data modeling",
+      "team collaboration and access control",
+      "theme support and seeded data"
     ],
     githubLink: "https://github.com/maarcusrenierol/productivity-management-tool",
     hostedLink: "https://productivity-management-tool.vercel.app",
@@ -63,53 +62,21 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui", "trpc",
-      "postgresql", "prisma", "react hook form", "zod"
+      "next.js", "typescript", "next auth", "tailwind css", "shadcn ui",
+      "trpc", "postgresql", "prisma", "react hook form", "zod", "vercel"
     ],
+    hightlight: true
   },
-  {
-    id: "portfolio",
-    title: "portfolio",
-    features: [
-      "dynamic portfolio site",
-      "showcases full-stack development skills",
-      "smooth, responsive design"
-    ],
-    githubLink: "https://github.com/maarcusrenierol/portfolio",
-    hostedLink: "https://maarcus.dev",
-    startDate: "2024-07-18",
-    endDate: "2024-07-22",
-    isOngoing: false,
-    category: "front end",
-    skills: [
-      "next.js", "typescript", "tailwind css", "shadcn ui",
-      "resend", "react hook form", "zod"
-    ],
-  },
-  {
-    id: "hovirreal",
-    title: "hovirreal",
-    features: [
-      "built a company website for a startup",
-      "responsive static site using vanilla stack"
-    ],
-    githubLink: "https://github.com/maarcusrenierol/hovirreal",
-    hostedLink: "",
-    startDate: "2021-12-10",
-    endDate: "2021-12-12",
-    isOngoing: false,
-    category: "freelance",
-    skills: ["html", "css", "js"],
-  },
+
   {
     id: "list-leap",
     title: "list leap",
     features: [
-      "authentication and org management",
-      "board creation with unsplash api for covers",
-      "activity logs and drag-drop reordering",
-      "card/list crud with limits",
-      "stripe subscription for unlimited boards"
+      "board and card management",
+      "drag and drop reordering",
+      "unsplash integration",
+      "activity logs",
+      "stripe subscriptions"
     ],
     githubLink: "https://github.com/maarcusrenierol/secure-track",
     hostedLink: "https://list-leap.vercel.app",
@@ -118,23 +85,20 @@ export const PROJECTS: Project[] = [
     isOngoing: false,
     category: "full stack",
     skills: [
-      "next.js",
-      "server actions",
-      "typescript",
-      "tailwind css",
-      "shadcn ui",
-      "mongodb",
-      "unsplash api"
+      "next.js", "server actions", "typescript", "tailwind css",
+      "shadcn ui", "mongodb", "unsplash api", "stripe", "vercel"
     ],
+    hightlight: true
   },
+
   {
     id: "password-manager",
     title: "password manager",
     features: [
-      "secure password storage with encryption",
-      "password generation tool",
-      "user authentication",
-      "clean and intuitive interface"
+      "secure password storage",
+      "password generator",
+      "authentication system",
+      "clean ui"
     ],
     githubLink: "https://github.com/maarcusrenierol/password-manager",
     hostedLink: "",
@@ -147,14 +111,15 @@ export const PROJECTS: Project[] = [
       "shadcn ui", "trpc", "postgresql", "prisma", "react hook form", "zod"
     ],
   },
+
   {
     id: "real-time-chat-app",
     title: "real time chat application",
     features: [
-      "real-time messaging with friends list",
-      "send/receive messages instantly",
-      "friend request management",
-      "authentication with intuitive ui"
+      "real-time messaging",
+      "friend system",
+      "instant updates",
+      "auth flow"
     ],
     githubLink: "https://github.com/maarcusrenierol/real-time-chat-app",
     hostedLink: "",
@@ -166,15 +131,15 @@ export const PROJECTS: Project[] = [
       "next.js", "next auth", "shadcn ui", "tailwind css", "upstash redis"
     ],
   },
+
   {
     id: "duolingo-clone",
     title: "duolingo clone",
     features: [
-      "ai voices with elevenlabs and sound effects",
-      "xp, hearts system, and quests",
-      "leaderboard, shop, and pro tier with stripe",
-      "admin dashboard and landing page",
-      "custom characters and mascot design"
+      "gamified learning system",
+      "xp, hearts, leaderboard",
+      "stripe subscriptions",
+      "admin dashboard"
     ],
     githubLink: "https://github.com/maarcusrenierol/duolingo-clone",
     hostedLink: "",
@@ -183,22 +148,39 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "full stack",
     skills: [
-      "next.js",
-      "drizzle orm",
-      "postgresql",
-      "server actions",
-      "stripe",
-      "shadcn ui",
-      "tailwind css"
+      "next.js", "drizzle orm", "postgresql", "server actions",
+      "stripe", "shadcn ui", "tailwind css"
     ],
   },
+
+  {
+    id: "threads-clone",
+    title: "threads clone",
+    features: [
+      "post and thread system",
+      "authentication and onboarding",
+      "activity and search",
+      "community features"
+    ],
+    githubLink: "https://github.com/maarcusrenierol/threads-clone",
+    hostedLink: "",
+    startDate: "2024-12-22",
+    endDate: null,
+    isOngoing: true,
+    category: "full stack",
+    skills: [
+      "next.js", "mongodb", "tailwind css", "clerk", "uploadthing",
+      "webhooks", "middleware", "zod", "react hook form", "vercel"
+    ],
+  },
+
   {
     id: "dotfiles",
     title: "dotfiles",
     features: [
-      "customized shell and editor configurations",
-      "streamlined cli workflows",
-      "boosts productivity and consistency"
+      "custom dev environment",
+      "optimized cli workflows",
+      "config automation"
     ],
     githubLink: "https://github.com/maarcusrenierol/dotfiles",
     hostedLink: "",
@@ -208,83 +190,22 @@ export const PROJECTS: Project[] = [
     category: "miscellaneous",
     skills: ["lua", "yml", "toml"],
   },
+
   {
-    id: "threads-clone",
-    title: "threads clone",
+    id: "hovirreal",
+    title: "hovirreal",
     features: [
-      "authentication and onboarding",
-      "post, comment, and thread system",
-      "search, activity, and community pages",
-      "deployed api and full web app experience"
+      "startup website",
+      "responsive design",
+      "vanilla implementation"
     ],
-    githubLink: "https://github.com/maarcusrenierol/threads-clone",
+    githubLink: "https://github.com/maarcusrenierol/hovirreal",
     hostedLink: "",
-    startDate: "2024-12-22",
-    endDate: null,
-    isOngoing: true,
-    category: "full stack",
-    skills: [
-      "next.js",
-      "mongodb",
-      "tailwind css",
-      "clerk",
-      "uploadthing",
-      "shadcn ui",
-      "webhooks",
-      "middleware",
-      "zod",
-      "react hook form",
-      "vercel"
-    ],
-  },
-  {
-    id: "mern-social-media-app",
-    title: "mern social media app",
-    features: [
-      "responsive ui built with react and redux",
-      "user and post crud routes",
-      "authentication and secure login",
-      "mern stack backend setup"
-    ],
-    githubLink: "https://github.com/maarcusrenierol/mern-social-media-app",
-    hostedLink: "",
-    startDate: "2023-07-12",
-    endDate: "2023-07-19",
+    startDate: "2021-12-10",
+    endDate: "2021-12-12",
     isOngoing: false,
-    category: "full stack",
-    skills: ["node.js", "javascript", "mongodb", "expressjs"],
-  },
-  {
-    id: "mern-finance-dashboard",
-    title: "mern finance dashboard",
-    features: [
-      "ml-powered financial predictions",
-      "dashboard ui with material ui and recharts",
-      "vite frontend with redux toolkit",
-      "mern backend with mongodb"
-    ],
-    githubLink: "https://github.com/maarcusrenierol/mern-finance-dashboard",
-    hostedLink: "",
-    startDate: "2023-07-10",
-    endDate: "2023-07-15",
-    isOngoing: false,
-    category: "full stack",
-    skills: ["node.js", "javascript", "mongodb", "expressjs"],
-  },
-  {
-    id: "glam-model-agency",
-    title: "the glam model agency website",
-    features: [
-      "revamped landing page using shopify",
-      "custom liquid, html, css, and js integration"
-    ],
-    githubLink: "https://github.com/anonymous-sherlock/the-glam-model",
-    hostedLink: "https://theglammodel.com",
-    startDate: "2022-02-16",
-    endDate: "2022-02-16",
-    isOngoing: false,
-    category: "miscellaneous",
-    skills: ["html", "css", "js", "liquid", "shopify"],
+    category: "freelance",
+    skills: ["html", "css", "js"],
   },
 ];
 

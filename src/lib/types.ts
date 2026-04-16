@@ -46,6 +46,7 @@ export type Project = {
   isOngoing: boolean;
   category: Category;
   skills: Skill[];
+  hightlight?: boolean;
 }
 
 export type WorkExperience = {
