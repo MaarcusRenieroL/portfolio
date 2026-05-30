@@ -19,7 +19,7 @@ const TimelineContext = React.createContext<TimelineContextValue | undefined>(
 const useTimeline = () => {
   const context = React.useContext(TimelineContext)
   if (!context) {
-    throw new Error("useTimeline must be used within a Timeline")
+    throw new Error("usetimeline must be used within a timeline")
   }
   return context
 }

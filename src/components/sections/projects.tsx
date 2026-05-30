@@ -14,7 +14,7 @@ export const Projects = () => {
         index="03"
         title="projects"
         eyebrow="selected work"
-        description="selected builds with enough signal to show what I like making."
+        description="selected builds with enough signal to show what i like making."
       />
 
       <ProjectTimeline projects={sortedProjects} />
@@ -25,7 +25,7 @@ export const Projects = () => {
             variant="outline"
             className="border-border/70 bg-background/40 transition-colors duration-300 hover:border-primary/60 hover:text-primary"
           >
-            View all
+            view all
           </Button>
         </Link>
       </div>

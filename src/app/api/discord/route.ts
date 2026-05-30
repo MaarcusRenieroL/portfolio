@@ -7,7 +7,7 @@ export async function GET() {
   try {
     if (!DISCORD_STATUS_FETCH_URL) {
       return NextResponse.json(
-        { error: "Discord API not configured", result: null },
+        { error: "discord api not configured", result: null },
         { status: 500 }
       );
     }
@@ -20,7 +20,7 @@ export async function GET() {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: `Discord API error: ${response.status}`, result: null },
+        { error: `discord api error: ${response.status}`, result: null },
         { status: response.status }
       );
     }
@@ -66,7 +66,7 @@ export async function GET() {
         error:
           error instanceof Error
             ? error.message
-            : "Unknown error occurred",
+            : "unknown error occurred",
         result: null,
       },
       { status: 500 }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { SectionHeading } from "./section-heading";
+import { formatShortDate } from "~/lib/utils/date";
 
 type Post = {
   slug: string;
@@ -20,7 +21,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
   const posts = useMemo(() => {
     return allPosts.filter((p) =>
-      p.title.toLowerCase().includes(query.toLowerCase())
+      p.title.includes(query)
     );
   }, [query, allPosts]);
 
@@ -81,11 +82,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
       <div className="flex flex-col gap-1">
         {posts.map((post, index) => {
-          const date = new Date(post.date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
+          const date = formatShortDate(post.date);
 
           return (
             <Link key={post.slug} href={`/blogs/${post.slug}`}>
@@ -101,7 +98,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
               >
                 <div className="flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-6">
                   <span className="text-sm text-muted-foreground sm:w-28">
-                    {date.toLowerCase()}
+                    {date}
                   </span>
 
                   <p className="text-primary">{post.title}</p>

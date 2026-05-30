@@ -31,7 +31,7 @@ export const WorkExperience: FC = () => {
         index="02"
         title="work experience"
         eyebrow="timeline"
-        description="the places where I learned to ship, debug, and work with teams."
+        description="the places where i learned to ship, debug, and work with teams."
       />
 
       <Timeline>

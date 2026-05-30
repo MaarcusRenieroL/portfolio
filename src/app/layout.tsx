@@ -19,10 +19,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Maarcus Reniero L",
-    template: "%s | Maarcus Reniero L",
+    default: "maarcus reniero l",
+    template: "%s | maarcus reniero l",
   },
-  description: "Trying to be the jack of all trades",
+  description: "trying to be the jack of all trades",
 
   metadataBase: new URL(
     process.env.NODE_ENV === "development"
@@ -31,10 +31,10 @@ export const metadata: Metadata = {
   ),
 
   openGraph: {
-    title: "Maarcus Reniero L",
-    description: "Trying to be the jack of all trades",
+    title: "maarcus reniero l",
+    description: "trying to be the jack of all trades",
     url: "https://maarcus.dev",
-    siteName: "Maarcus Reniero L",
+    siteName: "maarcus reniero l",
     images: [
       {
         url: "/me.png",

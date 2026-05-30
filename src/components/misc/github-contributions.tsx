@@ -25,10 +25,10 @@ export const GithubContributions = () => {
 
         <Button asChild size="icon" variant="ghost" className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary">
           <Link
-            href="https://github.com/MaarcusRenieroL"
+            href="https://github.com/maarcusrenierol"
             target="_blank"
             rel="noreferrer"
-            aria-label="Open GitHub profile"
+            aria-label="open github profile"
           >
             <GithubIcon className="h-4 w-4" />
           </Link>
@@ -37,7 +37,7 @@ export const GithubContributions = () => {
 
       <div className="w-full overflow-x-auto border border-border/60 bg-card/45 p-4">
         <GitHubCalendar
-          username="MaarcusRenieroL"
+          username="maarcusrenierol"
           blockSize={12}
           blockMargin={4}
           fontSize={14}

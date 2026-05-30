@@ -38,7 +38,7 @@ let cachedToken: CachedToken | null = null;
 
 async function getAccessToken(): Promise<string> {
   if (!CLIENT_ID || !SECRET_ID || !REFRESH_TOKEN) {
-    throw new Error("Missing Spotify environment variables");
+    throw new Error("missing spotify environment variables");
   }
 
   if (cachedToken && cachedToken.expiresAt > Date.now()) {
@@ -59,7 +59,7 @@ async function getAccessToken(): Promise<string> {
 
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(`Failed to get access token: ${data.error_description || data.error || 'Unknown error'}`);
+    throw new Error(`failed to get access token: ${data.error_description || data.error || "unknown error"}`);
   }
 
   cachedToken = {
@@ -129,7 +129,7 @@ export async function GET() {
 
     return NextResponse.json(toSpotifyStatus(song));
   } catch (error) {
-    console.error("Error fetching Spotify data:", error);
+    console.error("error fetching spotify data:", error);
     return NextResponse.json({
       isPlaying: false
     });

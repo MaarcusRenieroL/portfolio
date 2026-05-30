@@ -70,7 +70,7 @@ export const Header: FC = () => {
         </div>
 
         <p className="max-w-3xl text-sm leading-7 text-foreground/90 sm:text-base">
-          I’m a 22-year-old full-stack dev from Chennai with a full-stack dream: to run an entire IT firm end to end. Off duty, I’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. Becoming the jack of all trades, one repo, one rep, one revelation at a time.
+          i’m a 22-year-old full-stack dev from chennai with a full-stack dream: to run an entire it firm end to end. off duty, i’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. becoming the jack of all trades, one repo, one rep, one revelation at a time.
         </p>
       </div>
     </section>

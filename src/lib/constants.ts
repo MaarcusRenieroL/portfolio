@@ -5,13 +5,13 @@ export const PROJECTS: Project[] = [
     id: "dotfiles",
     title: "dotfiles",
     description:
-      "A personal development setup for keeping editor, shell, and tooling workflows fast and reproducible.",
+      "a personal development setup for keeping editor, shell, and tooling workflows fast and reproducible.",
     features: [
       "custom dev environment",
       "optimized cli workflows",
       "config automation",
     ],
-    githubLink: "https://github.com/MaarcusRenieroL/dotfiles",
+    githubLink: "https://github.com/maarcusrenierol/dotfiles",
     hostedLink: "",
     startDate: "2024-06-03",
     endDate: null,
@@ -23,12 +23,12 @@ export const PROJECTS: Project[] = [
     id: "next-cli",
     title: "next-cli",
     description:
-      "A project scaffolding CLI for bootstrapping opinionated Next.js apps with the tools I reach for most.",
+      "a project scaffolding cli for bootstrapping opinionated next.js apps with the tools i reach for most.",
     features: [
       "powerful project scaffolding tool built on top of the next.js framework",
       "helps developers bootstrap full-featured web applications in seconds",
     ],
-    githubLink: "https://github.com/MaarcusRenieroL/next-cli",
+    githubLink: "https://github.com/maarcusrenierol/next-cli",
     hostedLink: "",
     startDate: "2024-09-19",
     endDate: null,
@@ -41,9 +41,9 @@ export const PROJECTS: Project[] = [
     id: "portfolio",
     title: "portfolio",
     description:
-      "This portfolio: a minimal, keyboard-friendly space for projects, writing, work, and live presence.",
+      "this portfolio: a minimal, keyboard-friendly space for projects, writing, work, and live presence.",
     features: [],
-    githubLink: "https://github.com/MaarcusRenieroL/portfolio",
+    githubLink: "https://github.com/maarcusrenierol/portfolio",
     hostedLink: "https://maarcus.dev",
     startDate: "2024-07-18",
     endDate: null,
@@ -55,13 +55,13 @@ export const PROJECTS: Project[] = [
     id: "zentro",
     title: "zentro",
     description:
-      "A multi-tenant collaboration platform exploring workspaces, boards, permissions, and activity flows.",
+      "a multi-tenant collaboration platform exploring workspaces, boards, permissions, and activity flows.",
     features: [
       "building a multi-tenant collaboration platform.",
       "designed scalable organization, workspace, membership, and permission models to support multi-tenant access control.",
       "building a modular backend workflows for boards, tasks, notifications, and collaborative activity tracking.",
     ],
-    githubLink: "https://github.com/MaarcusRenieroL/zentro",
+    githubLink: "https://github.com/maarcusrenierol/zentro",
     hostedLink: "",
     startDate: "2024-07-18",
     endDate: null,
@@ -93,9 +93,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     href: "https://systech.com",
     duration: "jan 2023 - feb 2023",
     highlights: [
-      "Completed CCNA and CCNP certifications.",
-      "Applied theoretical knowledge to configure and troubleshoot network devices.",
-      "Showcased hands-on expertise in optimizing network performance.",
+      "completed ccna and ccnp certifications.",
+      "applied theoretical knowledge to configure and troubleshoot network devices.",
+      "showcased hands-on expertise in optimizing network performance.",
     ],
     skills: [
       "networking",
@@ -112,9 +112,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     href: "https://steamtroops.com/",
     duration: "aug 2023 - dec 2023",
     highlights: [
-      "Played a pivotal role in the company’s first product development using Next.js, TypeScript, Tailwind CSS, and Strapi.",
-      "Managed daily sprints and collaborated closely with cross-functional teams.",
-      "Contributed across the full stack in a fast-paced startup environment.",
+      "played a pivotal role in the company’s first product development using next.js, typescript, tailwind css, and strapi.",
+      "managed daily sprints and collaborated closely with cross-functional teams.",
+      "contributed across the full stack in a fast-paced startup environment.",
     ],
     skills: [
       "next.js",
@@ -136,9 +136,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     href: "https://matlync.com/",
     duration: "jan 2024 - feb 2024",
     highlights: [
-      "Coordinated with teams on multiple ongoing projects.",
-      "Worked extensively with Strapi CMS, Postbytz, and Next.js.",
-      "Handled iterative testing, debugging, and issue resolution across modules.",
+      "coordinated with teams on multiple ongoing projects.",
+      "worked extensively with strapi cms, postbytz, and next.js.",
+      "handled iterative testing, debugging, and issue resolution across modules.",
     ],
     skills: [
       "next.js",
@@ -156,9 +156,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     href: "https://systech.com",
     duration: "jan 2025 - present",
     highlights: [
-      "Building a new internal project from the ground up.",
-      "Collaborating with cross-functional teams to design and implement scalable solutions.",
-      "Focusing on clean architecture, maintainability, and performance.",
+      "building a new internal project from the ground up.",
+      "collaborating with cross-functional teams to design and implement scalable solutions.",
+      "focusing on clean architecture, maintainability, and performance.",
     ],
     skills: [
       "angular",

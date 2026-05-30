@@ -12,7 +12,7 @@ import {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const getStatusColor = (status: string) => {
-  switch (status?.toLowerCase()) {
+  switch (status) {
     case "online":
       return "bg-green-500";
     case "idle":
@@ -25,15 +25,15 @@ const getStatusColor = (status: string) => {
 };
 
 const getStatusText = (status: string) => {
-  switch (status?.toLowerCase()) {
+  switch (status) {
     case "online":
-      return "Online";
+      return "online";
     case "idle":
-      return "Idle";
+      return "idle";
     case "dnd":
-      return "Do Not Disturb";
+      return "do not disturb";
     default:
-      return "Offline";
+      return "offline";
   }
 };
 
@@ -66,7 +66,7 @@ export const DiscordStatus = () => {
                 {user?.avatar ? (
                   <Image
                     src={user.avatar}
-                    alt="Discord Avatar"
+                    alt="discord avatar"
                     width={48}
                     height={48}
                     className="rounded-full"
@@ -82,7 +82,7 @@ export const DiscordStatus = () => {
               </div>
               <div className="flex flex-col">
                 <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  {user?.username ?? "Unknown"}
+                  {user?.username ?? "unknown"}
                 </p>
                 <p className="text-xs text-muted-foreground">{user?.tag}</p>
                 <p className="text-xs text-muted-foreground">
@@ -100,7 +100,7 @@ export const DiscordStatus = () => {
                         ? `https://media.discordapp.net/${activity.assets.large_image.replace("mp:", "")}`
                         : `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`
                     }
-                    alt="Activity"
+                    alt="activity"
                     width={40}
                     height={40}
                     className="rounded-md object-cover"
@@ -123,7 +123,7 @@ export const DiscordStatus = () => {
             )}
 
             <div className="text-xs text-muted-foreground">
-              Guild:{" "}
+              guild:{" "}
               <span className="text-foreground font-medium">{user.guild}</span>
             </div>
           </div>

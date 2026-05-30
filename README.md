@@ -1,60 +1,60 @@
-# 🚀 Portfolio — Maarcus Reniero L
+# 🚀 portfolio — maarcus reniero l
 
-A minimal, high-performance developer portfolio built with modern web technologies.
-Focused on clarity, speed, and intentional design.
+a minimal, high-performance developer portfolio built with modern web technologies.
+focused on clarity, speed, and intentional design.
 
 ---
 
-## ⚡ Tech Stack
+## ⚡ tech stack
 
-- Next.js 15
-- React 19
-- TypeScript
-- Tailwind CSS
+- next.js 15
+- react 19
+- typescript
+- tailwind css
 - shadcn/ui
-- SWR
+- swr
 
 ---
 
-## 📂 Features
+## 📂 features
 
-- ⚡ Fast, responsive UI
-- 🎯 Highlighted projects system
-- 📝 Blog (file-based)
-- 🎧 Live Spotify status
-- 💬 Discord presence
-- 🌙 Dark / Light theme
-- ⌨️ Keyboard navigation
-
----
-
-## 🧠 Philosophy
-
-> Build less. Build better.
-
-- Minimal but intentional UI
-- Focus on signal over noise
-- Real projects > filler content
+- ⚡ fast, responsive ui
+- 🎯 highlighted projects system
+- 📝 blog (file-based)
+- 🎧 live spotify status
+- 💬 discord presence
+- 🌙 dark / light theme
+- ⌨️ keyboard navigation
 
 ---
 
-## 📸 Projects
+## 🧠 philosophy
 
-Projects are curated using a **highlight system**:
+> build less. build better.
 
-- Only top projects are shown on the main page
-- Full list can be extended later
-
-Each project includes:
-
-- Description
-- Key features
-- Tech stack
-- Live + GitHub links
+- minimal but intentional ui
+- focus on signal over noise
+- real projects > filler content
 
 ---
 
-## 🛠️ Setup
+## 📸 projects
+
+projects are curated using a **highlight system**:
+
+- only top projects are shown on the main page
+- full list can be extended later
+
+each project includes:
+
+- description
+- key features
+- tech stack
+- live + github links
+
+---
+
+## 🛠️ setup
 
 ```bash
 git clone https://github.com/maarcusrenierol/portfolio.git
@@ -65,9 +65,9 @@ pnpm dev
 
 ---
 
-## 🚀 Deployment
+## 🚀 deployment
 
-Deployed on Vercel
+deployed on vercel
 
 ```bash
 pnpm build
@@ -76,14 +76,14 @@ pnpm start
 
 ---
 
-## 📈 Versioning
+## 📈 versioning
 
 - `1.0.0` → initial stable release
 - future updates follow semantic versioning
 
 ---
 
-## 📬 Contact
+## 📬 contact
 
-- Portfolio: https://maarcus.dev
-- GitHub: https://github.com/MaarcusRenieroL
+- portfolio: https://maarcus.dev
+- github: https://github.com/maarcusrenierol

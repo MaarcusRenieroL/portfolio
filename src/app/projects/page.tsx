@@ -11,7 +11,7 @@ export default function ProjectsPage() {
         index="01"
         title="projects"
         eyebrow="filtered archive"
-        description="active builds, experiments, and tools that shaped how I work."
+        description="active builds, experiments, and tools that shaped how i work."
       />
 
       <ProjectExplorer projects={sortedProjects} />

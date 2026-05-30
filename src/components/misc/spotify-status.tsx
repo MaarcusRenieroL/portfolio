@@ -62,7 +62,7 @@ export const SpotifyStatus = () => {
             <div className="flex gap-3 items-start">
               <Image
                 src={data.albumImageUrl}
-                alt="Album cover"
+                alt="album cover"
                 width={50}
                 height={50}
                 className="rounded"

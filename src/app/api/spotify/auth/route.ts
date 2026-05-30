@@ -5,7 +5,7 @@ const REDIRECT_URI = "http://localhost:3000/api/spotify/callback";
 
 export async function GET() {
   if (!CLIENT_ID) {
-    return NextResponse.json({ error: "SPOTIFY_CLIENT_ID not configured" });
+    return NextResponse.json({ error: "spotify_client_id not configured" });
   }
 
   const scopes = [

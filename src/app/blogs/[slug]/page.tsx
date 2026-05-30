@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPost } from "~/lib/blogs";
+import { formatLongDate } from "~/lib/utils/date";
 
 type BlogPostProps = {
   params: Promise<{ slug: string }>;
@@ -25,7 +26,7 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: `Read ${post.title} by Maarcus Reniero L.`,
+    description: `read ${post.title} by maarcus reniero l.`,
   };
 }
 
@@ -39,11 +40,7 @@ export default async function BlogPost({
     return notFound();
   }
 
-  const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = formatLongDate(post.date);
 
   return (
     <article className="w-full flex">
@@ -59,7 +56,7 @@ export default async function BlogPost({
           <h1 className="text-2xl font-semibold">{post.title}</h1>
 
           <p className="text-sm text-muted-foreground">
-            {formattedDate.toLowerCase()}
+            {formattedDate}
           </p>
         </div>
 

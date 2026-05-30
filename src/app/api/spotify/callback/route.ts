@@ -10,15 +10,15 @@ export async function GET(request: Request) {
   const error = searchParams.get("error");
 
   if (error) {
-    return NextResponse.json({ error: `Authorization failed: ${error}` });
+    return NextResponse.json({ error: `authorization failed: ${error}` });
   }
 
   if (!code) {
-    return NextResponse.json({ error: "No authorization code received" });
+    return NextResponse.json({ error: "no authorization code received" });
   }
 
   if (!CLIENT_ID || !CLIENT_SECRET) {
-    return NextResponse.json({ error: "Spotify credentials not configured" });
+    return NextResponse.json({ error: "spotify credentials not configured" });
   }
 
   try {
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
     if (!response.ok) {
       return NextResponse.json({
-        error: "Failed to exchange code for tokens",
+        error: "failed to exchange code for tokens",
         details: data
       });
     }
@@ -51,14 +51,14 @@ export async function GET(request: Request) {
       access_token: data.access_token,
       refresh_token: data.refresh_token,
       expires_in: data.expires_in,
-      message: "Copy the refresh_token value and update your .env file with SPOTIFY_REFRESH_TOKEN=<this_value>"
+      message: "copy the refresh_token value and update your .env file with spotify_refresh_token=<this_value>"
     });
 
   } catch (error) {
-    console.error("Token exchange error:", error);
+    console.error("token exchange error:", error);
     return NextResponse.json({
-      error: "Failed to exchange authorization code",
-      details: error instanceof Error ? error.message : "Unknown error"
+      error: "failed to exchange authorization code",
+      details: error instanceof Error ? error.message : "unknown error"
     });
   }
 } 

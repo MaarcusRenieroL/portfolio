@@ -23,17 +23,19 @@ export const Navbar: FC = () => {
         return;
       }
 
-      switch (event.key.toLowerCase()) {
+      switch (event.key) {
         case "h":
+        case "H":
           router.push("/");
           break;
         case "p":
+        case "P":
           router.push("/projects");
           break;
         case "b":
+        case "B":
           router.push("/blogs");
           break;
-        // Add more shortcuts if needed
       }
     };
 

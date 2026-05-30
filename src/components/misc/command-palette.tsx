@@ -15,36 +15,36 @@ import { cn } from "~/lib/utils";
 
 const actions = [
   {
-    label: "Home",
-    shortcut: "H",
+    label: "home",
+    shortcut: "h",
     description: "return to the main feed",
     href: "/",
     icon: HomeIcon,
   },
   {
-    label: "Projects",
-    shortcut: "P",
+    label: "projects",
+    shortcut: "p",
     description: "view active builds and experiments",
     href: "/projects",
     icon: FolderGit2Icon,
   },
   {
-    label: "Blogs",
-    shortcut: "B",
+    label: "blogs",
+    shortcut: "b",
     description: "read notes and build logs",
     href: "/blogs",
     icon: FileTextIcon,
   },
   {
-    label: "Resume",
-    shortcut: "R",
+    label: "resume",
+    shortcut: "r",
     description: "open the resume pdf",
     href: "/resume",
     icon: BriefcaseIcon,
   },
   {
-    label: "Email",
-    shortcut: "E",
+    label: "email",
+    shortcut: "e",
     description: "start a conversation",
     href: "mailto:maarcusreniero.l@gmail.com",
     icon: MailIcon,
@@ -58,14 +58,14 @@ export function CommandPalette() {
   const [selected, setSelected] = useState(0);
 
   const filteredActions = useMemo(() => {
-    const value = query.trim().toLowerCase();
+    const value = query.trim();
 
     if (!value) {
       return actions;
     }
 
     return actions.filter((action) =>
-      `${action.label} ${action.description}`.toLowerCase().includes(value)
+      `${action.label} ${action.description}`.includes(value)
     );
   }, [query]);
 
@@ -89,7 +89,7 @@ export function CommandPalette() {
         target.tagName === "TEXTAREA" ||
         target.isContentEditable;
 
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      if ((event.metaKey || event.ctrlKey) && (event.key === "k" || event.key === "K")) {
         event.preventDefault();
         setOpen((current) => !current);
         return;
@@ -139,7 +139,7 @@ export function CommandPalette() {
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex h-9 items-center gap-2 border border-border/60 bg-background/55 px-2.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground"
-        aria-label="Open command palette"
+        aria-label="open command palette"
       >
         <SearchIcon className="h-3.5 w-3.5" />
         <span className="hidden text-[11px] sm:inline">cmd k</span>
@@ -150,7 +150,7 @@ export function CommandPalette() {
           <button
             type="button"
             className="absolute inset-0 cursor-default"
-            aria-label="Close command palette"
+            aria-label="close command palette"
             onClick={() => setOpen(false)}
           />
 

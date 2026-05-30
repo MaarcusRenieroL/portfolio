@@ -14,7 +14,7 @@ export function formatDuration(project: Project) {
   const start = formatMonthYear(project.startDate);
 
   if (project.isOngoing) {
-    return `${start} – Present`;
+    return `${start} – present`;
   }
 
   if (project.endDate) {

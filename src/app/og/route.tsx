@@ -18,11 +18,11 @@ export async function GET() {
         }}
       >
         <div style={{ fontSize: 60, fontWeight: 700 }}>
-          Maarcus Reniero L
+          maarcus reniero l
         </div>
 
         <div style={{ fontSize: 28, opacity: 0.7, marginTop: 20 }}>
-          Full-stack developer building scalable systems
+          full-stack developer building scalable systems
         </div>
       </div>
     ),

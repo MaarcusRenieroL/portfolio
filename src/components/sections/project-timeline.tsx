@@ -51,7 +51,7 @@ export function ProjectTimeline({ projects, compact = false }: ProjectTimelinePr
                   href={project.githubLink}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`${project.title} GitHub repository`}
+                  aria-label={`${project.title} github repository`}
                 >
                   <GithubIcon className="h-4 w-4" />
                 </Link>
