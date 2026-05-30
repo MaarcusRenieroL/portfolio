@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { NAV_LINKS } from "~/lib/constants";
 import { cn } from "~/lib/utils";
+import { CommandPalette } from "../misc/command-palette";
 import { ModeToggle } from "../misc/theme-switcher";
 export const Navbar: FC = () => {
   const router = useRouter();
@@ -62,7 +63,10 @@ export const Navbar: FC = () => {
         })}
       </div>
 
-      <ModeToggle />
+      <div className="flex items-center gap-2">
+        <CommandPalette />
+        <ModeToggle />
+      </div>
     </nav>
 
   );

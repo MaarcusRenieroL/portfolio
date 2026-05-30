@@ -14,7 +14,7 @@ import { WORK_EXPERIENCES } from "~/lib/constants";
 import { Button } from "~/components/ui/button";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
-import { ScrambleText } from "../misc/scramble-text";
+import { SectionHeading } from "../misc/section-heading";
 
 export const WorkExperience: FC = () => {
   const sortedExperience = [...WORK_EXPERIENCES].sort((a, b) => {
@@ -27,14 +27,12 @@ export const WorkExperience: FC = () => {
 
   return (
     <section className="flex flex-col gap-10">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          <ScrambleText text="work experience" />
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          the places where I learned to ship, debug, and work with teams.
-        </p>
-      </div>
+      <SectionHeading
+        index="02"
+        title="work experience"
+        eyebrow="timeline"
+        description="the places where I learned to ship, debug, and work with teams."
+      />
 
       <Timeline>
         {sortedExperience.map((experience, index) => (

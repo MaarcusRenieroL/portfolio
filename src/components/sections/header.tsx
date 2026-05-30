@@ -1,4 +1,10 @@
-import { Building2Icon, MapPinnedIcon } from "lucide-react";
+import {
+  Building2Icon,
+  Code2Icon,
+  MapPinnedIcon,
+  SparklesIcon,
+  TerminalIcon,
+} from "lucide-react";
 import { FC } from "react";
 import { ScrambleText } from "../misc/scramble-text";
 
@@ -31,7 +37,8 @@ export const Header: FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-y border-border/60 py-4">
+        <div className="grid gap-3 border-y border-border/60 py-4 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <MapPinnedIcon className="h-4 w-4 text-primary" />
             <span>chennai, india</span>
@@ -40,6 +47,25 @@ export const Header: FC = () => {
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Building2Icon className="h-4 w-4 text-primary" />
             <span>developer 1 - software engineering @ ust healthproof</span>
+          </div>
+          </div>
+
+          <div className="grid grid-cols-3 border border-border/60 bg-background/40 text-xs">
+            <div className="flex flex-col gap-1 border-r border-border/60 p-3">
+              <TerminalIcon className="h-4 w-4 text-primary" />
+              <span className="text-foreground">next</span>
+              <span className="text-muted-foreground">daily</span>
+            </div>
+            <div className="flex flex-col gap-1 border-r border-border/60 p-3">
+              <Code2Icon className="h-4 w-4 text-primary" />
+              <span className="text-foreground">spring</span>
+              <span className="text-muted-foreground">work</span>
+            </div>
+            <div className="flex flex-col gap-1 p-3">
+              <SparklesIcon className="h-4 w-4 text-primary" />
+              <span className="text-foreground">zentro</span>
+              <span className="text-muted-foreground">now</span>
+            </div>
           </div>
         </div>
 

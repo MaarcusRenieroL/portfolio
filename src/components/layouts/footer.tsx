@@ -15,7 +15,7 @@ export const Footer = () => {
           keep in touch
         </span>
       </div>
-      <div className="flex w-full flex-wrap gap-x-5 gap-y-3 border border-border/60 bg-card/35 p-4">
+      <div className="grid w-full grid-cols-2 gap-3 border border-border/60 bg-card/35 p-4 sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-3">
         {LINKS.map((link) => (
           <Link
             key={link.name}

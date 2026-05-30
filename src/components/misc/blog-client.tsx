@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Input } from "../ui/input";
-import { ScrambleText } from "./scramble-text";
+import { SectionHeading } from "./section-heading";
 
 type Post = {
   slug: string;
@@ -64,18 +64,12 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
   return (
     <section className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3 border border-border/60 bg-card/35 p-5 sm:p-6">
-        <span className="text-xs font-medium uppercase text-primary">
-          notes and build logs
-        </span>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          <ScrambleText text="blogs" />
-        </h1>
-
-        <p className="text-sm text-muted-foreground">
-          press / to search · enter to open
-        </p>
-      </div>
+      <SectionHeading
+        index="01"
+        title="blogs"
+        eyebrow="notes and build logs"
+        description="press / to search · enter to open"
+      />
 
       <Input
         ref={inputRef}

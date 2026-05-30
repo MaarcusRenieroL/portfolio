@@ -1,5 +1,5 @@
-import { ScrambleText } from "~/components/misc/scramble-text";
-import { ProjectTimeline } from "~/components/sections/project-timeline";
+import { SectionHeading } from "~/components/misc/section-heading";
+import { ProjectExplorer } from "~/components/sections/project-explorer";
 import { getProjects } from "~/lib/data/projects";
 
 export default function ProjectsPage() {
@@ -7,16 +7,14 @@ export default function ProjectsPage() {
 
   return (
     <section className="flex w-full flex-col gap-10">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          <ScrambleText text="projects" />
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          active builds, experiments, and tools that shaped how I work.
-        </p>
-      </div>
+      <SectionHeading
+        index="01"
+        title="projects"
+        eyebrow="filtered archive"
+        description="active builds, experiments, and tools that shaped how I work."
+      />
 
-      <ProjectTimeline projects={sortedProjects} />
+      <ProjectExplorer projects={sortedProjects} />
     </section>
   );
 }

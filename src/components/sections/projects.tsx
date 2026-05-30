@@ -1,23 +1,21 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-import { ScrambleText } from "../misc/scramble-text";
 import { getFeaturedProjects } from "~/lib/data/projects";
 import { ProjectTimeline } from "./project-timeline";
+import { SectionHeading } from "../misc/section-heading";
 
 export const Projects = () => {
   const sortedProjects = getFeaturedProjects();
 
   return (
     <section className="flex w-full flex-col gap-10">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          <ScrambleText text="projects" />
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          selected builds with enough signal to show what I like making.
-        </p>
-      </div>
+      <SectionHeading
+        index="03"
+        title="projects"
+        eyebrow="selected work"
+        description="selected builds with enough signal to show what I like making."
+      />
 
       <ProjectTimeline projects={sortedProjects} />
 
