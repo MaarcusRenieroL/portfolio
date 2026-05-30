@@ -30,9 +30,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogPost({
-  params,
-}: BlogPostProps) {
+export default async function BlogPost({ params }: BlogPostProps) {
   const { slug } = await params;
   const post = await getPost(slug);
 
@@ -55,9 +53,7 @@ export default async function BlogPost({
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold">{post.title}</h1>
 
-          <p className="text-sm text-muted-foreground">
-            {formattedDate}
-          </p>
+          <p className="text-sm text-muted-foreground">{formattedDate}</p>
         </div>
 
         <div className="w-full h-px bg-border" />

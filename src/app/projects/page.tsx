@@ -2,7 +2,7 @@ import { SectionHeading } from "~/components/misc/section-heading";
 import { ProjectExplorer } from "~/components/sections/project-explorer";
 import { getProjects } from "~/lib/data/projects";
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
   const sortedProjects = getProjects();
 
   return (

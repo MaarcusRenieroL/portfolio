@@ -63,13 +63,13 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LenisProvider>
             <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
-              <Navbar />
+              <PageTransitionProvider>
+                <Navbar />
 
-              <main className="flex flex-1 py-12 md:py-16">
-                <PageTransitionProvider>{children}</PageTransitionProvider>
-              </main>
+                <main className="flex flex-1 py-12 md:py-16">{children}</main>
 
-              <Footer />
+                <Footer />
+              </PageTransitionProvider>
             </div>
           </LenisProvider>
         </ThemeProvider>

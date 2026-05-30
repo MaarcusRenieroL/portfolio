@@ -20,9 +20,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
   const refs = useRef<(HTMLDivElement | null)[]>([]);
 
   const posts = useMemo(() => {
-    return allPosts.filter((p) =>
-      p.title.includes(query)
-    );
+    return allPosts.filter((p) => p.title.includes(query));
   }, [query, allPosts]);
 
   useEffect(() => {
@@ -37,7 +35,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setSelected((current) =>
-          Math.min(current + 1, Math.max(posts.length - 1, 0))
+          Math.min(current + 1, Math.max(posts.length - 1, 0)),
         );
       }
 
@@ -64,7 +62,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
   }, [query]);
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-8 w-full">
       <SectionHeading
         index="01"
         title="blogs"
@@ -109,11 +107,9 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
         })}
 
         {posts.length === 0 && (
-          <p className="text-sm text-muted-foreground mt-4">
-            no results found
-          </p>
+          <p className="text-sm text-muted-foreground mt-4">no results found</p>
         )}
       </div>
     </section>
   );
-}
+};

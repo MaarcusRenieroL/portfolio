@@ -2,14 +2,25 @@
 
 import { useEffect, FC } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 import { NAV_LINKS } from "~/lib/constants";
 import { cn } from "~/lib/utils";
 import { CommandPalette } from "../misc/command-palette";
 import { ModeToggle } from "../misc/theme-switcher";
+
 export const Navbar: FC = () => {
-  const router = useRouter();
   const pathname = usePathname();
+
+  const navigate = (href: string) => {
+    if (href === pathname) return;
+
+    window.dispatchEvent(
+      new CustomEvent("route-loading-start", {
+        detail: href,
+      }),
+    );
+  };
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -18,7 +29,7 @@ export const Navbar: FC = () => {
       if (
         target.tagName === "INPUT" ||
         target.tagName === "TEXTAREA" ||
-        (target as HTMLInputElement).isContentEditable
+        target.isContentEditable
       ) {
         return;
       }
@@ -26,22 +37,27 @@ export const Navbar: FC = () => {
       switch (event.key) {
         case "h":
         case "H":
-          router.push("/");
+          navigate("/");
           break;
+
         case "p":
         case "P":
-          router.push("/projects");
+          navigate("/projects");
           break;
+
         case "b":
         case "B":
-          router.push("/blogs");
+          navigate("/blogs");
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [router]);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [pathname]);
 
   return (
     <nav className="sticky top-5 z-20 relative flex w-full items-center justify-between gap-5 border border-border/60 bg-background/75 px-3 py-2 backdrop-blur-md before:absolute before:left-1/2 before:top-0 before:-z-10 before:h-full before:w-screen before:-translate-x-1/2 before:border-y before:border-border/60 before:bg-background/75 before:backdrop-blur-md">
@@ -56,7 +72,7 @@ export const Navbar: FC = () => {
               href={href}
               className={cn(
                 "text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground",
-                isActive && "text-primary font-medium",
+                isActive && "font-medium text-primary",
               )}
             >
               {"[" + link.at(0) + "] " + link}
