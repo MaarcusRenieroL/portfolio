@@ -5,7 +5,7 @@ import { WorkExperience } from "~/components/sections/work-experience";
 
 export default function Home() {
   return (
-    <main className="flex w-full flex-col gap-14">
+    <main className="flex w-full flex-col gap-12">
       <Header />
       <GithubContributions />
       <WorkExperience />

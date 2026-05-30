@@ -2,19 +2,24 @@ import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://maarcus.dev";
+  const lastModified = new Date();
 
   return [
     {
       url: `${baseUrl}/`,
-      lastModified: new Date(),
+      lastModified,
     },
     {
       url: `${baseUrl}/projects`,
-      lastModified: new Date(),
+      lastModified,
+    },
+    {
+      url: `${baseUrl}/blogs`,
+      lastModified,
     },
     {
       url: `${baseUrl}/resume`,
-      lastModified: new Date(),
+      lastModified,
     },
   ];
 }
