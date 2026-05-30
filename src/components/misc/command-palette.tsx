@@ -16,30 +16,35 @@ import { cn } from "~/lib/utils";
 const actions = [
   {
     label: "Home",
+    shortcut: "H",
     description: "return to the main feed",
     href: "/",
     icon: HomeIcon,
   },
   {
     label: "Projects",
+    shortcut: "P",
     description: "view active builds and experiments",
     href: "/projects",
     icon: FolderGit2Icon,
   },
   {
     label: "Blogs",
+    shortcut: "B",
     description: "read notes and build logs",
     href: "/blogs",
     icon: FileTextIcon,
   },
   {
     label: "Resume",
+    shortcut: "R",
     description: "open the resume pdf",
     href: "/resume",
     icon: BriefcaseIcon,
   },
   {
     label: "Email",
+    shortcut: "E",
     description: "start a conversation",
     href: "mailto:maarcusreniero.l@gmail.com",
     icon: MailIcon,
@@ -133,13 +138,15 @@ export function CommandPalette() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hidden border border-border/60 bg-background/60 px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground sm:inline-flex"
+        className="inline-flex h-9 items-center gap-2 border border-border/60 bg-background/55 px-2.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground"
+        aria-label="Open command palette"
       >
-        <span>cmd+k</span>
+        <SearchIcon className="h-3.5 w-3.5" />
+        <span className="hidden text-[11px] sm:inline">cmd k</span>
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-background/75 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 bg-background/55 p-4 backdrop-blur-md">
           <button
             type="button"
             className="absolute inset-0 cursor-default"
@@ -147,20 +154,30 @@ export function CommandPalette() {
             onClick={() => setOpen(false)}
           />
 
-          <div className="relative mx-auto mt-24 w-full max-w-xl overflow-hidden border border-border/70 bg-background shadow-2xl">
-            <div className="flex items-center gap-3 border-b border-border/60 px-4 py-3">
-              <SearchIcon className="h-4 w-4 text-primary" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="jump to..."
-                className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-              />
-              <span className="text-xs text-muted-foreground">esc</span>
+          <div className="relative mx-auto mt-16 w-full max-w-lg overflow-hidden border border-border/70 bg-background shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+            <div className="border-b border-border/60 bg-card/35 px-4 py-3">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <span className="text-xs font-medium uppercase text-primary">
+                  command center
+                </span>
+                <span className="border border-border/60 px-2 py-1 text-[10px] uppercase text-muted-foreground">
+                  esc
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <SearchIcon className="h-4 w-4 text-muted-foreground" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="type a destination..."
+                  className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                />
+              </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto p-2">
+            <div className="max-h-80 overflow-y-auto p-1.5">
               {filteredActions.map((action, index) => {
                 const Icon = action.icon;
 
@@ -171,18 +188,23 @@ export function CommandPalette() {
                     onMouseEnter={() => setSelected(index)}
                     onClick={() => runAction(action.href)}
                     className={cn(
-                      "flex w-full items-center gap-3 border border-transparent px-3 py-3 text-left transition-colors",
+                      "group flex w-full items-center gap-3 border-l-2 border-transparent px-3 py-3 text-left transition-colors",
                       selected === index
-                        ? "border-primary/45 bg-primary/10"
-                        : "hover:bg-card/60"
+                        ? "border-l-primary bg-primary/10"
+                        : "hover:bg-card/50"
                     )}
                   >
-                    <Icon className="h-4 w-4 text-primary" />
-                    <span className="flex flex-col gap-0.5">
+                    <span className="flex size-8 shrink-0 items-center justify-center border border-border/60 bg-background/60 text-primary transition-colors group-hover:border-primary/40">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                       <span className="text-sm font-medium">{action.label}</span>
                       <span className="text-xs text-muted-foreground">
                         {action.description}
                       </span>
+                    </span>
+                    <span className="border border-border/60 px-2 py-1 text-[10px] text-muted-foreground">
+                      {action.shortcut}
                     </span>
                   </button>
                 );
