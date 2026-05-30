@@ -49,9 +49,17 @@ export default function ProjectsPage() {
               </div>
 
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                <Link href={project.githubLink} target="_blank" aria-label="GitHub Repository">
+                <Link
+                  href={project.githubLink}
+                  target="_blank"
+                  aria-label="GitHub Repository"
+                >
                   <Button
-                    variant={hoveredId === `${project.id}-github` ? "default" : "outline"}
+                    variant={
+                      hoveredId === `${project.id}-github`
+                        ? "default"
+                        : "outline"
+                    }
                     size="icon"
                     onMouseEnter={() => setHoveredId(`${project.id}-github`)}
                     onMouseLeave={() => setHoveredId(null)}
@@ -62,9 +70,17 @@ export default function ProjectsPage() {
                 </Link>
 
                 {project.hostedLink && (
-                  <Link href={project.hostedLink} target="_blank" aria-label="Live Project">
+                  <Link
+                    href={project.hostedLink}
+                    target="_blank"
+                    aria-label="Live Project"
+                  >
                     <Button
-                      variant={hoveredId === `${project.id}-live` ? "default" : "outline"}
+                      variant={
+                        hoveredId === `${project.id}-live`
+                          ? "default"
+                          : "outline"
+                      }
                       size="icon"
                       onMouseEnter={() => setHoveredId(`${project.id}-live`)}
                       onMouseLeave={() => setHoveredId(null)}
@@ -84,7 +100,11 @@ export default function ProjectsPage() {
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm font-semibold text-muted-foreground">features</p>
+                  {project.features.length > 0 && (
+                    <p className="text-sm font-semibold text-muted-foreground">
+                      features
+                    </p>
+                  )}
                   <ul className="list-disc pl-5 text-sm leading-relaxed space-y-1">
                     {project.features.map((feature, index) => (
                       <li key={index}>{feature}</li>
@@ -93,7 +113,9 @@ export default function ProjectsPage() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm font-semibold text-muted-foreground">technologies</p>
+                  <p className="text-sm font-semibold text-muted-foreground">
+                    technologies
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {project.skills.map((skill, index) => (
                       <Badge key={index} variant="secondary">
