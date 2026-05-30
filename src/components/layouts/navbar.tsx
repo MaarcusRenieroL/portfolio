@@ -49,6 +49,11 @@ export const Navbar: FC = () => {
         case "B":
           navigate("/blogs");
           break;
+
+        case "r":
+        case "R":
+          navigate("/resume");
+          break;
       }
     };
 

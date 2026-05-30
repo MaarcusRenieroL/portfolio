@@ -144,6 +144,7 @@ export function PageTransitionProvider({
     if (href.startsWith("#")) return;
     if (href.startsWith("mailto:")) return;
     if (href.startsWith("tel:")) return;
+    if (anchor.hasAttribute("download")) return;
     if (anchor.target === "_blank") return;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
       return;

@@ -179,4 +179,4 @@ export const LINKS: SocialLink[] = [
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
 ];
 
-export const NAV_LINKS: NavLink = ["home", "projects", "blogs"];
+export const NAV_LINKS: NavLink = ["home", "projects", "blogs", "resume"];
