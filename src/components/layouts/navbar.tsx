@@ -57,7 +57,7 @@ export const Navbar: FC = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [pathname]);
+  }, [pathname, navigate]);
 
   return (
     <nav className="sticky top-5 z-20 relative flex w-full items-center justify-between gap-5 border border-border/60 bg-background/75 px-3 py-2 backdrop-blur-md before:absolute before:left-1/2 before:top-0 before:-z-10 before:h-full before:w-screen before:-translate-x-1/2 before:border-y before:border-border/60 before:bg-background/75 before:backdrop-blur-md">
