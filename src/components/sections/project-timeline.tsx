@@ -45,8 +45,8 @@ export function ProjectTimeline({ projects, compact = false }: ProjectTimelinePr
               </TimelineTitle>
             </div>
 
-            <div className="flex shrink-0 gap-2 md:opacity-70 md:transition-opacity md:duration-300 md:group-hover:opacity-100">
-              <Button asChild size="icon" variant="ghost" className="size-8 border border-border/60 bg-background/40 hover:border-primary/50 hover:text-primary">
+            <div className="flex shrink-0 gap-2 md:opacity-75 md:transition-opacity md:duration-300 md:group-hover:opacity-100">
+              <Button asChild size="icon" variant="ghost" className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary">
                 <Link
                   href={project.githubLink}
                   target="_blank"
@@ -58,7 +58,7 @@ export function ProjectTimeline({ projects, compact = false }: ProjectTimelinePr
               </Button>
 
               {project.hostedLink && (
-                <Button asChild size="icon" variant="ghost" className="size-8 border border-border/60 bg-background/40 hover:border-primary/50 hover:text-primary">
+                <Button asChild size="icon" variant="ghost" className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary">
                   <Link
                     href={project.hostedLink}
                     target="_blank"
@@ -73,7 +73,9 @@ export function ProjectTimeline({ projects, compact = false }: ProjectTimelinePr
           </TimelineHeader>
 
           <TimelineContent className="mt-4 p-0">
-            <article className="flex w-full flex-col gap-5 border border-border/70 bg-card/20 p-5 transition-colors duration-300 hover:border-primary/50 sm:p-6">
+            <article className="relative flex w-full flex-col gap-5 overflow-hidden border border-border/70 bg-card/45 p-5 transition-colors duration-300 hover:border-primary/50 sm:p-6">
+              <div className="absolute inset-x-0 top-0 h-px bg-primary/35 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
               <div className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted-foreground">
                   <span>{formatDuration(project)}</span>

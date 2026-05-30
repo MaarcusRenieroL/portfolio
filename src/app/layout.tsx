@@ -58,17 +58,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} mx-auto flex min-h-screen max-w-4xl flex-col gap-10 p-5 font-mono antialiased md:p-10`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-mono antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LenisProvider>
-            <Navbar />
-            <main className="flex flex-1">
-              <PageTransitionProvider>
-                {children}
-              </PageTransitionProvider>
-            </main>
-            <Footer />
+            <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
+              <Navbar />
+              <main className="flex flex-1 py-12 md:py-16">
+                <PageTransitionProvider>
+                  {children}
+                </PageTransitionProvider>
+              </main>
+              <Footer />
+            </div>
           </LenisProvider>
         </ThemeProvider>
       </body>

@@ -58,7 +58,9 @@ export const WorkExperience: FC = () => {
             </TimelineHeader>
 
             <TimelineContent className="mt-4 p-0">
-              <article className="group relative flex w-full flex-col gap-5 border border-border/70 bg-card/20 p-5 transition-colors duration-300 hover:border-primary/50 sm:p-6">
+              <article className="group relative flex w-full flex-col gap-5 overflow-hidden border border-border/70 bg-card/45 p-5 transition-colors duration-300 hover:border-primary/50 sm:p-6">
+                <div className="absolute inset-x-0 top-0 h-px bg-primary/35 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {experience.title} ({experience.duration})
@@ -71,7 +73,7 @@ export const WorkExperience: FC = () => {
                       rel="noreferrer"
                       className="shrink-0 opacity-80 transition-opacity duration-300 hover:opacity-100"
                     >
-                      <Button size="icon" variant="ghost" className="size-8 border border-border/60 bg-background/40 hover:border-primary/50 hover:text-primary">
+                      <Button size="icon" variant="ghost" className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary">
                         <ArrowUpRightIcon className="h-4 w-4" />
                       </Button>
                     </Link>

@@ -35,7 +35,9 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelected((current) => Math.min(current + 1, Math.max(posts.length - 1, 0)));
+        setSelected((current) =>
+          Math.min(current + 1, Math.max(posts.length - 1, 0))
+        );
       }
 
       if (e.key === "ArrowUp") {
@@ -62,7 +64,10 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
   return (
     <section className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 border border-border/60 bg-card/35 p-5 sm:p-6">
+        <span className="text-xs font-medium uppercase text-primary">
+          notes and build logs
+        </span>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           <ScrambleText text="blogs" />
         </h1>
@@ -77,7 +82,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="search posts..."
-        className="h-12 border-border/70 bg-card/20 px-4 text-sm shadow-none focus-visible:ring-1"
+        className="h-12 rounded-none border-border/70 bg-card/45 px-4 text-sm shadow-none focus-visible:ring-1"
       />
 
       <div className="flex flex-col gap-1">
@@ -94,8 +99,10 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
                 ref={(el) => {
                   refs.current[index] = el;
                 }}
-                className={`w-full cursor-pointer border border-transparent transition-colors duration-300 hover:border-border/70 hover:bg-card/20 ${
-                  selected === index ? "border-primary/40 bg-primary/5" : ""
+                className={`w-full cursor-pointer border transition-colors duration-300 hover:border-border/70 hover:bg-card/35 ${
+                  selected === index
+                    ? "border-primary/45 bg-primary/10"
+                    : "border-border/40 bg-card/20"
                 }`}
               >
                 <div className="flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-6">
@@ -103,9 +110,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
                     {date.toLowerCase()}
                   </span>
 
-                  <p className="text-primary">
-                    {post.title}
-                  </p>
+                  <p className="text-primary">{post.title}</p>
                 </div>
               </div>
             </Link>

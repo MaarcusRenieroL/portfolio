@@ -12,12 +12,12 @@ export const GithubContributions = () => {
   return (
     <section className="flex w-full flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-sm font-semibold text-muted-foreground">
+        <h2 className="text-xs font-semibold uppercase text-muted-foreground">
           github activity
         </h2>
       </div>
 
-      <div className="w-full overflow-x-auto rounded-md border border-border/60 bg-card/20 p-4">
+      <div className="w-full overflow-x-auto border border-border/60 bg-card/45 p-4">
         <GitHubCalendar
           username="MaarcusRenieroL"
           blockSize={12}

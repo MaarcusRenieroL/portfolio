@@ -41,7 +41,7 @@ export const Navbar: FC = () => {
   }, [router]);
 
   return (
-    <nav className="flex w-full items-center justify-between gap-5">
+    <nav className="sticky top-5 z-20 flex w-full items-center justify-between gap-5 border border-border/60 bg-background/75 px-3 py-2 backdrop-blur-md">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {NAV_LINKS.map((link) => {
           const href = `/${link === "home" ? "" : link}`;
@@ -52,7 +52,7 @@ export const Navbar: FC = () => {
               key={link}
               href={href}
               className={cn(
-                "text-sm transition-colors duration-300 hover:text-primary",
+                "text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground",
                 isActive && "text-primary font-medium"
               )}
             >
