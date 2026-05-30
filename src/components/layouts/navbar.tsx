@@ -44,7 +44,7 @@ export const Navbar: FC = () => {
   }, [router]);
 
   return (
-    <nav className="sticky top-5 z-20 flex w-full items-center justify-between gap-5 border border-border/60 bg-background/75 px-3 py-2 backdrop-blur-md">
+    <nav className="sticky top-5 z-20 relative flex w-full items-center justify-between gap-5 border border-border/60 bg-background/75 px-3 py-2 backdrop-blur-md before:absolute before:left-1/2 before:top-0 before:-z-10 before:h-full before:w-screen before:-translate-x-1/2 before:border-y before:border-border/60 before:bg-background/75 before:backdrop-blur-md">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {NAV_LINKS.map((link) => {
           const href = `/${link === "home" ? "" : link}`;
@@ -56,7 +56,7 @@ export const Navbar: FC = () => {
               href={href}
               className={cn(
                 "text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground",
-                isActive && "text-primary font-medium"
+                isActive && "text-primary font-medium",
               )}
             >
               {"[" + link.at(0) + "] " + link}
@@ -70,6 +70,5 @@ export const Navbar: FC = () => {
         <ModeToggle />
       </div>
     </nav>
-
   );
 };
