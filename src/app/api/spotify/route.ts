@@ -4,15 +4,45 @@ import { Artist } from "~/lib/types";
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SECRET_ID = process.env.SPOTIFY_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN;
-const basic = Buffer.from(`${CLIENT_ID}:${SECRET_ID}`).toString("base64")
+const basic = Buffer.from(`${CLIENT_ID}:${SECRET_ID}`).toString("base64");
 
-const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token"
+const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const PLAYBACK_STATE_ENDPOINT = "https://api.spotify.com/v1/me/player";
 
-async function getAccessToken() {
+type SpotifyTrack = {
+  name: string;
+  artists: Artist[];
+  album: {
+    name: string;
+    images: { url: string }[];
+  };
+  external_urls: {
+    spotify: string;
+  };
+  duration_ms: number;
+};
+
+type SpotifyPlayback = {
+  is_playing?: boolean;
+  item?: SpotifyTrack | null;
+  progress_ms?: number;
+};
+
+type CachedToken = {
+  accessToken: string;
+  expiresAt: number;
+};
+
+let cachedToken: CachedToken | null = null;
+
+async function getAccessToken(): Promise<string> {
   if (!CLIENT_ID || !SECRET_ID || !REFRESH_TOKEN) {
     throw new Error("Missing Spotify environment variables");
+  }
+
+  if (cachedToken && cachedToken.expiresAt > Date.now()) {
+    return cachedToken.accessToken;
   }
 
   const res = await fetch(TOKEN_ENDPOINT, {
@@ -32,43 +62,55 @@ async function getAccessToken() {
     throw new Error(`Failed to get access token: ${data.error_description || data.error || 'Unknown error'}`);
   }
 
-  return data;
+  cachedToken = {
+    accessToken: data.access_token,
+    expiresAt: Date.now() + ((data.expires_in ?? 3600) - 60) * 1000,
+  };
+
+  return cachedToken.accessToken;
+}
+
+function toSpotifyStatus(playback: SpotifyPlayback) {
+  if (!playback?.is_playing || !playback.item) {
+    return { isPlaying: false };
+  }
+
+  return {
+    isPlaying: true,
+    title: playback.item.name,
+    artist: playback.item.artists.map((artist) => artist.name).join(", "),
+    album: playback.item.album.name,
+    albumImageUrl: playback.item.album.images[0]?.url || "",
+    songUrl: playback.item.external_urls.spotify,
+    progress: playback.progress_ms || 0,
+    duration: playback.item.duration_ms || 0,
+  };
 }
 
 export async function GET() {
   try {
-    const { access_token } = await getAccessToken();
+    const accessToken = await getAccessToken();
 
     const playbackResponse = await fetch(PLAYBACK_STATE_ENDPOINT, {
       headers: {
-        Authorization: `Bearer ${access_token}`,
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
+      next: { revalidate: 5 },
     });
 
     if (playbackResponse.status === 200) {
-      const playbackData = await playbackResponse.json();
-
-      console.log("playback data: ")
-      console.log(playbackData.item.artists)
+      const playbackData = await playbackResponse.json() as SpotifyPlayback;
 
       if (playbackData.is_playing && playbackData.item) {
-        return NextResponse.json({
-          isPlaying: true,
-          title: playbackData.item.name,
-          artist: playbackData.item.artists.map((artist: Artist) => artist.name).join(", "),
-          album: playbackData.item.album.name,
-          albumImageUrl: playbackData.item.album.images[0]?.url || "",
-          songUrl: playbackData.item.external_urls.spotify,
-          progress: playbackData.progress_ms || 0,
-          duration: playbackData.item.duration_ms || 0
-        });
+        return NextResponse.json(toSpotifyStatus(playbackData));
       }
     }
 
     const response = await fetch(NOW_PLAYING_ENDPOINT, {
       headers: {
-        Authorization: `Bearer ${access_token}`,
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
+      next: { revalidate: 5 },
     });
 
     if (response.status === 204 || response.status > 400) {
@@ -77,7 +119,7 @@ export async function GET() {
       });
     }
 
-    const song = await response.json();
+    const song = await response.json() as SpotifyPlayback;
 
     if (!song || !song.item) {
       return NextResponse.json({
@@ -85,16 +127,7 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json({
-      isPlaying: song.is_playing || false,
-      title: song.item.name,
-      artist: song.item.artists.map((artist: Artist) => artist.name).join(", "),
-      album: song.item.album.name,
-      albumImageUrl: song.item.album.images[0]?.url || "",
-      songUrl: song.item.external_urls.spotify,
-      progress: song.progress_ms || 0,
-      duration: song.item.duration_ms || 0
-    });
+    return NextResponse.json(toSpotifyStatus(song));
   } catch (error) {
     console.error("Error fetching Spotify data:", error);
     return NextResponse.json({

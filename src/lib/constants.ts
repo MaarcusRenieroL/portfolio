@@ -4,6 +4,8 @@ export const PROJECTS: Project[] = [
   {
     id: "dotfiles",
     title: "dotfiles",
+    description:
+      "A personal development setup for keeping editor, shell, and tooling workflows fast and reproducible.",
     features: [
       "custom dev environment",
       "optimized cli workflows",
@@ -20,6 +22,8 @@ export const PROJECTS: Project[] = [
   {
     id: "next-cli",
     title: "next-cli",
+    description:
+      "A project scaffolding CLI for bootstrapping opinionated Next.js apps with the tools I reach for most.",
     features: [
       "powerful project scaffolding tool built on top of the next.js framework",
       "helps developers bootstrap full-featured web applications in seconds",
@@ -36,6 +40,8 @@ export const PROJECTS: Project[] = [
   {
     id: "portfolio",
     title: "portfolio",
+    description:
+      "This portfolio: a minimal, keyboard-friendly space for projects, writing, work, and live presence.",
     features: [],
     githubLink: "https://github.com/MaarcusRenieroL/portfolio",
     hostedLink: "https://maarcus.dev",
@@ -48,6 +54,8 @@ export const PROJECTS: Project[] = [
   {
     id: "zentro",
     title: "zentro",
+    description:
+      "A multi-tenant collaboration platform exploring workspaces, boards, permissions, and activity flows.",
     features: [
       "building a multi-tenant collaboration platform.",
       "designed scalable organization, workspace, membership, and permission models to support multi-tenant access control.",

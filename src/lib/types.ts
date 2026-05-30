@@ -38,6 +38,7 @@ export type DISCORD_ACTIVITY = {
 export type Project = {
   id: string;
   title: string;
+  description: string;
   features: string[];
   githubLink: string;
   hostedLink: string;

@@ -33,6 +33,16 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
         inputRef.current?.focus();
       }
 
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelected((current) => Math.min(current + 1, Math.max(posts.length - 1, 0)));
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelected((current) => Math.max(current - 1, 0));
+      }
+
       if (e.key === "Enter" && posts[selected]) {
         window.location.href = `/blogs/${posts[selected].slug}`;
       }
@@ -52,24 +62,25 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
   return (
     <section className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <ScrambleText text="blogs" />
+        </h1>
 
-      <h1 className="text-4xl font-bold tracking-tight">
-        <ScrambleText text="blogs" />
-      </h1>
-
-      <p className="text-sm text-muted-foreground">
-        press / to search · enter to open
-      </p>
+        <p className="text-sm text-muted-foreground">
+          press / to search · enter to open
+        </p>
+      </div>
 
       <Input
         ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="search posts..."
-        className="border-b bg-transparent outline-none text-sm py-1"
+        className="h-12 border-border/70 bg-card/20 px-4 text-sm shadow-none focus-visible:ring-1"
       />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-1">
         {posts.map((post, index) => {
           const date = new Date(post.date).toLocaleDateString("en-US", {
             month: "short",
@@ -83,18 +94,18 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
                 ref={(el) => {
                   refs.current[index] = el;
                 }}
-                className="w-full cursor-pointer hover:bg-muted/50 transition duration-500"
+                className={`w-full cursor-pointer border border-transparent transition-colors duration-300 hover:border-border/70 hover:bg-card/20 ${
+                  selected === index ? "border-primary/40 bg-primary/5" : ""
+                }`}
               >
-                <div className="flex items-center gap-6 p-3">
-
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-6">
+                  <span className="text-sm text-muted-foreground sm:w-28">
                     {date.toLowerCase()}
                   </span>
 
-                  <p className="text-green-500">
+                  <p className="text-primary">
                     {post.title}
                   </p>
-
                 </div>
               </div>
             </Link>
@@ -107,7 +118,6 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
           </p>
         )}
       </div>
-
     </section>
   );
 }

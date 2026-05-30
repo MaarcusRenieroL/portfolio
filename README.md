@@ -12,7 +12,6 @@ Focused on clarity, speed, and intentional design.
 - TypeScript
 - Tailwind CSS
 - shadcn/ui
-- Prisma + PostgreSQL
 - SWR
 
 ---
@@ -60,8 +59,8 @@ Each project includes:
 ```bash
 git clone https://github.com/maarcusrenierol/portfolio.git
 cd portfolio
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ---
@@ -71,8 +70,8 @@ npm run dev
 Deployed on Vercel
 
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ---

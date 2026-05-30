@@ -26,36 +26,41 @@ export const WorkExperience: FC = () => {
   });
 
   return (
-    <section className="flex flex-col gap-16">
-      <h1 className="text-4xl font-bold tracking-tight">
-        <ScrambleText text="work experience" />
-      </h1>
+    <section className="flex flex-col gap-10">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <ScrambleText text="work experience" />
+        </h1>
+        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          the places where I learned to ship, debug, and work with teams.
+        </p>
+      </div>
 
       <Timeline>
         {sortedExperience.map((experience, index) => (
           <TimelineItem
             key={experience.id}
             step={index + 1}
-            className="group relative group-data-[orientation=vertical]/timeline:ms-10 group-data-[orientation=vertical]/timeline:not-last:pb-12"
+            className="group relative group-data-[orientation=vertical]/timeline:ms-9 group-data-[orientation=vertical]/timeline:not-last:pb-10"
           >
             <TimelineHeader>
-              <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+              <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-6 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
 
-              <TimelineTitle className="text-xl font-semibold transition-colors duration-300 group-hover:text-green-500">
+              <TimelineTitle className="text-lg font-semibold transition-colors duration-300 group-hover:text-primary">
                 {experience.company}
               </TimelineTitle>
 
-              <TimelineIndicator className="bg-primary/10 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
-                <span className="text-xs font-bold uppercase">
+              <TimelineIndicator className="flex size-5 items-center justify-center border-none bg-primary/15 text-primary group-data-[orientation=vertical]/timeline:-left-6 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground">
+                <span className="text-[10px] font-bold uppercase">
                   {experience.company[0]}
                 </span>
               </TimelineIndicator>
             </TimelineHeader>
 
-            <TimelineContent className="p-0 mt-5">
-              <div className="group relative flex flex-col w-full gap-5 border p-6 transition-all duration-300 ease-in-out hover:border-primary">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground mb-1">
+            <TimelineContent className="mt-4 p-0">
+              <article className="group relative flex w-full flex-col gap-5 border border-border/70 bg-card/20 p-5 transition-colors duration-300 hover:border-primary/50 sm:p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {experience.title} ({experience.duration})
                   </p>
 
@@ -63,34 +68,35 @@ export const WorkExperience: FC = () => {
                     <Link
                       href={experience.href}
                       target="_blank"
-                      className="opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto"
+                      rel="noreferrer"
+                      className="shrink-0 opacity-80 transition-opacity duration-300 hover:opacity-100"
                     >
-                      <Button size="icon" variant="ghost" className="transition-transform hover:scale-105">
+                      <Button size="icon" variant="ghost" className="size-8 border border-border/60 bg-background/40 hover:border-primary/50 hover:text-primary">
                         <ArrowUpRightIcon className="h-4 w-4" />
                       </Button>
                     </Link>
                   )}
                 </div>
 
-                <ul className="list-disc pl-5 text-sm space-y-2 text-foreground leading-relaxed">
+                <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-foreground/85">
                   {experience.highlights.map((point, index) => (
-                    <li key={index} className="transition-all duration-300 ease-in-out">
+                    <li key={index}>
                       {point}
                     </li>
                   ))}
                 </ul>
 
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm font-semibold text-muted-foreground">technologies</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">technologies</p>
                   <div className="flex flex-wrap gap-2">
                     {experience.skills.map((skill, index) => (
-                      <Badge key={index} variant="secondary">
+                      <Badge key={index} variant="secondary" className="border border-border/50 bg-secondary/70 px-2.5 py-1 text-[11px] text-secondary-foreground/90">
                         {skill}
                       </Badge>
                     ))}
                   </div>
                 </div>
-              </div>
+              </article>
             </TimelineContent>
           </TimelineItem>
         ))}

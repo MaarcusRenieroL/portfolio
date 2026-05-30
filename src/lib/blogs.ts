@@ -12,19 +12,21 @@ const postsDirectory = path.join(process.cwd(), "content/blogs");
 export function getAllPosts() {
   const fileNames = fs.readdirSync(postsDirectory);
 
-  return fileNames.map((fileName) => {
-    const slug = fileName.replace(/\.md$/, "");
-    const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+  return fileNames
+    .map((fileName) => {
+      const slug = fileName.replace(/\.md$/, "");
+      const fullPath = path.join(postsDirectory, fileName);
+      const fileContents = fs.readFileSync(fullPath, "utf8");
 
-    const { data } = matter(fileContents);
+      const { data } = matter(fileContents);
 
-    return {
-      slug,
-      title: data.title,
-      date: data.date,
-    };
-  });
+      return {
+        slug,
+        title: data.title,
+        date: data.date,
+      };
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function getPost(slug: string) {

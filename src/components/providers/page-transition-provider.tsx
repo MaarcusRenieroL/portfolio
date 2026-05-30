@@ -14,7 +14,7 @@ export const PageTransitionProvider = ({ children }: { children: React.ReactNode
     const timeout = setTimeout(() => {
       setDisplayChildren(children);
       setOpacity(1);
-    }, 150);
+    }, 90);
 
     return () => clearTimeout(timeout);
   }, [pathname, children]);
@@ -22,7 +22,7 @@ export const PageTransitionProvider = ({ children }: { children: React.ReactNode
   return (
     <div
       style={{
-        transition: "opacity 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "opacity 140ms cubic-bezier(0.4, 0, 0.2, 1)",
         opacity,
         width: "100%"
       }}

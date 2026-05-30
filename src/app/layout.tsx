@@ -58,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-mono max-w-4xl mx-auto flex flex-col gap-10 p-5 md:p-10 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} mx-auto flex min-h-screen max-w-4xl flex-col gap-10 p-5 font-mono antialiased md:p-10`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LenisProvider>

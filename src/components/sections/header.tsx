@@ -4,9 +4,9 @@ import { ScrambleText } from "../misc/scramble-text";
 
 export const Header: FC = () => {
   return (
-    <div className="flex flex-col gap-10">
+    <section className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h1 className="text-4xl font-bold tracking-tight">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           <ScrambleText text="maarcus reniero l" />
         </h1>
 
@@ -22,10 +22,10 @@ export const Header: FC = () => {
       </div>
 
       <div>
-        <p className="text-md leading-relaxed text-foreground text-justify">
+        <p className="max-w-3xl text-sm leading-7 text-foreground/90 sm:text-base">
           I’m a 22-year-old full-stack dev from Chennai with a full-stack dream: to run an entire IT firm end to end. Off duty, I’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. Becoming the jack of all trades — one repo, one rep, one revelation at a time.
         </p>
       </div>
-    </div>
+    </section>
   );
 };

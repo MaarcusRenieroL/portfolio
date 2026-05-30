@@ -1,12 +1,37 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPost } from "~/lib/blogs";
+import { getAllPosts, getPost } from "~/lib/blogs";
+
+type BlogPostProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export function generateStaticParams() {
+  return getAllPosts().map((post) => ({
+    slug: post.slug,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: BlogPostProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+
+  if (!post) {
+    return {};
+  }
+
+  return {
+    title: post.title,
+    description: `Read ${post.title} by Maarcus Reniero L.`,
+  };
+}
 
 export default async function BlogPost({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: BlogPostProps) {
   const { slug } = await params;
   const post = await getPost(slug);
 

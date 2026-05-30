@@ -5,8 +5,12 @@ import Lenis from "@studio-freight/lenis";
 
 export const LenisProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
     const lenis = new Lenis({
-      duration: 1,
+      duration: 0.8,
       lerp: 0.1,
       smoothWheel: true,
     });
