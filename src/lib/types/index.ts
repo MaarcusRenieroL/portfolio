@@ -48,6 +48,16 @@ export type Project = {
   category: Category;
   skills: Skill[];
   highlight?: boolean;
+  status: "active" | "maintained" | "shipped" | "archived";
+  role: string;
+  impact: string;
+  challenge: string;
+  approach: string[];
+  outcome: string[];
+  decisions: string[];
+  lessons: string[];
+  nextSteps: string[];
+  preview: "terminal" | "dashboard" | "editor" | "system";
 };
 
 export type WorkExperience = {
@@ -66,6 +76,18 @@ export type SocialLink = {
 };
 
 export type NavLink = string[];
+
+export type StackGroup = {
+  title: string;
+  eyebrow: string;
+  items: string[];
+};
+
+export type NowItem = {
+  title: string;
+  description: string;
+  meta: string;
+};
 
 export type Category =
   | "full stack"

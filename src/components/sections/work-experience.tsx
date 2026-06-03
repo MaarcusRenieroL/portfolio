@@ -49,7 +49,7 @@ export const WorkExperience: FC = () => {
               </TimelineTitle>
 
               <TimelineIndicator className="flex size-5 items-center justify-center border-none bg-primary/15 text-primary group-data-[orientation=vertical]/timeline:-left-6 group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground">
-                <span className="text-[10px] font-bold uppercase">
+                <span className="text-[10px] font-bold">
                   {experience.company[0]}
                 </span>
               </TimelineIndicator>
@@ -87,7 +87,7 @@ export const WorkExperience: FC = () => {
                 </ul>
 
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">technologies</p>
+                  <p className="text-xs font-semibold text-muted-foreground">technologies</p>
                   <div className="flex flex-wrap gap-2">
                     {experience.skills.map((skill, index) => (
                       <Badge key={index} variant="secondary" className="border border-border/50 bg-secondary/70 px-2.5 py-1 text-[11px] text-secondary-foreground/90">

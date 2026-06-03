@@ -10,18 +10,40 @@ type Post = {
   slug: string;
   title: string;
   date: string;
+  excerpt: string;
+  tags: string[];
+  readingTime: number;
 };
 
 export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
+  const [activeTag, setActiveTag] = useState("all");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const refs = useRef<(HTMLDivElement | null)[]>([]);
 
   const posts = useMemo(() => {
-    return allPosts.filter((p) => p.title.includes(query));
-  }, [query, allPosts]);
+    const value = query.trim().toLowerCase();
+    const tagFiltered =
+      activeTag === "all"
+        ? allPosts
+        : allPosts.filter((post) => post.tags.includes(activeTag));
+
+    if (!value) {
+      return tagFiltered;
+    }
+
+    return tagFiltered.filter((post) =>
+      `${post.title} ${post.excerpt} ${post.tags.join(" ")}`
+        .toLowerCase()
+        .includes(value),
+    );
+  }, [activeTag, query, allPosts]);
+
+  const tags = useMemo(() => {
+    return ["all", ...Array.from(new Set(allPosts.flatMap((post) => post.tags)))];
+  }, [allPosts]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -59,7 +81,7 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
 
   useEffect(() => {
     setSelected(0);
-  }, [query]);
+  }, [activeTag, query]);
 
   return (
     <section className="flex flex-col gap-8 w-full">
@@ -78,6 +100,32 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
         className="h-12 rounded-none border-border/70 bg-card/45 px-4 text-sm shadow-none focus-visible:ring-1"
       />
 
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => {
+          const isActive = activeTag === tag;
+          const count =
+            tag === "all"
+              ? allPosts.length
+              : allPosts.filter((post) => post.tags.includes(tag)).length;
+
+          return (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setActiveTag(tag)}
+              className={`border px-3 py-2 text-xs transition-colors ${
+                isActive
+                  ? "border-primary/60 bg-primary/10 text-primary"
+                  : "border-border/60 bg-card/30 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              {tag}
+              <span className="ml-2 text-muted-foreground">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="flex flex-col gap-1">
         {posts.map((post, index) => {
           const date = formatShortDate(post.date);
@@ -94,12 +142,31 @@ export const BlogClient = ({ posts: allPosts }: { posts: Post[] }) => {
                     : "border-border/40 bg-card/20"
                 }`}
               >
-                <div className="flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-6">
-                  <span className="text-sm text-muted-foreground sm:w-28">
-                    {date}
-                  </span>
+                <div className="grid gap-3 p-4 sm:grid-cols-[8rem_1fr_auto] sm:items-start">
+                  <div className="text-sm text-muted-foreground">
+                    <span className="block">{date}</span>
+                    <span className="mt-1 block text-xs">
+                      {post.readingTime} min read
+                    </span>
+                  </div>
 
-                  <p className="text-primary">{post.title}</p>
+                  <div className="min-w-0">
+                    <p className="text-primary">{post.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {post.excerpt}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 sm:justify-end">
+                    {post.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="border border-border/60 bg-background/55 px-2 py-1 text-[10px] text-muted-foreground"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </Link>

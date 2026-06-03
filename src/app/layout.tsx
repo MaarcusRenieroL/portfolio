@@ -6,6 +6,7 @@ import { Navbar } from "~/components/layouts/navbar";
 import { Footer } from "~/components/layouts/footer";
 import { LenisProvider } from "~/components/providers/lenis-provider";
 import { PageTransitionProvider } from "~/components/providers/page-transition-provider";
+import { ScrollProgress } from "~/components/misc/scroll-progress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "maarcus reniero l",
     images: [
       {
-        url: "/me.png",
+        url: "/og",
         width: 1200,
         height: 630,
       },
@@ -64,6 +65,7 @@ export default function RootLayout({
           <LenisProvider>
             <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
               <PageTransitionProvider>
+                <ScrollProgress />
                 <Navbar />
 
                 <main className="flex flex-1 py-12 md:py-16">{children}</main>

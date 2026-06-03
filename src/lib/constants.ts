@@ -1,4 +1,11 @@
-import { NavLink, Project, SocialLink, WorkExperience } from "./types";
+import {
+  NavLink,
+  NowItem,
+  Project,
+  SocialLink,
+  StackGroup,
+  WorkExperience,
+} from "./types";
 
 export const PROJECTS: Project[] = [
   {
@@ -18,6 +25,37 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "miscellaneous",
     skills: ["lua", "yml", "toml"],
+    status: "maintained",
+    role: "systems tinkerer and workflow designer",
+    impact:
+      "keeps my everyday development environment reproducible across machines and reduces setup friction when i move between projects.",
+    challenge:
+      "personal tooling can become fragile fast, especially when shell, editor, package managers, and project-specific habits drift apart.",
+    approach: [
+      "split editor, shell, and tool configuration into small focused modules.",
+      "kept setup scripts explicit so a fresh machine can be brought close to my daily environment quickly.",
+      "treated the repository as a living manual for shortcuts, aliases, and workflow choices.",
+    ],
+    outcome: [
+      "faster onboarding on new machines.",
+      "less context switching between project setups.",
+      "a clearer record of the tools i actually rely on every day.",
+    ],
+    decisions: [
+      "kept config grouped by tool so changes stay easy to reason about.",
+      "favored readable setup steps over clever one-liners.",
+      "used the repo as both automation and documentation.",
+    ],
+    lessons: [
+      "developer experience compounds when the small daily actions are smooth.",
+      "a personal setup is easier to maintain when every file has a clear owner.",
+    ],
+    nextSteps: [
+      "add a fresh-machine bootstrap checklist.",
+      "document the most-used aliases and editor motions.",
+      "split machine-specific pieces from reusable defaults.",
+    ],
+    preview: "terminal",
   },
   {
     id: "next-cli",
@@ -36,6 +74,37 @@ export const PROJECTS: Project[] = [
     category: "full stack",
     skills: ["next.js", "tailwind css", "shadcn ui"],
     highlight: true,
+    status: "active",
+    role: "product engineer and cli author",
+    impact:
+      "turns repeated next.js setup work into a guided command-line flow so new apps start with the structure i already trust.",
+    challenge:
+      "bootstrapping modern apps involves many tiny decisions, and repeating those decisions manually slows down momentum.",
+    approach: [
+      "designed an opinionated path for framework, styling, and component setup.",
+      "kept the generated project structure predictable enough to customize after creation.",
+      "focused the interface around fast choices instead of long configuration files.",
+    ],
+    outcome: [
+      "reusable starter workflow for personal and experimental projects.",
+      "clearer defaults for the stack i reach for most.",
+      "a stronger base for adding templates, presets, and checks later.",
+    ],
+    decisions: [
+      "made the cli opinionated instead of trying to support every stack.",
+      "kept generated folders predictable so projects can diverge safely.",
+      "started with the choices i repeat most before expanding presets.",
+    ],
+    lessons: [
+      "a scaffolder is useful only when its defaults are clear.",
+      "good setup tools should reduce decisions without hiding important tradeoffs.",
+    ],
+    nextSteps: [
+      "add more templates for app, dashboard, and api-heavy projects.",
+      "support config previews before generation.",
+      "add post-create checks for install and formatting.",
+    ],
+    preview: "terminal",
   },
   {
     id: "portfolio",
@@ -50,6 +119,37 @@ export const PROJECTS: Project[] = [
     isOngoing: true,
     category: "front end",
     skills: ["next.js", "tailwind css", "shadcn ui"],
+    status: "active",
+    role: "designer, developer, and owner",
+    impact:
+      "acts as a living proof-of-work system for projects, writing, career history, and live presence.",
+    challenge:
+      "a personal site needs personality without becoming noisy, and it has to stay easy to update as the work changes.",
+    approach: [
+      "built around a minimal terminal-inspired visual system with keyboard-friendly navigation.",
+      "kept core content in typed data structures so project and career updates stay simple.",
+      "layered in live signals like github activity, spotify, discord, and route transitions.",
+    ],
+    outcome: [
+      "a compact portfolio that feels personal instead of generic.",
+      "fast access to resume, writing, links, and project proof.",
+      "a foundation for deeper case studies and richer project storytelling.",
+    ],
+    decisions: [
+      "kept navigation keyboard-friendly because the site leans into a terminal feel.",
+      "kept content data-driven so pages can grow without rewriting layouts.",
+      "used live presence carefully so it adds signal without taking over the page.",
+    ],
+    lessons: [
+      "personal sites work better when they show how someone thinks, not just what they used.",
+      "a strong visual system can stay simple if the spacing and hierarchy are consistent.",
+    ],
+    nextSteps: [
+      "add a real portrait asset when available.",
+      "continue turning featured projects into deeper case studies.",
+      "publish more build logs from the work behind the site.",
+    ],
+    preview: "dashboard",
   },
   {
     id: "zentro",
@@ -82,6 +182,37 @@ export const PROJECTS: Project[] = [
       "upstash redis",
     ],
     highlight: true,
+    status: "active",
+    role: "full-stack product builder",
+    impact:
+      "explores the architecture behind collaborative workspaces, boards, permissions, and activity-heavy saas flows.",
+    challenge:
+      "multi-tenant products need clean boundaries between organizations, workspaces, members, and the actions each user can take.",
+    approach: [
+      "modeled organizations, workspaces, members, and permissions as first-class concepts.",
+      "planned modular backend workflows for boards, tasks, notifications, and activity events.",
+      "used typed validation and data access patterns to keep product flows reliable as the surface area grows.",
+    ],
+    outcome: [
+      "stronger understanding of saas tenancy and access control.",
+      "a practical playground for real-time collaboration and activity systems.",
+      "a long-term project that can grow into a serious product experiment.",
+    ],
+    decisions: [
+      "modeled tenancy first so every feature can respect organization boundaries.",
+      "kept permissions close to membership and workspace concepts.",
+      "planned activity flows early because collaboration products need auditability.",
+    ],
+    lessons: [
+      "multi-tenant structure gets expensive if it is treated as an afterthought.",
+      "collaboration features need product clarity before technical complexity.",
+    ],
+    nextSteps: [
+      "ship a tighter board and task workflow.",
+      "add activity feeds and notification preferences.",
+      "stress-test permission paths across organization roles.",
+    ],
+    preview: "system",
   },
 ];
 
@@ -179,4 +310,73 @@ export const LINKS: SocialLink[] = [
   { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
 ];
 
-export const NAV_LINKS: NavLink = ["home", "projects", "blogs", "resume"];
+export const NAV_LINKS: NavLink = [
+  "home",
+  "projects",
+  "about",
+  "stack",
+  "now",
+  "blogs",
+  "contact",
+  "resume",
+];
+
+export const STACK_GROUPS: StackGroup[] = [
+  {
+    eyebrow: "interfaces",
+    title: "frontend",
+    items: ["next.js", "react", "typescript", "tailwind css", "shadcn ui"],
+  },
+  {
+    eyebrow: "services",
+    title: "backend",
+    items: ["java", "spring boot", "trpc", "zod", "server actions"],
+  },
+  {
+    eyebrow: "data",
+    title: "database",
+    items: ["postgresql", "mysql server", "drizzle orm", "prisma", "upstash redis"],
+  },
+  {
+    eyebrow: "delivery",
+    title: "cloud and tooling",
+    items: ["aws", "docker", "vercel", "git", "github actions"],
+  },
+  {
+    eyebrow: "craft",
+    title: "daily workflow",
+    items: ["neovim", "terminal", "dotfiles", "pnpm", "system design notes"],
+  },
+  {
+    eyebrow: "learning",
+    title: "current edges",
+    items: ["angular", "spring batch", "multi-tenant systems", "product design"],
+  },
+];
+
+export const NOW_ITEMS: NowItem[] = [
+  {
+    title: "building zentro",
+    description:
+      "turning collaboration concepts into a stronger multi-tenant product architecture.",
+    meta: "active build",
+  },
+  {
+    title: "working at ust healthproof",
+    description:
+      "shipping internal software with angular, java, spring boot, batch jobs, and relational data.",
+    meta: "day job",
+  },
+  {
+    title: "sharpening the portfolio",
+    description:
+      "making this site feel more like proof, not just presence: project stories, writing, and better routes.",
+    meta: "personal brand",
+  },
+  {
+    title: "learning by range",
+    description:
+      "balancing frontend craft, backend architecture, dev tooling, music, anime, films, and long rides.",
+    meta: "outside the editor",
+  },
+];

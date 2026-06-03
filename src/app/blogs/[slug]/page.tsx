@@ -26,7 +26,7 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: `read ${post.title} by maarcus reniero l.`,
+    description: post.excerpt,
   };
 }
 
@@ -50,16 +50,37 @@ export default async function BlogPost({ params }: BlogPostProps) {
           ← back to blog
         </Link>
 
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">{post.title}</h1>
+        <div className="flex flex-col gap-4 border border-border/60 bg-card/35 p-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
+            <span>{formattedDate}</span>
+            <span>/</span>
+            <span>{post.readingTime} min read</span>
+          </div>
 
-          <p className="text-sm text-muted-foreground">{formattedDate}</p>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            {post.title}
+          </h1>
+
+          <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
+            {post.excerpt}
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {post.tags.map((tag) => (
+              <span
+                key={tag}
+                className="border border-border/60 bg-background/55 px-2 py-1 text-[10px] text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="w-full h-px bg-border" />
 
         <div
-          className="text-sm leading-relaxed text-foreground space-y-4"
+          className="space-y-4 text-sm leading-7 text-foreground [&_a]:text-primary [&_a]:underline [&_h2]:pt-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:pt-3 [&_h3]:text-xl [&_h3]:font-semibold [&_li]:ml-5 [&_ul]:list-disc"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
       </div>

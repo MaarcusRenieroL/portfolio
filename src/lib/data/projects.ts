@@ -10,6 +10,27 @@ export function getFeaturedProjects() {
   return getProjects().filter((project) => project.highlight);
 }
 
+export function getProject(id: string) {
+  return PROJECTS.find((project) => project.id === id) ?? null;
+}
+
+export function getProjectNeighbors(id: string) {
+  const projects = getProjects();
+  const index = projects.findIndex((project) => project.id === id);
+
+  if (index === -1) {
+    return {
+      previous: null,
+      next: null,
+    };
+  }
+
+  return {
+    previous: projects[index - 1] ?? null,
+    next: projects[index + 1] ?? null,
+  };
+}
+
 export function formatDuration(project: Project) {
   const start = formatMonthYear(project.startDate);
 

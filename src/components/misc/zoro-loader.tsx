@@ -37,11 +37,11 @@ export function ZoroLoader({ text = "loading" }: ZoroLoaderProps) {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <p className="text-xs uppercase tracking-[0.45em] text-green-700 dark:text-green-300">
+            <p className="text-xs tracking-[0.45em] text-green-700 dark:text-green-300">
               {text}
             </p>
 
-            <p className="text-[10px] uppercase tracking-[0.4em] text-green-700/60 dark:text-green-300/50">
+            <p className="text-[10px] tracking-[0.4em] text-green-700/60 dark:text-green-300/50">
               stand by
             </p>
           </div>

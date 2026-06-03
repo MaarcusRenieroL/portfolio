@@ -13,7 +13,7 @@ export const Footer = () => {
           <ScrambleText text="links" />
         </h1>
 
-        <span className="hidden text-xs uppercase text-muted-foreground sm:inline">
+        <span className="hidden text-xs text-muted-foreground sm:inline">
           keep in touch
         </span>
       </div>
@@ -32,6 +32,20 @@ export const Footer = () => {
 
         <DiscordStatus />
         <SpotifyStatus />
+
+        <Link
+          href="/about"
+          className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+        >
+          about
+        </Link>
+
+        <Link
+          href="/contact"
+          className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+        >
+          contact
+        </Link>
 
         <Link
           href="/resume"

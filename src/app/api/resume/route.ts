@@ -15,7 +15,7 @@ export async function GET() {
       },
     });
   } catch {
-    return new Response("Resume file not found", {
+    return new Response("resume file not found", {
       status: 404,
     });
   }

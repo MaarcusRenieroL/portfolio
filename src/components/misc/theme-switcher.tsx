@@ -17,7 +17,7 @@ export const ModeToggle: FC = () => {
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" disabled aria-label="Toggle theme">
+      <Button variant="outline" size="icon" disabled aria-label="toggle theme">
         <Sun className="h-[1.2rem] w-[1.2rem]" />
       </Button>
     );
@@ -51,7 +51,7 @@ export const ModeToggle: FC = () => {
       size="icon"
       onClick={toggleTheme}
       className="relative overflow-hidden"
-      aria-label="Toggle theme"
+      aria-label="toggle theme"
     >
       <Sun
         className={cn(

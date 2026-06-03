@@ -17,7 +17,7 @@ export const Projects = () => {
         description="selected builds with enough signal to show what i like making."
       />
 
-      <ProjectTimeline projects={sortedProjects} />
+      <ProjectTimeline projects={sortedProjects} compact />
 
       <div className="flex items-center justify-end w-full pt-4">
         <Link href="/projects">

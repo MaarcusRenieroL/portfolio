@@ -3,16 +3,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BriefcaseIcon,
+  CopyIcon,
   FileTextIcon,
   FolderGit2Icon,
   HomeIcon,
+  LayersIcon,
   MailIcon,
+  MessageSquareIcon,
+  SparklesIcon,
   SearchIcon,
+  UserIcon,
 } from "lucide-react";
 
 import { cn } from "~/lib/utils";
+import { PROJECTS } from "~/lib/constants";
 
-const actions = [
+const pageActions = [
   {
     label: "home",
     shortcut: "h",
@@ -26,6 +32,27 @@ const actions = [
     description: "view active builds and experiments",
     href: "/projects",
     icon: FolderGit2Icon,
+  },
+  {
+    label: "about",
+    shortcut: "a",
+    description: "learn the person behind the repos",
+    href: "/about",
+    icon: UserIcon,
+  },
+  {
+    label: "stack",
+    shortcut: "s",
+    description: "view tools, skills, and current edges",
+    href: "/stack",
+    icon: LayersIcon,
+  },
+  {
+    label: "now",
+    shortcut: "n",
+    description: "see what has my attention right now",
+    href: "/now",
+    icon: SparklesIcon,
   },
   {
     label: "blogs",
@@ -42,13 +69,37 @@ const actions = [
     icon: BriefcaseIcon,
   },
   {
+    label: "contact",
+    shortcut: "c",
+    description: "open contact options",
+    href: "/contact",
+    icon: MessageSquareIcon,
+  },
+  {
     label: "email",
     shortcut: "e",
     description: "start a conversation",
     href: "mailto:maarcusreniero.l@gmail.com",
     icon: MailIcon,
   },
+  {
+    label: "copy email",
+    shortcut: "copy",
+    description: "copy my email address",
+    href: "copy:maarcusreniero.l@gmail.com",
+    icon: CopyIcon,
+  },
 ];
+
+const projectActions = PROJECTS.map((project) => ({
+  label: project.title,
+  shortcut: "project",
+  description: project.description,
+  href: `/projects/${project.id}`,
+  icon: FolderGit2Icon,
+}));
+
+const actions = [...pageActions, ...projectActions];
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -70,6 +121,11 @@ export function CommandPalette() {
   const runAction = useCallback((href: string) => {
     setOpen(false);
     setQuery("");
+
+    if (href.startsWith("copy:")) {
+      void navigator.clipboard?.writeText(href.replace("copy:", ""));
+      return;
+    }
 
     if (href.startsWith("mailto:")) {
       window.location.href = href;
@@ -171,11 +227,11 @@ export function CommandPalette() {
           <div className="relative mx-auto mt-16 w-full max-w-lg overflow-hidden border border-border/70 bg-background shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
             <div className="border-b border-border/60 bg-card/35 px-4 py-3">
               <div className="mb-3 flex items-center justify-between gap-4">
-                <span className="text-xs font-medium uppercase text-primary">
+                <span className="text-xs font-medium text-primary">
                   command center
                 </span>
 
-                <span className="border border-border/60 px-2 py-1 text-[10px] uppercase text-muted-foreground">
+                <span className="border border-border/60 px-2 py-1 text-[10px] text-muted-foreground">
                   esc
                 </span>
               </div>

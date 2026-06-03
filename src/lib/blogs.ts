@@ -24,6 +24,11 @@ export function getAllPosts() {
         slug,
         title: data.title,
         date: data.date,
+        excerpt:
+          data.excerpt ??
+          contentPreview(fileContents.replace(/^---[\s\S]*?---/, "")),
+        tags: Array.isArray(data.tags) ? data.tags : ["build log"],
+        readingTime: getReadingTime(fileContents),
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -50,6 +55,22 @@ export async function getPost(slug: string) {
     slug,
     title: data.title,
     date: data.date,
+    excerpt:
+      data.excerpt ?? contentPreview(content),
+    tags: Array.isArray(data.tags) ? data.tags : ["build log"],
+    readingTime: getReadingTime(content),
     contentHtml: processed.toString(),
   };
+}
+
+function getReadingTime(content: string) {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function contentPreview(content: string) {
+  return content
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 150);
 }

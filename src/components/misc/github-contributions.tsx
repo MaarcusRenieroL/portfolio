@@ -26,18 +26,18 @@ type GitHubContributionResponse = {
 };
 
 const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
 ];
 
 async function getGithubContributions() {
@@ -173,8 +173,8 @@ export const GithubContributions = async () => {
     <section className="space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            Github Activity
+          <h2 className="text-sm font-bold tracking-wide text-muted-foreground">
+            github activity
           </h2>
 
           <p className="mt-2 text-sm text-foreground">
@@ -187,7 +187,7 @@ export const GithubContributions = async () => {
           target="_blank"
           rel="noreferrer"
           className="grid size-10 place-items-center border border-border/70 bg-background/40 text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
-          aria-label="Open GitHub profile"
+          aria-label="open github profile"
         >
           <GithubIcon className="size-5" />
         </Link>
@@ -251,7 +251,7 @@ export const GithubContributions = async () => {
             </p>
 
             <div className="flex items-center gap-1.5 text-sm text-foreground">
-              <span>Less</span>
+              <span>less</span>
 
               {[0, 1, 2, 3, 4].map((level) => (
                 <span
@@ -260,7 +260,7 @@ export const GithubContributions = async () => {
                 />
               ))}
 
-              <span>More</span>
+              <span>more</span>
             </div>
           </div>
         </div>
