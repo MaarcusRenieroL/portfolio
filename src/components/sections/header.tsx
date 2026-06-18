@@ -6,7 +6,6 @@ import {
   DownloadIcon,
   FileTextIcon,
   MapPinnedIcon,
-  SparklesIcon,
   TerminalIcon,
 } from "lucide-react";
 
@@ -21,7 +20,7 @@ export const Header: FC = () => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-col gap-3">
             <div className="text-xs font-medium text-primary">
-              available for focused builds
+              full-stack software engineer
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
@@ -31,12 +30,12 @@ export const Header: FC = () => {
 
           <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground sm:text-right">
             <div className="border border-border/60 bg-background/40 px-3 py-2">
-              <span className="block text-foreground">full-stack</span>
+              <span className="block text-foreground">product</span>
               <span>focus</span>
             </div>
             <div className="border border-border/60 bg-background/40 px-3 py-2">
-              <span className="block text-foreground">chennai</span>
-              <span>base</span>
+              <span className="block text-foreground">2025</span>
+              <span>current role</span>
             </div>
           </div>
         </div>
@@ -66,15 +65,15 @@ export const Header: FC = () => {
               <span className="text-muted-foreground">work</span>
             </div>
             <div className="flex flex-col gap-1 p-3">
-              <SparklesIcon className="h-4 w-4 text-primary" />
+              <Building2Icon className="h-4 w-4 text-primary" />
               <span className="text-foreground">zentro</span>
-              <span className="text-muted-foreground">now</span>
+              <span className="text-muted-foreground">saas</span>
             </div>
           </div>
         </div>
 
         <p className="max-w-3xl text-sm leading-7 text-foreground/90 sm:text-base">
-          i’m a 22-year-old full-stack dev from chennai with a full-stack dream: to run an entire it firm end to end. off duty, i’m chasing sunsets on two wheels, strumming riffs on my guitar, or diving into anime, films, and rabbit holes my curiosity finds. becoming the jack of all trades, one repo, one rep, one revelation at a time.
+          i build product-minded web apps across frontend, backend, data, and tooling. my strongest work is around next.js, typescript, multi-tenant product architecture, internal tools, and clean interfaces that stay maintainable after the first demo.
         </p>
 
         <div className="flex flex-col gap-2 sm:flex-row">

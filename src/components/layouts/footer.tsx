@@ -1,8 +1,6 @@
 import Link from "next/link";
 
 import { LINKS } from "~/lib/constants";
-import { DiscordStatus } from "../misc/discord-status";
-import { SpotifyStatus } from "../misc/spotify-status";
 import { ScrambleText } from "../misc/scramble-text";
 
 export const Footer = () => {
@@ -29,9 +27,6 @@ export const Footer = () => {
             {link.name}
           </Link>
         ))}
-
-        <DiscordStatus />
-        <SpotifyStatus />
 
         <Link
           href="/about"

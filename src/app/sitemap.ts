@@ -1,5 +1,4 @@
 import { MetadataRoute } from "next";
-import { getAllPosts } from "~/lib/blogs";
 import { getProjects } from "~/lib/data/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -24,15 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
     },
     {
-      url: `${baseUrl}/now`,
-      lastModified,
-    },
-    {
       url: `${baseUrl}/contact`,
-      lastModified,
-    },
-    {
-      url: `${baseUrl}/blogs`,
       lastModified,
     },
     {
@@ -46,10 +37,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
   }));
 
-  const blogRoutes = getAllPosts().map((post) => ({
-    url: `${baseUrl}/blogs/${post.slug}`,
-    lastModified: new Date(post.date),
-  }));
-
-  return [...staticRoutes, ...projectRoutes, ...blogRoutes];
+  return [...staticRoutes, ...projectRoutes];
 }

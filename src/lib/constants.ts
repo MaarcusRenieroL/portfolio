@@ -1,6 +1,5 @@
 import {
   NavLink,
-  NowItem,
   Project,
   SocialLink,
   StackGroup,
@@ -128,7 +127,7 @@ export const PROJECTS: Project[] = [
     approach: [
       "built around a minimal terminal-inspired visual system with keyboard-friendly navigation.",
       "kept core content in typed data structures so project and career updates stay simple.",
-      "layered in live signals like github activity, spotify, discord, and route transitions.",
+      "kept the strongest recruiter signals close to the top: projects, experience, stack, resume, and contact.",
     ],
     outcome: [
       "a compact portfolio that feels personal instead of generic.",
@@ -315,8 +314,6 @@ export const NAV_LINKS: NavLink = [
   "projects",
   "about",
   "stack",
-  "now",
-  "blogs",
   "contact",
   "resume",
 ];
@@ -351,32 +348,5 @@ export const STACK_GROUPS: StackGroup[] = [
     eyebrow: "learning",
     title: "current edges",
     items: ["angular", "spring batch", "multi-tenant systems", "product design"],
-  },
-];
-
-export const NOW_ITEMS: NowItem[] = [
-  {
-    title: "building zentro",
-    description:
-      "turning collaboration concepts into a stronger multi-tenant product architecture.",
-    meta: "active build",
-  },
-  {
-    title: "working at ust healthproof",
-    description:
-      "shipping internal software with angular, java, spring boot, batch jobs, and relational data.",
-    meta: "day job",
-  },
-  {
-    title: "sharpening the portfolio",
-    description:
-      "making this site feel more like proof, not just presence: project stories, writing, and better routes.",
-    meta: "personal brand",
-  },
-  {
-    title: "learning by range",
-    description:
-      "balancing frontend craft, backend architecture, dev tooling, music, anime, films, and long rides.",
-    meta: "outside the editor",
   },
 ];

@@ -11,10 +11,10 @@ export const Projects = () => {
   return (
     <section className="flex w-full flex-col gap-10">
       <SectionHeading
-        index="03"
+        index="02"
         title="projects"
         eyebrow="selected work"
-        description="selected builds with enough signal to show what i like making."
+        description="the strongest proof points first: product architecture, developer tooling, and the site you are reading now."
       />
 
       <ProjectTimeline projects={sortedProjects} compact />

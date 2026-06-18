@@ -28,7 +28,7 @@ export const WorkExperience: FC = () => {
   return (
     <section className="flex flex-col gap-10">
       <SectionHeading
-        index="02"
+        index="03"
         title="work experience"
         eyebrow="timeline"
         description="the places where i learned to ship, debug, and work with teams."
