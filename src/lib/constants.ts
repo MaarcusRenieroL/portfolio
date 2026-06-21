@@ -293,7 +293,7 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     id: 4,
     title: "developer 1 - software engineering",
     company: "ust healthproof",
-    href: "https://www.healthproof.com/",
+    href: "https://www.usthealthproof.com/",
     startDate: "2025-01-01",
     endDate: null,
     isOngoing: true,
@@ -315,10 +315,6 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
   },
 ];
 
-/**
- * drop a real headshot in /public (e.g. "/headshot.jpg") and set the path
- * here to replace the "mr" initials placeholder in the identity panel.
- */
 export const PROFILE = {
   headshot: "",
 };

@@ -87,7 +87,7 @@ export function SpotifyNowPlaying() {
         href={track.songUrl}
         target="_blank"
         rel="noreferrer"
-        className="group block border border-border/60 bg-card/35 p-3 transition-colors hover:border-primary/45"
+        className="group block w-full border border-border/60 bg-card/35 p-3 transition-colors hover:border-primary/45 sm:w-64"
         aria-label={`open ${track.title} on spotify`}
       >
         {content}
@@ -96,7 +96,9 @@ export function SpotifyNowPlaying() {
   }
 
   return (
-    <div className="border border-border/60 bg-card/35 p-3">{content}</div>
+    <div className="w-full border border-border/60 bg-card/35 p-3 sm:w-64">
+      {content}
+    </div>
   );
 }
 
