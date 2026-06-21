@@ -32,9 +32,26 @@ export async function generateMetadata({
     return {};
   }
 
+  const ogImage = `/og?title=${encodeURIComponent(
+    project.title,
+  )}&subtitle=${encodeURIComponent(project.impact)}`;
+
   return {
     title: project.title,
     description: project.impact,
+    openGraph: {
+      title: project.title,
+      description: project.impact,
+      url: `https://maarcus.dev/projects/${project.id}`,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.impact,
+      images: [ogImage],
+    },
   };
 }
 
@@ -207,17 +224,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <section className="grid gap-6 lg:grid-cols-3">
         {[
-          ["decisions", project.decisions],
-          ["lessons", project.lessons],
-          ["next steps", project.nextSteps],
-        ].map(([label, items]) => (
+          { label: "decisions", items: project.decisions },
+          { label: "lessons", items: project.lessons },
+          { label: "next steps", items: project.nextSteps },
+        ].map(({ label, items }) => (
           <div
-            key={label as string}
+            key={label}
             className="flex flex-col gap-4 border border-border/60 bg-card/35 p-5"
           >
-            <p className="text-xs font-semibold text-primary">{label as string}</p>
+            <p className="text-xs font-semibold text-primary">{label}</p>
             <ul className="space-y-2 text-sm leading-7 text-foreground/85">
-              {(items as string[]).map((item) => (
+              {items.map((item) => (
                 <li key={item} className="flex gap-2">
                   <span className="mt-2 size-1.5 shrink-0 bg-primary/70" />
                   <span>{item}</span>
@@ -245,25 +262,23 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <nav className="grid gap-3 border-t border-border/60 pt-6 sm:grid-cols-2">
         {[
-          ["previous", previous],
-          ["next", next],
-        ].map(([label, item]) => {
-          if (!item) {
+          { label: "previous", neighbor: previous },
+          { label: "next", neighbor: next },
+        ].map(({ label, neighbor }) => {
+          if (!neighbor) {
             return (
               <div
-                key={label as string}
+                key={label}
                 className="border border-border/40 bg-card/20 p-4 text-sm text-muted-foreground"
               >
-                no {label as string} project
+                no {label} project
               </div>
             );
           }
 
-          const neighbor = item as NonNullable<typeof previous>;
-
           return (
             <Link
-              key={label as string}
+              key={label}
               href={`/projects/${neighbor.id}`}
               className="group border border-border/60 bg-card/35 p-4 transition-colors hover:border-primary/45 hover:bg-primary/5"
             >
