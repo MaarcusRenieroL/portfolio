@@ -10,6 +10,7 @@ import {
 import { SectionHeading } from "~/components/misc/section-heading";
 import { CopyEmailButton } from "~/components/misc/copy-email-button";
 import { Card } from "~/components/ui/card";
+import { ContactForm } from "~/components/sections/contact-form";
 
 const contactLinks = [
   {
@@ -74,36 +75,38 @@ export default function ContactPage() {
           </div>
         </aside>
 
-        <div className="grid gap-3">
-          {contactLinks.map((link) => {
-            const Icon = link.icon;
+        <ContactForm />
+      </div>
 
-            return (
-              <Link
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                className="group grid gap-3 border border-border/60 bg-background/45 p-4 transition-colors hover:border-primary/45 sm:grid-cols-[2.75rem_1fr_auto] sm:items-center"
-              >
-                <span className="grid size-11 place-items-center border border-border/60 bg-card/45 text-primary">
-                  <Icon className="size-5" />
+      <div className="grid gap-3 md:grid-cols-3">
+        {contactLinks.map((link) => {
+          const Icon = link.icon;
+
+          return (
+            <Link
+              key={link.label}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+              className="group grid gap-3 border border-border/60 bg-background/45 p-4 transition-colors hover:border-primary/45 sm:grid-cols-[2.75rem_1fr_auto] sm:items-center"
+            >
+              <span className="grid size-11 place-items-center border border-border/60 bg-card/45 text-primary">
+                <Icon className="size-5" />
+              </span>
+
+              <span className="min-w-0">
+                <span className="block text-xs font-semibold text-muted-foreground">
+                  {link.label}
                 </span>
-
-                <span>
-                  <span className="block text-xs font-semibold text-muted-foreground">
-                    {link.label}
-                  </span>
-                  <span className="mt-1 block text-sm text-foreground">
-                    {link.value}
-                  </span>
+                <span className="mt-1 block truncate text-sm text-foreground">
+                  {link.value}
                 </span>
+              </span>
 
-                <ArrowUpRightIcon className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
-              </Link>
-            );
-          })}
-        </div>
+              <ArrowUpRightIcon className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+            </Link>
+          );
+        })}
       </div>
 
       <section className="grid gap-3 md:grid-cols-2">
