@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     default: "maarcus reniero l",
     template: "%s | maarcus reniero l",
   },
-  description: "trying to be the jack of all trades",
+  description:
+    "full-stack software engineer building product-minded web apps across frontend, backend, data, and tooling.",
 
   metadataBase: new URL(
     process.env.NODE_ENV === "development"
@@ -33,7 +34,8 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "maarcus reniero l",
-    description: "trying to be the jack of all trades",
+    description:
+      "full-stack software engineer building product-minded web apps across frontend, backend, data, and tooling.",
     url: "https://maarcus.dev",
     siteName: "maarcus reniero l",
     images: [

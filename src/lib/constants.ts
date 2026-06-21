@@ -109,8 +109,12 @@ export const PROJECTS: Project[] = [
     id: "portfolio",
     title: "portfolio",
     description:
-      "this portfolio: a minimal, keyboard-friendly space for projects, writing, work, and live presence.",
-    features: [],
+      "this portfolio: a minimal, keyboard-friendly space for projects, work, and proof of how i build.",
+    features: [
+      "terminal-inspired, keyboard-friendly interface",
+      "data-driven projects and experience sections",
+      "dynamic open graph image and resume download",
+    ],
     githubLink: "https://github.com/maarcusrenierol/portfolio",
     hostedLink: "https://maarcus.dev",
     startDate: "2024-07-18",
@@ -131,13 +135,13 @@ export const PROJECTS: Project[] = [
     ],
     outcome: [
       "a compact portfolio that feels personal instead of generic.",
-      "fast access to resume, writing, links, and project proof.",
+      "fast access to resume, links, and project proof.",
       "a foundation for deeper case studies and richer project storytelling.",
     ],
     decisions: [
       "kept navigation keyboard-friendly because the site leans into a terminal feel.",
       "kept content data-driven so pages can grow without rewriting layouts.",
-      "used live presence carefully so it adds signal without taking over the page.",
+      "kept the visual system consistent so spacing and hierarchy carry the design.",
     ],
     lessons: [
       "personal sites work better when they show how someone thinks, not just what they used.",
@@ -165,7 +169,7 @@ export const PROJECTS: Project[] = [
     startDate: "2024-07-18",
     endDate: null,
     isOngoing: true,
-    category: "front end",
+    category: "full stack",
     skills: [
       "next.js",
       "tailwind css",
@@ -283,7 +287,7 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     id: 4,
     title: "developer 1 - software engineering",
     company: "ust healthproof",
-    href: "https://systech.com",
+    href: "https://www.healthproof.com/",
     duration: "jan 2025 - present",
     highlights: [
       "building a new internal project from the ground up.",
@@ -306,7 +310,7 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
 export const LINKS: SocialLink[] = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },
   { name: "github", url: "https://github.com/maarcusrenierol" },
-  { name: "linkedin", url: "https://www.linkedin.com/maarcus-reniero-l" },
+  { name: "linkedin", url: "https://www.linkedin.com/in/maarcus-reniero-l" },
 ];
 
 export const NAV_LINKS: NavLink = [

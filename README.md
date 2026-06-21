@@ -12,7 +12,6 @@ focused on clarity, speed, and intentional design.
 - typescript
 - tailwind css
 - shadcn/ui
-- swr
 
 ---
 
@@ -20,11 +19,9 @@ focused on clarity, speed, and intentional design.
 
 - ⚡ fast, responsive ui
 - 🎯 highlighted projects system
-- 📝 blog (file-based)
-- 🎧 live spotify status
-- 💬 discord presence
+- 🧭 keyboard-friendly navigation
+- 📄 dynamic open graph image + resume download
 - 🌙 dark / light theme
-- ⌨️ keyboard navigation
 
 ---
 
@@ -43,7 +40,7 @@ focused on clarity, speed, and intentional design.
 projects are curated using a **highlight system**:
 
 - only top projects are shown on the main page
-- full list can be extended later
+- the full list lives on the projects page
 
 each project includes:
 
@@ -87,3 +84,4 @@ pnpm start
 
 - portfolio: https://maarcus.dev
 - github: https://github.com/maarcusrenierol
+- linkedin: https://www.linkedin.com/in/maarcus-reniero-l

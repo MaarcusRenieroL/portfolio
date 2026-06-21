@@ -25,8 +25,8 @@ const contactLinks = [
   },
   {
     label: "linkedin",
-    value: "linkedin.com/maarcus-reniero-l",
-    href: "https://www.linkedin.com/maarcus-reniero-l",
+    value: "linkedin.com/in/maarcus-reniero-l",
+    href: "https://www.linkedin.com/in/maarcus-reniero-l",
     icon: LinkedinIcon,
   },
 ];

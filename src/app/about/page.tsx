@@ -27,7 +27,7 @@ export default function AboutPage() {
         index="03"
         title="about"
         eyebrow="person behind the repos"
-        description="a full-stack developer from chennai trying to grow into someone who can understand, build, and run serious software end to end."
+        description="a full-stack developer from chennai who builds across the stack and is growing toward understanding, building, and running serious software end to end."
       />
 
       <IdentityPanel />
