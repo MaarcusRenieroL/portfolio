@@ -302,6 +302,22 @@ html[data-theme-transition="bottom-left"]::view-transition-new(root) {
   animation: panel-in 180ms ease-out both;
 }
 
+@keyframes equalizer {
+  0%,
+  100% {
+    height: 4px;
+  }
+
+  50% {
+    height: 12px;
+  }
+}
+
+.animate-equalizer {
+  height: 12px;
+  animation: equalizer 0.9s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

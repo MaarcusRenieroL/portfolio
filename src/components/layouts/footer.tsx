@@ -2,18 +2,17 @@ import Link from "next/link";
 
 import { LINKS } from "~/lib/constants";
 import { ScrambleText } from "../misc/scramble-text";
+import { SpotifyNowPlaying } from "../misc/spotify-now-playing";
 
 export const Footer = () => {
   return (
     <footer className="flex w-full flex-col gap-5 border-t border-border/60 py-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold sm:text-3xl">
           <ScrambleText text="links" />
         </h1>
 
-        <span className="hidden text-xs text-muted-foreground sm:inline">
-          keep in touch
-        </span>
+        <SpotifyNowPlaying />
       </div>
 
       <div className="grid w-full grid-cols-2 gap-3 border border-border/60 bg-card/35 p-4 sm:flex sm:flex-wrap sm:gap-x-5 sm:gap-y-3">
