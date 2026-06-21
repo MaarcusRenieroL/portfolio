@@ -14,8 +14,8 @@ import {
 import { ZoroLoader } from "~/components/misc/zoro-loader";
 import { cn } from "~/lib/utils";
 
-const INITIAL_LOAD_TIME = 900;
-const ROUTE_LOADER_MIN_TIME = 650;
+const INITIAL_LOAD_TIME = 450;
+const ROUTE_LOADER_MIN_TIME = 0;
 const REVEAL_TIME = 650;
 
 type PageTransitionProviderProps = {
