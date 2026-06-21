@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ActivityIcon, BoxesIcon, Code2Icon, TerminalIcon } from "lucide-react";
 
 import { cn } from "~/lib/utils";
@@ -55,6 +56,18 @@ export function ProjectPreview({ project, compact = false }: ProjectPreviewProps
           {project.status}
         </span>
       </div>
+
+      {project.image && (
+        <div className="relative h-40 w-full shrink-0 overflow-hidden border-b border-border/60">
+          <Image
+            src={project.image}
+            alt={`${project.title} preview`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="flex flex-1 flex-col justify-between gap-5 p-4">
         <div className="grid grid-cols-[auto_1fr] gap-4">

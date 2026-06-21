@@ -1,4 +1,7 @@
+import Image from "next/image";
 import { CameraIcon, MapPinnedIcon, SparklesIcon } from "lucide-react";
+
+import { PROFILE } from "~/lib/constants";
 
 type IdentityPanelProps = {
   compact?: boolean;
@@ -17,9 +20,21 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
             </div>
 
             <div className="grid place-items-center">
-              <div className="grid size-28 place-items-center border border-primary/45 bg-primary/10 text-4xl font-bold text-primary">
-                mr
-              </div>
+              {PROFILE.headshot ? (
+                <div className="relative size-28 overflow-hidden border border-primary/45">
+                  <Image
+                    src={PROFILE.headshot}
+                    alt="maarcus reniero l"
+                    fill
+                    sizes="112px"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="grid size-28 place-items-center border border-primary/45 bg-primary/10 text-4xl font-bold text-primary">
+                  mr
+                </div>
+              )}
             </div>
 
             <p className="text-xs leading-5 text-muted-foreground">
