@@ -10,6 +10,8 @@ export type Project = {
   isOngoing: boolean;
   category: Category;
   skills: Skill[];
+  /** optional screenshot/preview, e.g. "/projects/zentro.png" in /public */
+  image?: string;
   highlight?: boolean;
   status: "active" | "maintained" | "shipped" | "archived";
   role: string;
@@ -28,7 +30,9 @@ export type WorkExperience = {
   title: string;
   company: string;
   href: string;
-  duration: string;
+  startDate: string;
+  endDate: string | null;
+  isOngoing: boolean;
   highlights: string[];
   skills: string[];
 };

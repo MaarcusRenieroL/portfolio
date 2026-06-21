@@ -1,7 +1,6 @@
-"use client";
-
 import { Download, ExternalLink, FileText } from "lucide-react";
 import { SectionHeading } from "~/components/misc/section-heading";
+import { Card } from "~/components/ui/card";
 
 const resumeSummary = [
   ["role", "developer 1 - software engineering"],
@@ -48,10 +47,10 @@ export default function ResumePage() {
 
       <section className="grid gap-3 md:grid-cols-4">
         {resumeSummary.map(([label, value]) => (
-          <div key={label} className="border border-border/60 bg-card/35 p-4">
+          <Card key={label} className="p-4">
             <p className="text-xs font-semibold text-primary">{label}</p>
             <p className="mt-2 text-sm leading-6 text-foreground/85">{value}</p>
-          </div>
+          </Card>
         ))}
       </section>
 
@@ -68,12 +67,41 @@ export default function ResumePage() {
         </div>
 
         <div className="bg-card/25 p-2 sm:p-3">
-          <div className="overflow-hidden border border-border/60 bg-background">
+          {/* embedded pdf preview is reliable on larger screens only */}
+          <div className="hidden overflow-hidden border border-border/60 bg-background sm:block">
             <iframe
               src={`${resumeUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
               className="h-[82vh] w-full bg-background"
               title="maarcus reniero resume pdf"
             />
+          </div>
+
+          {/* mobile: inline pdf rendering is unreliable, so offer clear actions */}
+          <div className="flex flex-col items-center gap-4 border border-border/60 bg-background/45 p-8 text-center sm:hidden">
+            <FileText className="size-8 text-primary" />
+            <p className="text-sm text-muted-foreground">
+              open the resume in your pdf viewer for the best experience on
+              mobile.
+            </p>
+            <div className="flex gap-2">
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-10 items-center gap-2 border border-border/60 bg-background/45 px-4 text-sm font-medium transition-colors hover:border-primary/50 hover:bg-primary/5"
+              >
+                <ExternalLink className="size-4" />
+                open
+              </a>
+              <a
+                href={downloadUrl}
+                download="maarcus-reniero-resume.pdf"
+                className="inline-flex h-10 items-center gap-2 border border-primary/50 bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                <Download className="size-4" />
+                download
+              </a>
+            </div>
           </div>
         </div>
       </section>

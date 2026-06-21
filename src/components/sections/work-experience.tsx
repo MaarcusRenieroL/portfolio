@@ -10,20 +10,17 @@ import {
 
 import Link from "next/link";
 import { FC } from "react";
-import { WORK_EXPERIENCES } from "~/lib/constants";
 import { Button } from "~/components/ui/button";
 import { ArrowUpRightIcon } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import { SectionHeading } from "../misc/section-heading";
+import {
+  getExperiences,
+  formatExperienceDuration,
+} from "~/lib/data/experience";
 
 export const WorkExperience: FC = () => {
-  const sortedExperience = [...WORK_EXPERIENCES].sort((a, b) => {
-    const getStartDate = (duration: string) => {
-      const match = duration.match(/([a-z]{3,9}) (\d{4})/i);
-      return match ? new Date(`${match[1]} 1, ${match[2]}`) : new Date(0);
-    };
-    return getStartDate(b.duration).getTime() - getStartDate(a.duration).getTime();
-  });
+  const sortedExperience = getExperiences();
 
   return (
     <section className="flex flex-col gap-10">
@@ -61,7 +58,7 @@ export const WorkExperience: FC = () => {
 
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {experience.title} ({experience.duration})
+                    {experience.title} ({formatExperienceDuration(experience)})
                   </p>
 
                   {experience.href && (

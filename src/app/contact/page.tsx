@@ -9,6 +9,7 @@ import {
 
 import { SectionHeading } from "~/components/misc/section-heading";
 import { CopyEmailButton } from "~/components/misc/copy-email-button";
+import { Card } from "~/components/ui/card";
 
 const contactLinks = [
   {
@@ -107,13 +108,13 @@ export default function ContactPage() {
 
       <section className="grid gap-3 md:grid-cols-2">
         {fitItems.map(([label, text]) => (
-          <div
+          <Card
             key={label}
-            className="border border-border/60 bg-card/35 p-4 transition-colors hover:border-primary/45"
+            className="p-4 transition-colors hover:border-primary/45"
           >
             <p className="text-sm font-medium text-foreground">{label}</p>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
-          </div>
+          </Card>
         ))}
       </section>
     </section>

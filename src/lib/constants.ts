@@ -225,7 +225,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     title: "hardware and network engineering intern",
     company: "systech",
     href: "https://systech.com",
-    duration: "jan 2023 - feb 2023",
+    startDate: "2023-01-01",
+    endDate: "2023-02-28",
+    isOngoing: false,
     highlights: [
       "completed ccna and ccnp certifications.",
       "applied theoretical knowledge to configure and troubleshoot network devices.",
@@ -244,7 +246,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     title: "full stack developer intern",
     company: "steam troops innovation labs",
     href: "https://steamtroops.com/",
-    duration: "aug 2023 - dec 2023",
+    startDate: "2023-08-01",
+    endDate: "2023-12-31",
+    isOngoing: false,
     highlights: [
       "played a pivotal role in the company’s first product development using next.js, typescript, tailwind css, and strapi.",
       "managed daily sprints and collaborated closely with cross-functional teams.",
@@ -268,7 +272,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     title: "full stack developer intern",
     company: "matlync",
     href: "https://matlync.com/",
-    duration: "jan 2024 - feb 2024",
+    startDate: "2024-01-01",
+    endDate: "2024-02-29",
+    isOngoing: false,
     highlights: [
       "coordinated with teams on multiple ongoing projects.",
       "worked extensively with strapi cms, postbytz, and next.js.",
@@ -288,7 +294,9 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     title: "developer 1 - software engineering",
     company: "ust healthproof",
     href: "https://www.healthproof.com/",
-    duration: "jan 2025 - present",
+    startDate: "2025-01-01",
+    endDate: null,
+    isOngoing: true,
     highlights: [
       "building a new internal project from the ground up.",
       "collaborating with cross-functional teams to design and implement scalable solutions.",
@@ -306,6 +314,14 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     ],
   },
 ];
+
+/**
+ * drop a real headshot in /public (e.g. "/headshot.jpg") and set the path
+ * here to replace the "mr" initials placeholder in the identity panel.
+ */
+export const PROFILE = {
+  headshot: "",
+};
 
 export const LINKS: SocialLink[] = [
   { name: "email", url: "mailto:maarcusreniero.l@gmail.com" },

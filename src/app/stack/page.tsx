@@ -1,4 +1,5 @@
 import { SectionHeading } from "~/components/misc/section-heading";
+import { Card } from "~/components/ui/card";
 import { STACK_GROUPS } from "~/lib/constants";
 
 export default function StackPage() {
@@ -13,9 +14,9 @@ export default function StackPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         {STACK_GROUPS.map((group) => (
-          <article
+          <Card
             key={group.title}
-            className="border border-border/60 bg-card/35 p-5 transition-colors hover:border-primary/45"
+            className="p-5 transition-colors hover:border-primary/45"
           >
             <div className="mb-5">
               <p className="text-xs font-semibold text-primary">
@@ -34,7 +35,7 @@ export default function StackPage() {
                 </span>
               ))}
             </div>
-          </article>
+          </Card>
         ))}
       </div>
 
