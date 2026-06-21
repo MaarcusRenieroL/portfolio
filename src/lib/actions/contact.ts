@@ -78,6 +78,7 @@ export async function sendContactMessage(
     });
 
     if (error) {
+      console.error("[contact] resend error:", error);
       return {
         status: "error",
         message: "could not send right now. please try again or email me directly.",
@@ -88,7 +89,8 @@ export async function sendContactMessage(
       status: "success",
       message: "thanks — your message is on its way. i'll get back to you soon.",
     };
-  } catch {
+  } catch (err) {
+    console.error("[contact] unexpected error:", err);
     return {
       status: "error",
       message: "something went wrong. please try again or email me directly.",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { CheckCircle2Icon, Loader2Icon, SendIcon } from "lucide-react";
 
 import { Input } from "~/components/ui/input";
@@ -15,6 +15,12 @@ export function ContactForm() {
     sendContactMessage,
     initialState,
   );
+
+  // controlled so a validation error doesn't wipe what the user typed
+  // (react resets uncontrolled fields after a form action runs).
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   if (state.status === "success") {
     return (
@@ -55,6 +61,8 @@ export function ContactForm() {
             name="name"
             placeholder="your name"
             required
+            value={name}
+            onChange={(event) => setName(event.target.value)}
             aria-invalid={Boolean(state.fieldErrors?.name)}
           />
           {state.fieldErrors?.name && (
@@ -72,6 +80,8 @@ export function ContactForm() {
             type="email"
             placeholder="you@example.com"
             required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             aria-invalid={Boolean(state.fieldErrors?.email)}
           />
           {state.fieldErrors?.email && (
@@ -89,6 +99,8 @@ export function ContactForm() {
           name="message"
           placeholder="what would you like to build or talk about?"
           required
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
           aria-invalid={Boolean(state.fieldErrors?.message)}
         />
         {state.fieldErrors?.message && (
