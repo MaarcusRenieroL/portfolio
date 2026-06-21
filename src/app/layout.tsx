@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { Navbar } from "~/components/layouts/navbar";
@@ -7,6 +9,23 @@ import { Footer } from "~/components/layouts/footer";
 import { LenisProvider } from "~/components/providers/lenis-provider";
 import { PageTransitionProvider } from "~/components/providers/page-transition-provider";
 import { ScrollProgress } from "~/components/misc/scroll-progress";
+import { LINKS } from "~/lib/constants";
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "maarcus reniero l",
+  jobTitle: "full-stack software engineer",
+  url: "https://maarcus.dev",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Chennai",
+    addressCountry: "IN",
+  },
+  sameAs: LINKS.filter((link) => link.url.startsWith("http")).map(
+    (link) => link.url,
+  ),
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,6 +82,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-mono antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LenisProvider>
             <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
@@ -77,6 +100,8 @@ export default function RootLayout({
             </div>
           </LenisProvider>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
