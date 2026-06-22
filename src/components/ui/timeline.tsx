@@ -192,7 +192,7 @@ function TimelineTitle({
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3
+    <h2
       data-slot="timeline-title"
       className={cn("text-sm font-medium", className)}
       {...props}

@@ -66,9 +66,15 @@ export const WorkExperience: FC = () => {
                       href={experience.href}
                       target="_blank"
                       rel="noreferrer"
+                      aria-label={`visit ${experience.company} website`}
                       className="shrink-0 opacity-80 transition-opacity duration-300 hover:opacity-100"
                     >
-                      <Button size="icon" variant="ghost" className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`visit ${experience.company} website`}
+                        className="size-8 rounded-none border border-border/60 bg-background/60 hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+                      >
                         <ArrowUpRightIcon className="h-4 w-4" />
                       </Button>
                     </Link>
