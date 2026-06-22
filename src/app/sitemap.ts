@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getProjects } from "~/lib/data/projects";
+import { getPosts } from "~/lib/data/blog";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://maarcus.dev";
@@ -12,6 +13,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
@@ -52,5 +59,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     };
   });
 
-  return [...staticRoutes, ...projectRoutes];
+  const blogRoutes: MetadataRoute.Sitemap = getPosts().map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: post.date ? new Date(post.date) : now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...projectRoutes, ...blogRoutes];
 }

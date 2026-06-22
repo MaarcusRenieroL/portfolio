@@ -1,7 +1,56 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
+
+/* blog code blocks + syntax highlighting (rehype-highlight / hljs) */
+.prose pre {
+  background-color: #0d1117;
+  color: #e6edf3;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+.prose :where(code):not(:where(pre *))::before,
+.prose :where(code):not(:where(pre *))::after {
+  content: "";
+}
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+  color: #8b949e;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: #ff7b72;
+}
+.hljs-string,
+.hljs-attr,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+  color: #a5d6ff;
+}
+.hljs-title,
+.hljs-section,
+.hljs-title.function_ {
+  color: #d2a8ff;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-attribute,
+.hljs-symbol,
+.hljs-bullet {
+  color: #79c0ff;
+}
+.hljs-deletion {
+  color: #ffa198;
+}
 
 @theme inline {
   --color-background: var(--background);

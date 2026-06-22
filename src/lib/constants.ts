@@ -224,7 +224,7 @@ export const WORK_EXPERIENCES: WorkExperience[] = [
     id: 1,
     title: "hardware and network engineering intern",
     company: "systech",
-    href: "https://systech.com",
+    href: "https://systechgroup.in",
     startDate: "2023-01-01",
     endDate: "2023-02-28",
     isOngoing: false,
@@ -328,6 +328,7 @@ export const LINKS: SocialLink[] = [
 export const NAV_LINKS: NavLink = [
   "home",
   "projects",
+  "blog",
   "about",
   "stack",
   "contact",
