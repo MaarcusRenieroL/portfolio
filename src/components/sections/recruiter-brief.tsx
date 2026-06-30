@@ -28,7 +28,7 @@ const highlights = [
 
 const proof = [
   "built zentro as a multi-tenant collaboration product experiment with organizations, permissions, workspaces, and activity-heavy workflows.",
-  "created next-cli to reduce repeated setup decisions when starting opinionated next.js projects.",
+  "created next-kit to reduce repeated setup decisions when starting opinionated next.js projects.",
   "maintain this portfolio and dotfiles as living proof of product taste, code organization, and day-to-day engineering habits.",
 ];
 
