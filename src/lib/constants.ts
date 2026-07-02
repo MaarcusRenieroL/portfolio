@@ -69,7 +69,7 @@ export const PROJECTS: Project[] = [
       "ships with a marketing site covering quickstart, integrations, and faq",
     ],
     githubLink: "https://github.com/maarcusrenierol/next-kit",
-    hostedLink: "",
+    hostedLink: "https://next-kit.maarcus.dev",
     startDate: "2024-09-19",
     endDate: null,
     isOngoing: true,

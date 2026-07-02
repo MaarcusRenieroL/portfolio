@@ -10,6 +10,7 @@ import { LenisProvider } from "~/components/providers/lenis-provider";
 import { PageTransitionProvider } from "~/components/providers/page-transition-provider";
 import { ScrollProgress } from "~/components/misc/scroll-progress";
 import { LINKS } from "~/lib/constants";
+import { buildSearchIndex } from "~/lib/data/search";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -77,6 +78,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const searchDocs = buildSearchIndex();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -91,7 +94,7 @@ export default function RootLayout({
             <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
               <PageTransitionProvider>
                 <ScrollProgress />
-                <Navbar />
+                <Navbar searchDocs={searchDocs} />
 
                 <main className="flex flex-1 py-12 md:py-16">{children}</main>
 
