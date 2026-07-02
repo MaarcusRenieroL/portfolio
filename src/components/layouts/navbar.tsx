@@ -6,16 +6,11 @@ import { usePathname } from "next/navigation";
 import { MenuIcon, XIcon } from "lucide-react";
 
 import { NAV_LINKS } from "~/lib/constants";
-import { SearchDoc } from "~/lib/types";
 import { cn } from "~/lib/utils";
 import { ModeToggle } from "../misc/theme-switcher";
 import { CommandPalette } from "../misc/command-palette";
 
-type NavbarProps = {
-  searchDocs?: SearchDoc[];
-};
-
-export const Navbar: FC<NavbarProps> = ({ searchDocs }) => {
+export const Navbar: FC = () => {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -82,9 +77,9 @@ export const Navbar: FC<NavbarProps> = ({ searchDocs }) => {
   return (
     <nav
       ref={navRef}
-      className="sticky top-5 z-20 relative flex w-full flex-col gap-2 border border-border/60 bg-background/78 px-3 py-2 backdrop-blur-md before:absolute before:left-1/2 before:top-0 before:-z-10 before:h-full before:w-screen before:-translate-x-1/2 before:border-y before:border-border/60 before:bg-background/78 before:backdrop-blur-md"
+      className="sticky top-6 z-30 mt-6 w-full border-y border-border/60 bg-background/78 py-3 backdrop-blur-md"
     >
-      <div className="flex w-full items-center justify-between gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+      <div className="flex w-full items-center justify-between gap-3 px-6 md:px-10 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-14">
         <Link
           href="/"
           className="flex min-w-0 items-center gap-2 justify-self-start text-sm font-semibold text-foreground"
@@ -104,7 +99,7 @@ export const Navbar: FC<NavbarProps> = ({ searchDocs }) => {
         </div>
 
         <div className="flex shrink-0 items-center justify-self-end gap-2">
-          <CommandPalette docs={searchDocs} />
+          <CommandPalette />
           <span className="hidden lg:inline-flex">
             <ModeToggle />
           </span>
@@ -121,7 +116,7 @@ export const Navbar: FC<NavbarProps> = ({ searchDocs }) => {
       </div>
 
       {mobileOpen && (
-        <div className="grid gap-1 border-t border-border/60 pt-2 lg:hidden">
+        <div className="grid gap-1 border-t border-border/60 px-6 pt-2 md:px-10 lg:hidden">
           {NAV_LINKS.map((link) => renderLink(link, true))}
         </div>
       )}

@@ -44,15 +44,6 @@ export type SocialLink = {
 
 export type NavLink = string[];
 
-export type SearchDoc = {
-  id: string;
-  title: string;
-  description: string;
-  href: string;
-  group: "pages" | "projects" | "blog" | "stack";
-  keywords?: string;
-};
-
 export type StackGroup = {
   title: string;
   eyebrow: string;
