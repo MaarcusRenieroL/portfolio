@@ -62,7 +62,7 @@ export function DiscordPresence() {
   const secondary = presence?.activity?.name ?? name;
 
   return (
-    <div className="flex w-full items-center gap-3 border border-border/60 bg-card/35 p-3 sm:w-64">
+    <div className="flex w-full min-w-0 items-center gap-3 border border-border/60 bg-card/35 p-3 lg:w-64">
       <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden border border-border/60 bg-background/60 text-primary">
         {presence?.avatarUrl && !avatarFailed ? (
           <Image
@@ -87,7 +87,7 @@ export function DiscordPresence() {
         />
       </span>
 
-      <span className="min-w-0">
+      <span className="min-w-0 flex-1">
         <span className="block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           {statusLabel[status]}
         </span>

@@ -87,7 +87,7 @@ export function SpotifyNowPlaying() {
         href={track.songUrl}
         target="_blank"
         rel="noreferrer"
-        className="group block w-full border border-border/60 bg-card/35 p-3 transition-colors hover:border-primary/45 sm:w-64"
+        className="group block w-full min-w-0 border border-border/60 bg-card/35 p-3 transition-colors hover:border-primary/45 lg:w-64"
       >
         {content}
       </Link>
@@ -95,7 +95,7 @@ export function SpotifyNowPlaying() {
   }
 
   return (
-    <div className="w-full border border-border/60 bg-card/35 p-3 sm:w-64">
+    <div className="w-full min-w-0 border border-border/60 bg-card/35 p-3 lg:w-64">
       {content}
     </div>
   );

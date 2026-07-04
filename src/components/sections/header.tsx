@@ -34,7 +34,7 @@ export const Header: FC = () => {
               <span>focus</span>
             </div>
             <div className="border border-border/60 bg-background/40 px-3 py-2">
-              <span className="block text-foreground">2025</span>
+              <span className="block text-foreground">since 2025</span>
               <span>current role</span>
             </div>
           </div>

@@ -165,7 +165,7 @@ export const PROJECTS: Project[] = [
     features: [
       "building a multi-tenant collaboration platform.",
       "designed scalable organization, workspace, membership, and permission models to support multi-tenant access control.",
-      "building a modular backend workflows for boards, tasks, notifications, and collaborative activity tracking.",
+      "building modular backend workflows for boards, tasks, notifications, and collaborative activity tracking.",
     ],
     githubLink: "https://github.com/maarcusrenierol/zentro",
     hostedLink: "",
