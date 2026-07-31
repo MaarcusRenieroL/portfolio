@@ -92,7 +92,7 @@ export default function RootLayout({
               <ScrollProgress />
               <Navbar />
 
-              <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
+              <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
                 <main className="flex flex-1 pb-12 pt-2 md:pb-16 md:pt-3">{children}</main>
 
                 <Footer />
