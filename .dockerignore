@@ -1,0 +1,12 @@
+node_modules
+.next
+dist
+build
+coverage
+.git
+.turbo
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose.yml

@@ -1,0 +1,21 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      CI: "true"
+    ports:
+      - "${WEB_PORT:-3500}:3000"
+    volumes:
+      - .:/app
+      - portfolio-web-node-modules:/app/node_modules
+      - portfolio-web-next:/app/.next
+
+volumes:
+  portfolio-web-node-modules:
+  portfolio-web-next:
