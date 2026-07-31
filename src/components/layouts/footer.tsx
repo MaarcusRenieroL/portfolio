@@ -9,9 +9,9 @@ export const Footer = () => {
   return (
     <footer className="flex w-full flex-col gap-5 border-t border-border/60 py-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between lg:items-center">
-        <h1 className="text-2xl font-bold sm:text-3xl">
+        <h2 className="text-2xl font-bold sm:text-3xl">
           <ScrambleText text="links" />
-        </h1>
+        </h2>
 
         <div className="grid w-full min-w-0 gap-2 sm:max-w-full sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:flex lg:w-auto lg:items-center">
           <DiscordPresence />

@@ -40,8 +40,19 @@ export function ScrambleText({
     step,
     scramble,
     seed,
-    overdrive: true,
+    overdrive: false,
   })
+
+  // safety net: if the animation stalls (backgrounded tab, low-power mode,
+  // rAF throttling) the name must still end up readable.
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (ref.current && ref.current.textContent !== text) {
+        ref.current.textContent = text
+      }
+    }, 2500)
+    return () => clearTimeout(timeout)
+  }, [text, ref])
 
   // honor reduced-motion: render the text statically instead of animating it.
   if (reducedMotion) {

@@ -220,7 +220,7 @@ export function CommandPalette() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex h-9 items-center gap-2 border border-border/60 bg-background/55 px-2.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground sm:px-3"
+        className="inline-flex h-9 items-center gap-2 border border-border/60 bg-background/55 px-2.5 text-xs text-muted-foreground outline-none transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-foreground focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-3"
         aria-label="open command palette"
       >
         <SearchIcon className="size-3.5" />
@@ -234,7 +234,7 @@ export function CommandPalette() {
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-background/65 p-3 backdrop-blur-md sm:p-4">
           <button
             type="button"
-            className="absolute inset-0 cursor-default"
+            className="absolute inset-0 cursor-default outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
             aria-label="close command palette"
             onClick={() => setOpen(false)}
           />
@@ -259,7 +259,7 @@ export function CommandPalette() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="type a destination..."
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                   aria-label="command palette input"
                 />
               </div>
@@ -282,7 +282,7 @@ export function CommandPalette() {
                     onMouseMove={() => setSelected(index)}
                     onClick={() => runAction(action.href)}
                     className={cn(
-                      "group flex w-full items-start gap-3 border-l-2 border-transparent px-3 py-3 text-left transition-colors sm:items-center",
+                      "group flex w-full items-start gap-3 border-l-2 border-transparent px-3 py-3 text-left outline-none transition-colors focus-visible:ring-0 focus-visible:ring-offset-0 sm:items-center",
                       isActive
                         ? "border-l-primary bg-primary/10 text-foreground"
                         : "text-foreground/90 hover:bg-card/55 hover:text-foreground",

@@ -29,7 +29,7 @@ export const ModeToggle: FC = () => {
     const nextTheme = isDark ? "light" : "dark";
     const direction = isDark ? "bottom-left" : "top-right";
 
-    if (!document.startViewTransition) {
+    if (!document.startViewTransition || document.hidden) {
       setTheme(nextTheme);
       return;
     }
@@ -40,9 +40,11 @@ export const ModeToggle: FC = () => {
       setTheme(nextTheme);
     });
 
-    transition.finished.finally(() => {
-      delete document.documentElement.dataset.themeTransition;
-    });
+    transition.finished
+      .catch(() => {})
+      .finally(() => {
+        delete document.documentElement.dataset.themeTransition;
+      });
   };
 
   return (
