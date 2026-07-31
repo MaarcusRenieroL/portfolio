@@ -60,8 +60,8 @@ export function SpotifyNowPlaying() {
         )}
       </span>
 
-      <span className="min-w-0">
-        <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
           {track?.isPlaying ? (
             <>
               <Equalizer />
@@ -87,7 +87,7 @@ export function SpotifyNowPlaying() {
         href={track.songUrl}
         target="_blank"
         rel="noreferrer"
-        className="group block w-full min-w-0 border border-border/60 bg-card/35 p-3 transition-colors hover:border-primary/45 lg:w-64"
+        className="block w-full border border-border/60 bg-card/40 p-3 transition-colors hover:border-primary/50"
       >
         {content}
       </Link>
@@ -95,7 +95,7 @@ export function SpotifyNowPlaying() {
   }
 
   return (
-    <div className="w-full min-w-0 border border-border/60 bg-card/35 p-3 lg:w-64">
+    <div className="w-full border border-border/60 bg-card/40 p-3">
       {content}
     </div>
   );
