@@ -7,6 +7,17 @@
       "runtimeArgs": ["dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "shine-lens",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/private/tmp/claude-501/-Users-maarcusrenierol-Desktop-projects-portfolio/2bec2ea7-dab7-4034-a367-3064992dd24a/scratchpad/shine-lens/shine-lens-main",
+        "dev"
+      ],
+      "port": 3001,
+      "autoPort": true
     }
   ]
 }

@@ -9,6 +9,7 @@ import {
 
 import { SectionHeading } from "~/components/misc/section-heading";
 import { CopyEmailButton } from "~/components/misc/copy-email-button";
+import { MagneticCTA } from "~/components/misc/magnetic-cta";
 import { Card } from "~/components/ui/card";
 import { ContactForm } from "~/components/sections/contact-form";
 
@@ -63,13 +64,14 @@ export default function ContactPage() {
             workflows, project architecture, and product-minded implementation.
           </p>
 
-          <a
-            href="mailto:maarcusreniero.l@gmail.com?subject=portfolio%20contact"
-            className="mt-6 inline-flex h-10 items-center gap-2 border border-primary/50 bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <MailIcon className="size-4" />
-            send email
-          </a>
+          <div className="mt-6">
+            <MagneticCTA
+              href="mailto:maarcusreniero.l@gmail.com?subject=portfolio%20contact"
+            >
+              <MailIcon className="size-4" />
+              send email
+            </MagneticCTA>
+          </div>
           <div className="mt-2">
             <CopyEmailButton />
           </div>
