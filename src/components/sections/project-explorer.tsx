@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { SearchIcon, XIcon } from "lucide-react";
 
-import { ProjectTimeline } from "./project-timeline";
+import { ProjectCard } from "../projects/project-card";
+import { Reveal } from "../misc/reveal";
 import { Category, Project } from "~/lib/types";
 import { cn } from "~/lib/utils";
 
@@ -118,7 +119,13 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
       </div>
 
       {visibleProjects.length > 0 ? (
-        <ProjectTimeline projects={visibleProjects} />
+        <div className="grid gap-5 md:grid-cols-2">
+          {visibleProjects.map((project, index) => (
+            <Reveal key={project.id} delay={(index % 6) * 0.05}>
+              <ProjectCard project={project} index={index} />
+            </Reveal>
+          ))}
+        </div>
       ) : (
         <div className="border border-border/60 bg-card/35 p-8 text-center text-sm text-muted-foreground">
           no matching projects

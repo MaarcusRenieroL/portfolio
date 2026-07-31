@@ -1,33 +1,33 @@
-import Link from "next/link";
-import { Button } from "../ui/button";
-
+import { ArrowRightIcon } from "lucide-react";
 import { getFeaturedProjects } from "~/lib/data/projects";
-import { ProjectTimeline } from "./project-timeline";
+import { ProjectCard } from "../projects/project-card";
+import { Reveal } from "../misc/reveal";
 import { SectionHeading } from "../misc/section-heading";
+import { MagneticCTA } from "../misc/magnetic-cta";
 
 export const Projects = () => {
   const sortedProjects = getFeaturedProjects();
 
   return (
-    <section className="flex w-full flex-col gap-10">
+    <section className="flex w-full flex-col gap-8">
       <SectionHeading
         index="02"
-        title="projects"
         eyebrow="selected work"
-        description="the strongest proof points first: product architecture, developer tooling, and the site you are reading now."
+        title="featured projects"
+        description="products, tools, and experiments — the ones i point to when someone asks how i think."
+        action={
+          <MagneticCTA href="/projects" variant="ghost" className="text-xs">
+            archive <ArrowRightIcon className="size-3.5" />
+          </MagneticCTA>
+        }
       />
 
-      <ProjectTimeline projects={sortedProjects} compact />
-
-      <div className="flex items-center justify-end w-full pt-4">
-        <Link href="/projects">
-          <Button
-            variant="outline"
-            className="border-border/70 bg-background/40 transition-colors duration-300 hover:border-primary/60 hover:text-primary"
-          >
-            view all
-          </Button>
-        </Link>
+      <div className="grid gap-5 md:grid-cols-2">
+        {sortedProjects.map((project, index) => (
+          <Reveal key={project.id} delay={index * 0.05}>
+            <ProjectCard project={project} index={index} />
+          </Reveal>
+        ))}
       </div>
     </section>
   );

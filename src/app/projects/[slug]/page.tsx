@@ -1,16 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, GithubIcon, GlobeIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, GithubIcon, GlobeIcon } from "lucide-react";
 
 import { Badge } from "~/components/ui/badge";
-import { ProjectPreview } from "~/components/projects/project-preview";
+import { MagneticCTA } from "~/components/misc/magnetic-cta";
+import { Reveal } from "~/components/misc/reveal";
 import {
   getProject,
   getProjectNeighbors,
   getProjects,
   formatDuration,
 } from "~/lib/data/projects";
+
+const ACCENTS = [
+  "from-emerald-400/20 via-teal-500/10 to-transparent",
+  "from-cyan-400/20 via-sky-500/10 to-transparent",
+  "from-violet-400/20 via-fuchsia-500/10 to-transparent",
+  "from-amber-400/20 via-orange-500/10 to-transparent",
+];
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
@@ -64,236 +72,211 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const { previous, next } = getProjectNeighbors(project.id);
+  const index = getProjects().findIndex((p) => p.id === project.id);
+  const accent = ACCENTS[Math.max(0, index) % ACCENTS.length];
+
+  const sections: [string, string[]][] = [
+    ["approach", project.approach],
+    ["outcome", project.outcome],
+    ["decisions", project.decisions],
+    ["lessons", project.lessons],
+    ["next steps", project.nextSteps],
+  ];
 
   return (
     <article className="flex w-full flex-col gap-10">
       <Link
         href="/projects"
-        className="inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+        className="inline-flex w-fit items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-primary"
       >
-        <ArrowLeftIcon className="size-4" />
-        back to projects
+        <ArrowLeftIcon className="size-3.5" />
+        all projects
       </Link>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.82fr] lg:items-start">
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
-            <span className="text-primary">{project.status}</span>
-            <span className="h-px w-8 bg-border" aria-hidden="true" />
-            <span>{project.category}</span>
-            <span>/</span>
-            <span>{formatDuration(project)}</span>
-          </div>
+      <header className="relative overflow-hidden border border-border/60 bg-card/40 p-6 sm:p-10">
+        <div
+          aria-hidden
+          className={`pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br ${accent}`}
+        />
+        <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+          <span>{project.category}</span>
+          <span className="h-px w-8 bg-primary/50" />
+          <span className="text-muted-foreground">{project.status}</span>
+          <span className="text-muted-foreground">
+            · {formatDuration(project)}
+          </span>
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-              {project.title}
-            </h1>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-6xl">
+          {project.title}
+        </h1>
 
-            <p className="max-w-3xl text-base leading-8 text-foreground/90">
-              {project.description}
+        <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground">
+          {project.description}
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          <MagneticCTA href={project.githubLink} variant="ghost" external>
+            <GithubIcon className="size-4" />
+            repository
+          </MagneticCTA>
+          {project.hostedLink && (
+            <MagneticCTA href={project.hostedLink} external>
+              <GlobeIcon className="size-4" />
+              live
+            </MagneticCTA>
+          )}
+        </div>
+
+        <div className="mt-6 flex flex-wrap gap-1.5">
+          {project.skills.map((skill) => (
+            <span key={skill} className="chip">
+              {skill}
+            </span>
+          ))}
+        </div>
+      </header>
+
+      <div className="grid gap-5 md:grid-cols-3">
+        <Reveal>
+          <div className="h-full border border-border/60 bg-card/40 p-5 lift">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+              role
             </p>
-
-            <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
+            <p className="mt-2 text-sm text-foreground">{project.role}</p>
+          </div>
+        </Reveal>
+        <Reveal delay={0.05}>
+          <div className="h-full border border-border/60 bg-card/40 p-5 lift">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+              impact
+            </p>
+            <p className="mt-2 text-sm leading-6 text-foreground/85">
               {project.impact}
             </p>
           </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={project.githubLink}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 items-center gap-2 border border-border/60 bg-background/55 px-4 text-sm font-medium transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
-            >
-              <GithubIcon className="size-4" />
-              github
-            </Link>
-
-            {project.hostedLink && (
-              <Link
-                href={project.hostedLink}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 items-center gap-2 border border-primary/50 bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                <GlobeIcon className="size-4" />
-                live
-              </Link>
-            )}
-          </div>
-        </div>
-
-        <ProjectPreview project={project} />
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-2">
-        {[
-          ["product surface", project.description],
-          ["system surface", project.challenge],
-        ].map(([label, text]) => (
-          <div
-            key={label}
-            className="relative overflow-hidden border border-border/60 bg-card/35 p-5"
-          >
-            <div className="mb-5 flex items-center justify-between border-b border-border/60 pb-3">
-              <p className="text-xs font-semibold text-primary">{label}</p>
-              <span className="size-2 bg-primary/70" />
-            </div>
-            <div className="grid min-h-40 place-items-center border border-border/60 bg-background/45 p-5 text-center">
-              <p className="max-w-sm text-sm leading-7 text-muted-foreground">
-                {text}
-              </p>
-            </div>
-          </div>
-        ))}
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-3">
-        {[
-          ["role", project.role],
-          ["challenge", project.challenge],
-          ["result", project.outcome[0]],
-        ].map(([label, value]) => (
-          <div key={label} className="border border-border/60 bg-card/35 p-4">
-            <p className="mb-2 text-xs font-semibold text-primary">
-              {label}
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div className="h-full border border-border/60 bg-card/40 p-5 lift">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+              challenge
             </p>
-            <p className="text-sm leading-6 text-foreground/85">{value}</p>
-          </div>
-        ))}
-      </section>
-
-      <section className="border border-border/60 bg-card/35 p-5">
-        <div className="mb-5">
-          <p className="text-xs font-semibold text-primary">architecture</p>
-          <h2 className="mt-2 text-2xl font-semibold">how the pieces connect</h2>
-        </div>
-
-        <div className="grid gap-3 md:grid-cols-3">
-          {[
-            ["interface", project.skills.slice(0, 3).join(", ")],
-            ["workflow", project.approach[0]],
-            ["data and rules", project.decisions[0]],
-          ].map(([label, text], index) => (
-            <div
-              key={label}
-              className="relative border border-border/60 bg-background/45 p-4"
-            >
-              <span className="mb-4 grid size-8 place-items-center border border-primary/45 bg-primary/10 text-xs font-semibold text-primary">
-                {index + 1}
-              </span>
-              <p className="text-sm font-medium text-foreground">{label}</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-4 border border-border/60 bg-card/35 p-5">
-          <div>
-            <p className="text-xs font-semibold text-primary">
-              approach
+            <p className="mt-2 text-sm leading-6 text-foreground/85">
+              {project.challenge}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold">how it was shaped</h2>
           </div>
+        </Reveal>
+      </div>
 
-          <ul className="list-disc space-y-2 pl-5 text-sm leading-7 text-foreground/85">
-            {project.approach.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="flex flex-col gap-4 border border-border/60 bg-card/35 p-5">
-          <div>
-            <p className="text-xs font-semibold text-primary">
-              outcome
+      <Reveal>
+        <section className="border border-border/60 bg-card/40 p-6 sm:p-8">
+          <div className="mb-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+              architecture
             </p>
-            <h2 className="mt-2 text-2xl font-semibold">what it proves</h2>
+            <h2 className="mt-2 text-2xl font-semibold">
+              how the pieces connect
+            </h2>
           </div>
 
-          <ul className="list-disc space-y-2 pl-5 text-sm leading-7 text-foreground/85">
-            {project.outcome.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-3">
-        {[
-          { label: "decisions", items: project.decisions },
-          { label: "lessons", items: project.lessons },
-          { label: "next steps", items: project.nextSteps },
-        ].map(({ label, items }) => (
-          <div
-            key={label}
-            className="flex flex-col gap-4 border border-border/60 bg-card/35 p-5"
-          >
-            <p className="text-xs font-semibold text-primary">{label}</p>
-            <ul className="space-y-2 text-sm leading-7 text-foreground/85">
-              {items.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <span className="mt-2 size-1.5 shrink-0 bg-primary/70" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </section>
-
-      <section className="flex flex-col gap-3 border border-border/60 bg-card/35 p-5">
-        <p className="text-xs font-semibold text-primary">stack</p>
-        <div className="flex flex-wrap gap-2">
-          {project.skills.map((skill) => (
-            <Badge
-              key={skill}
-              variant="secondary"
-              className="border border-border/50 bg-secondary/70 px-2.5 py-1 text-[11px] text-secondary-foreground/90"
-            >
-              {skill}
-            </Badge>
-          ))}
-        </div>
-      </section>
-
-      <nav className="grid gap-3 border-t border-border/60 pt-6 sm:grid-cols-2">
-        {[
-          { label: "previous", neighbor: previous },
-          { label: "next", neighbor: next },
-        ].map(({ label, neighbor }) => {
-          if (!neighbor) {
-            return (
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              ["interface", project.skills.slice(0, 3).join(", ")],
+              ["workflow", project.approach[0]],
+              ["data and rules", project.decisions[0]],
+            ].map(([label, text], i) => (
               <div
                 key={label}
-                className="border border-border/40 bg-card/20 p-4 text-sm text-muted-foreground"
+                className="relative border border-border/60 bg-background/45 p-4 lift"
               >
-                no {label} project
+                <span className="mb-4 grid size-8 place-items-center border border-primary/45 bg-primary/10 text-xs font-semibold text-primary">
+                  {i + 1}
+                </span>
+                <p className="text-sm font-medium text-foreground">{label}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {text}
+                </p>
               </div>
-            );
-          }
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
-          return (
-            <Link
-              key={label}
-              href={`/projects/${neighbor.id}`}
-              className="group border border-border/60 bg-card/35 p-4 transition-colors hover:border-primary/45 hover:bg-primary/5"
-            >
-              <p className="text-xs font-semibold text-muted-foreground">
-                {label as string}
+      <div className="grid gap-6 md:grid-cols-2">
+        {sections.map(([title, items], idx) => (
+          <Reveal key={title} delay={idx * 0.05}>
+            <section className="h-full border border-border/60 bg-card/40 p-5 lift">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+                {String(idx + 1).padStart(2, "0")} — {title}
               </p>
-              <p className="mt-2 text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
-                {neighbor.title}
-              </p>
-              <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
-                {neighbor.description}
-              </p>
-            </Link>
-          );
-        })}
+              <ul className="mt-4 space-y-2.5 text-sm leading-6 text-foreground/85">
+                {items.map((item) => (
+                  <li key={item} className="flex gap-2.5">
+                    <span className="mt-2 size-1 shrink-0 bg-primary/70" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </Reveal>
+        ))}
+      </div>
+
+      <Reveal>
+        <section className="flex flex-col gap-3 border border-border/60 bg-card/40 p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+            stack
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {project.skills.map((skill) => (
+              <Badge
+                key={skill}
+                variant="secondary"
+                className="border border-border/50 bg-secondary/70 px-2.5 py-1 text-[11px] text-secondary-foreground/90"
+              >
+                {skill}
+              </Badge>
+            ))}
+          </div>
+        </section>
+      </Reveal>
+
+      <nav className="flex flex-col gap-2 border-t border-border/50 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        {previous ? (
+          <Link
+            href={`/projects/${previous.id}`}
+            className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+          >
+            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>
+              <span className="block font-mono text-[10px] uppercase tracking-[0.2em]">
+                previous
+              </span>
+              <span className="block text-foreground">{previous.title}</span>
+            </span>
+          </Link>
+        ) : (
+          <span />
+        )}
+        {next ? (
+          <Link
+            href={`/projects/${next.id}`}
+            className="group inline-flex items-center gap-2 text-right text-sm text-muted-foreground hover:text-primary"
+          >
+            <span>
+              <span className="block font-mono text-[10px] uppercase tracking-[0.2em]">
+                next
+              </span>
+              <span className="block text-foreground">{next.title}</span>
+            </span>
+            <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        ) : (
+          <MagneticCTA href="/contact" variant="ghost">
+            get in touch
+            <ArrowRightIcon className="size-4" />
+          </MagneticCTA>
+        )}
       </nav>
     </article>
   );
