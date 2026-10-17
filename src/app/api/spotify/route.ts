@@ -62,48 +62,53 @@ function normalize(item: SpotifyItem, isPlaying: boolean) {
 }
 
 export async function GET() {
-  const accessToken = await getAccessToken();
+  try {
+    const accessToken = await getAccessToken();
 
-  if (!accessToken) {
+    if (!accessToken) {
+      return NextResponse.json({ isPlaying: false }, { headers: noStore });
+    }
+
+    const headers = { Authorization: `Bearer ${accessToken}` };
+
+    const nowPlaying = await fetch(NOW_PLAYING_ENDPOINT, {
+      headers,
+      cache: "no-store",
+    });
+
+    if (nowPlaying.status === 200) {
+      const data = (await nowPlaying.json()) as {
+        item?: SpotifyItem;
+        is_playing?: boolean;
+      };
+
+      if (data?.item) {
+        return NextResponse.json(normalize(data.item, Boolean(data.is_playing)), {
+          headers: noStore,
+        });
+      }
+    }
+
+    // nothing playing right now — fall back to the most recent track
+    const recent = await fetch(RECENTLY_PLAYED_ENDPOINT, {
+      headers,
+      cache: "no-store",
+    });
+
+    if (recent.ok) {
+      const data = (await recent.json()) as {
+        items?: { track: SpotifyItem }[];
+      };
+      const track = data?.items?.[0]?.track;
+
+      if (track) {
+        return NextResponse.json(normalize(track, false), { headers: noStore });
+      }
+    }
+
+    return NextResponse.json({ isPlaying: false }, { headers: noStore });
+  } catch (err) {
+    console.error("[spotify] fetch error:", err);
     return NextResponse.json({ isPlaying: false }, { headers: noStore });
   }
-
-  const headers = { Authorization: `Bearer ${accessToken}` };
-
-  const nowPlaying = await fetch(NOW_PLAYING_ENDPOINT, {
-    headers,
-    cache: "no-store",
-  });
-
-  if (nowPlaying.status === 200) {
-    const data = (await nowPlaying.json()) as {
-      item?: SpotifyItem;
-      is_playing?: boolean;
-    };
-
-    if (data?.item) {
-      return NextResponse.json(normalize(data.item, Boolean(data.is_playing)), {
-        headers: noStore,
-      });
-    }
-  }
-
-  // nothing playing right now — fall back to the most recent track
-  const recent = await fetch(RECENTLY_PLAYED_ENDPOINT, {
-    headers,
-    cache: "no-store",
-  });
-
-  if (recent.ok) {
-    const data = (await recent.json()) as {
-      items?: { track: SpotifyItem }[];
-    };
-    const track = data?.items?.[0]?.track;
-
-    if (track) {
-      return NextResponse.json(normalize(track, false), { headers: noStore });
-    }
-  }
-
-  return NextResponse.json({ isPlaying: false }, { headers: noStore });
 }

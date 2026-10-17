@@ -1,9 +1,12 @@
+"use client";
+
 import { FC } from "react";
 import {
   DownloadIcon,
   MapPinnedIcon,
   ArrowRightIcon,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 import { ScrambleText } from "../misc/scramble-text";
 import { MagneticCTA } from "../misc/magnetic-cta";
@@ -14,7 +17,32 @@ import { DiscordPresence } from "../misc/discord-presence";
 export const Header: FC = () => {
   return (
     <section className="hero-vignette relative isolate overflow-hidden pb-16 pt-14 sm:pt-20">
+      {/* Background layers */}
       <div aria-hidden className="hero-glow grid-pulse absolute inset-0 -z-10" />
+
+      {/* Animated radial orb */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 30% 40%, rgba(74,222,128,0.06) 0%, transparent 70%)",
+        }}
+      />
+      {/* Second orb offset */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        animate={{ rotate: -360 }}
+        transition={{ repeat: Infinity, duration: 55, ease: "linear" }}
+        style={{
+          background:
+            "radial-gradient(ellipse 50% 60% at 70% 60%, rgba(0,220,255,0.04) 0%, transparent 70%)",
+        }}
+      />
+
       <div className="flex flex-col gap-12">
         {/* Hero Section */}
         <Reveal>

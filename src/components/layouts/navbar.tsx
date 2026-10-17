@@ -7,7 +7,9 @@ import { MenuIcon, XIcon } from "lucide-react";
 
 import { NAV_LINKS } from "~/lib/constants";
 import { cn } from "~/lib/utils";
+import { playBlip } from "~/lib/audio";
 import { ModeToggle } from "../misc/theme-switcher";
+import { AudioToggle } from "../misc/audio-toggle";
 import { CommandPalette } from "../misc/command-palette";
 
 export const Navbar: FC = () => {
@@ -56,6 +58,7 @@ export const Navbar: FC = () => {
         key={link}
         href={href}
         title={`open ${link}`}
+        onMouseEnter={() => playBlip()}
         className={cn(
           "group relative inline-flex h-9 items-center justify-center gap-2 px-3 text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground",
           compact && "h-10 justify-between border border-border/50 bg-background/45",
@@ -99,6 +102,9 @@ export const Navbar: FC = () => {
         </div>
 
         <div className="flex shrink-0 items-center justify-self-end gap-2">
+          <div className="hidden md:flex items-center gap-1.5">
+            <AudioToggle compact />
+          </div>
           <CommandPalette />
           <span className="hidden lg:inline-flex">
             <ModeToggle />
@@ -116,7 +122,13 @@ export const Navbar: FC = () => {
       </div>
 
       {mobileOpen && (
-        <div className="grid gap-1 border-t border-border/60 px-6 pt-2 md:px-10 lg:hidden">
+        <div className="grid gap-2 border-t border-border/60 px-6 pt-3 pb-2 md:px-10 lg:hidden">
+          <div className="flex items-center gap-2 pb-2 border-b border-border/40">
+            <AudioToggle />
+            <div className="ml-auto">
+              <ModeToggle />
+            </div>
+          </div>
           {NAV_LINKS.map((link) => renderLink(link, true))}
         </div>
       )}

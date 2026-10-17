@@ -331,6 +331,7 @@ export const LINKS: SocialLink[] = [
 export const NAV_LINKS: NavLink = [
   "home",
   "projects",
+  "experience",
   "blog",
   "about",
   "stack",

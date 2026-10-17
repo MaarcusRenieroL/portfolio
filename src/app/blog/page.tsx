@@ -14,7 +14,7 @@ export default function BlogPage() {
   return (
     <section className="flex w-full flex-col gap-10">
       <SectionHeading
-        index="05"
+        index="02"
         title="blog"
         eyebrow="notes and write-ups"
         description="writing about building things — developer tools, the web, and lessons from actually shipping."

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, ClockIcon, FlameIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -60,47 +60,69 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article className="flex w-full flex-col gap-8">
+      {/* Back to Blog Button */}
       <Link
         href="/blog"
-        className="inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+        className="inline-flex w-fit items-center gap-2 border border-border/60 bg-card/40 px-3.5 py-1.5 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
       >
-        <ArrowLeftIcon className="size-4" />
-        back to blog
+        <ArrowLeftIcon className="size-3.5" />
+        <span>Return to dispatches</span>
       </Link>
 
-      <header className="flex flex-col gap-3 border-l border-primary/50 pl-4">
-        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span>{formatLongDate(post.date)}</span>
-          <span className="h-px w-6 bg-border" aria-hidden="true" />
-          <span>{post.readingTime}</span>
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {post.title}
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          {post.description}
-        </p>
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="border border-border/50 bg-background/45 px-2 py-0.5 text-[11px] text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-      </header>
+      {/* Article Specimen Container */}
+      <div className="relative overflow-hidden border border-border/60 bg-card/35 p-6 sm:p-10">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+        />
 
-      <div className="prose prose-zinc max-w-none text-foreground/90 dark:prose-invert prose-headings:font-semibold prose-a:text-primary prose-code:before:content-none prose-code:after:content-none">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeHighlight]}
-        >
-          {post.content}
-        </ReactMarkdown>
+        <header className="flex flex-col gap-4 border-b border-border/40 pb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+            <div className="flex items-center gap-2 text-primary font-bold">
+              <FlameIcon className="size-3.5 text-primary" />
+              <span className="uppercase tracking-wider text-[11px]">DISPATCH // {post.slug}</span>
+            </div>
+            <div className="flex items-center gap-3 text-muted-foreground text-[11px]">
+              <span>{formatLongDate(post.date)}</span>
+              <span>·</span>
+              <span className="flex items-center gap-1">
+                <ClockIcon className="size-3 text-primary/70" />
+                {post.readingTime}
+              </span>
+            </div>
+          </div>
+
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+            {post.title}
+          </h1>
+
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {post.description}
+          </p>
+
+          {post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 pt-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        {/* Markdown Content */}
+        <div className="prose prose-zinc max-w-none pt-8 text-foreground/90 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-code:border prose-code:border-border/60 prose-code:bg-background/80 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-xs prose-pre:border prose-pre:border-border/60 prose-pre:bg-background/90">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight]}
+          >
+            {post.content}
+          </ReactMarkdown>
+        </div>
       </div>
     </article>
   );

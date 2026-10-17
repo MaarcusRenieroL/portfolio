@@ -16,6 +16,7 @@ import {
 
 import { cn } from "~/lib/utils";
 import { PROJECTS } from "~/lib/constants";
+import { isAudioEnabled, setAudioEnabled } from "~/lib/audio";
 
 const pageActions = [
   {
@@ -83,6 +84,23 @@ const pageActions = [
   },
 ];
 
+const toolActions = [
+  {
+    label: "toggle mechanical sfx",
+    shortcut: "sfx",
+    description: "turn synthesized keyboard thocks and blips on/off",
+    href: "sfx:toggle",
+    icon: BriefcaseIcon,
+  },
+  {
+    label: "open quake terminal",
+    shortcut: "`",
+    description: "drop down retro interactive shell console",
+    href: "term:toggle",
+    icon: FolderGit2Icon,
+  },
+];
+
 const projectActions = PROJECTS.map((project) => ({
   label: project.title,
   shortcut: "project",
@@ -91,7 +109,7 @@ const projectActions = PROJECTS.map((project) => ({
   icon: FolderGit2Icon,
 }));
 
-const actions = [...pageActions, ...projectActions];
+const actions = [...pageActions, ...projectActions, ...toolActions];
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -116,6 +134,16 @@ export function CommandPalette() {
   const runAction = useCallback((href: string) => {
     setOpen(false);
     setQuery("");
+
+    if (href === "sfx:toggle") {
+      setAudioEnabled(!isAudioEnabled());
+      return;
+    }
+
+    if (href === "term:toggle") {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "`" }));
+      return;
+    }
 
     if (href.startsWith("copy:")) {
       void navigator.clipboard?.writeText(href.replace("copy:", ""));

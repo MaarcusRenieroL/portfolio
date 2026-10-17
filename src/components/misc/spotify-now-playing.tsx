@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Music2Icon } from "lucide-react";
+import { motion } from "motion/react";
 
 type NowPlaying = {
   isPlaying: boolean;
@@ -103,12 +104,20 @@ export function SpotifyNowPlaying() {
 
 function Equalizer() {
   return (
-    <span className="flex items-end gap-0.5" aria-hidden="true">
-      {[0, 1, 2].map((bar) => (
-        <span
-          key={bar}
-          className="w-0.5 animate-equalizer bg-primary"
-          style={{ animationDelay: `${bar * 150}ms` }}
+    <span className="flex items-end gap-[2px] h-3.5" aria-hidden="true">
+      {[12, 16, 8, 14, 10].map((maxHeight, i) => (
+        <motion.span
+          key={i}
+          className="w-0.5 bg-primary"
+          animate={{
+            height: [3, maxHeight, 5, maxHeight * 0.75, 3],
+          }}
+          transition={{
+            duration: 0.75 + i * 0.12,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
         />
       ))}
     </span>

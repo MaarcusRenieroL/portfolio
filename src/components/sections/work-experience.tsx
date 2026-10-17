@@ -1,7 +1,8 @@
 import { FC } from "react";
-import { ArrowUpRightIcon } from "lucide-react";
+import { ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
 import { SectionHeading } from "../misc/section-heading";
 import { Reveal } from "../misc/reveal";
+import { MagneticCTA } from "../misc/magnetic-cta";
 import {
   getExperiences,
   formatExperienceDuration,
@@ -9,6 +10,8 @@ import {
 
 export const WorkExperience: FC = () => {
   const sortedExperience = getExperiences();
+  // Show only 2 most recent on home page
+  const preview = sortedExperience.slice(0, 2);
 
   return (
     <section className="flex flex-col gap-8">
@@ -22,19 +25,25 @@ export const WorkExperience: FC = () => {
       <div className="relative">
         <div
           aria-hidden
-          className="absolute left-4 top-2 bottom-2 w-px bg-gradient-to-b from-primary/60 via-border to-transparent"
-        />
+          className="absolute left-4 top-2 bottom-2 w-px bg-gradient-to-b from-primary/60 via-border to-transparent overflow-hidden"
+        >
+          <div className="w-full h-16 bg-gradient-to-b from-transparent via-primary to-transparent animate-pulse" />
+        </div>
         <div className="flex flex-col gap-6">
-          {sortedExperience.map((exp, i) => (
+          {preview.map((exp, i) => (
             <Reveal key={exp.id} delay={i * 0.05}>
-              <div className="relative pl-12">
+              <div className="group relative pl-12">
                 <span
                   aria-hidden
-                  className="absolute left-2 top-4 grid size-5 place-items-center border border-primary/50 bg-background"
+                  className="absolute left-2 top-4 grid size-5 place-items-center border border-primary/50 bg-background transition-all group-hover:border-primary group-hover:scale-110"
                 >
-                  <span className="size-1.5 bg-primary" />
+                  <span className="size-1.5 bg-primary group-hover:shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
                 </span>
-                <article className="border border-border/60 bg-card/40 p-5 lift">
+                <article className="relative overflow-hidden border border-border/60 bg-card/40 p-5 transition-all hover:border-primary/50 hover:shadow-lg">
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+                  />
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <div>
                       <h3 className="text-lg font-semibold leading-tight">
@@ -82,6 +91,15 @@ export const WorkExperience: FC = () => {
           ))}
         </div>
       </div>
+
+      {sortedExperience.length > 2 && (
+        <Reveal delay={0.15}>
+          <MagneticCTA href="/experience" variant="ghost">
+            view full experience history
+            <ArrowRightIcon className="size-4" />
+          </MagneticCTA>
+        </Reveal>
+      )}
     </section>
   );
 };

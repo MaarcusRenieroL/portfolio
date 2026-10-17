@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SearchIcon, XIcon } from "lucide-react";
+import { FolderGit2Icon, SearchIcon, XIcon } from "lucide-react";
 
 import { ProjectCard } from "../projects/project-card";
 import { Reveal } from "../misc/reveal";
+import { motion } from "motion/react";
 import { Category, Project } from "~/lib/types";
 import { cn } from "~/lib/utils";
+import { playBlip, playThock } from "~/lib/audio";
 
 const filters: Array<"all" | Category> = [
   "all",
@@ -51,73 +53,97 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
     );
   }, [activeFilter, projects, query]);
 
-  const totalLabel = useMemo(() => {
-    if (activeFilter === "all") {
-      return `${visibleProjects.length} of ${projects.length}`;
-    }
-
-    return `${visibleProjects.length} ${activeFilter}`;
-  }, [activeFilter, projects.length, visibleProjects.length]);
-
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid gap-3 border border-border/60 bg-card/30 p-3 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="search projects, skills, status..."
-            className="h-11 w-full border border-border/60 bg-background/55 pl-9 pr-10 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/55"
-          />
-
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="clear project search"
-            >
-              <XIcon className="size-4" />
-            </button>
-          )}
-        </div>
-
-        <span className="border border-border/60 bg-background/55 px-3 py-2 text-xs text-muted-foreground">
-          {totalLabel}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {filters.map((filter) => {
-          const count =
-            filter === "all"
-              ? projects.length
-              : projects.filter((project) => project.category === filter).length;
-
-          if (count === 0) {
-            return null;
-          }
-
-          return (
-            <button
-              key={filter}
-              type="button"
-              onClick={() => setActiveFilter(filter)}
-              className={cn(
-                "border px-3 py-2 text-xs transition-colors",
-                activeFilter === filter
-                  ? "border-primary/60 bg-primary/10 text-primary"
-                  : "border-border/60 bg-card/30 text-muted-foreground hover:border-primary/40 hover:text-foreground",
+    <div className="flex flex-col gap-10">
+      {/* Filter and Search Control Center */}
+      <Reveal>
+        <div className="flex flex-col gap-3 border border-border/60 bg-card/40 p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            {/* Search Input */}
+            <div className="flex flex-1 items-center gap-2 border border-border/60 bg-background/60 px-3 transition-colors focus-within:border-primary/60">
+              <SearchIcon className="size-4 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  playThock();
+                }}
+                placeholder="search projects, skills, status, tools…"
+                className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground font-mono"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    playBlip();
+                  }}
+                  className="text-muted-foreground hover:text-foreground p-1"
+                  aria-label="clear search"
+                >
+                  <XIcon className="size-3.5" />
+                </button>
               )}
-            >
-              {filter}
-              <span className="ml-2 text-muted-foreground">{count}</span>
-            </button>
-          );
-        })}
-      </div>
+            </div>
 
+            {/* Quick Reset Filter */}
+            {(activeFilter !== "all" || query) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveFilter("all");
+                  setQuery("");
+                  playBlip();
+                }}
+                className="flex items-center gap-1.5 border border-primary/50 bg-primary/10 px-3 py-2 font-mono text-xs text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              >
+                <span>Reset View</span>
+                <XIcon className="size-3" />
+              </button>
+            )}
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {filters.map((filter) => {
+              const count =
+                filter === "all"
+                  ? projects.length
+                  : projects.filter((project) => project.category === filter).length;
+
+              if (count === 0) return null;
+
+              return (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => {
+                    setActiveFilter(filter);
+                    playBlip();
+                  }}
+                  className={cn(
+                    "relative h-8 border px-3 font-mono text-[11px] uppercase tracking-wider transition-colors select-none font-medium active:scale-95",
+                    activeFilter === filter
+                      ? "border-primary text-primary font-bold"
+                      : "border-border/60 bg-background/50 text-muted-foreground hover:border-primary/40 hover:text-primary",
+                  )}
+                >
+                  {activeFilter === filter && (
+                    <motion.span
+                      layoutId="active-project-tab"
+                      className="absolute inset-0 bg-primary/15 shadow-[0_0_12px_rgba(74,222,128,0.2)] pointer-events-none"
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                    />
+                  )}
+                  <span className="relative z-10">{filter} ({count})</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </Reveal>
+
+      {/* Projects Grid */}
       {visibleProjects.length > 0 ? (
         <div className="grid gap-5 md:grid-cols-2">
           {visibleProjects.map((project, index) => (
@@ -127,8 +153,23 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
           ))}
         </div>
       ) : (
-        <div className="border border-border/60 bg-card/35 p-8 text-center text-sm text-muted-foreground">
-          no matching projects
+        <div className="border border-dashed border-border/60 bg-card/30 p-12 text-center">
+          <FolderGit2Icon className="size-8 mx-auto text-primary/60" />
+          <p className="mt-3 font-mono text-xs text-primary font-bold">[0 PROJECTS MATCHED]</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            No projects found matching &quot;{query}&quot;. Try resetting the filters.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setActiveFilter("all");
+              playBlip();
+            }}
+            className="mt-4 inline-flex items-center gap-1.5 border border-primary/50 bg-primary/10 px-4 py-1.5 font-mono text-xs text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+          >
+            Clear Filters
+          </button>
         </div>
       )}
     </div>
