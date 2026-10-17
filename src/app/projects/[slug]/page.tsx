@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, ArrowRightIcon, GithubIcon, GlobeIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, GlobeIcon } from "lucide-react";
+import { GithubIcon } from "~/components/icons";
 
 import { MagneticCTA } from "~/components/misc/magnetic-cta";
 import { Reveal } from "~/components/misc/reveal";

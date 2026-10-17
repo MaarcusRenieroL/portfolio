@@ -1,11 +1,10 @@
 import Link from "next/link";
 import {
   ArrowUpRightIcon,
-  GithubIcon,
-  LinkedinIcon,
   MailIcon,
   MapPinnedIcon,
 } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "~/components/icons";
 
 import { SectionHeading } from "~/components/misc/section-heading";
 import { CopyEmailButton } from "~/components/misc/copy-email-button";

@@ -2,7 +2,8 @@
 
 import { useRef, useState, MouseEvent } from "react";
 import Link from "next/link";
-import { ArrowUpRightIcon, GithubIcon, GlobeIcon } from "lucide-react";
+import { ArrowUpRightIcon, GlobeIcon } from "lucide-react";
+import { GithubIcon } from "~/components/icons";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 
 import { Project } from "~/lib/types";
