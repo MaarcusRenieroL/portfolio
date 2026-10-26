@@ -16,6 +16,7 @@ import {
 import { useTheme } from "next-themes";
 import { playThock, playSuccess, playShutter, playBlip, isAudioEnabled, setAudioEnabled } from "~/lib/audio";
 import { PROJECTS, LINKS } from "~/lib/constants";
+import { CERTS, MASTERS_LINE, ROADMAP, TRACKS, roadmapProgress } from "~/lib/data/career";
 
 interface HistoryBlock {
   id: string;
@@ -32,6 +33,7 @@ const ALL_COMMANDS = [
   "bio",
   "projects",
   "ls",
+  "roadmap",
   "contact",
   "matrix",
   "sfx",
@@ -235,6 +237,8 @@ export const QuakeTerminal: FC = () => {
             <span>Print bio background &amp; engineering profile</span>
             <span className="text-primary font-bold">projects / ls</span>
             <span>List active builds, GitHub repos, and status</span>
+            <span className="text-primary font-bold">roadmap</span>
+            <span>Ai, cloud and security roadmap: done vs next</span>
             <span className="text-primary font-bold">matrix</span>
             <span>Toggle cyber digital rain stream</span>
             <span className="text-primary font-bold">contact</span>
@@ -381,6 +385,36 @@ export const QuakeTerminal: FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        );
+        break;
+
+      case "roadmap":
+      case "tracks":
+        rawText = MASTERS_LINE;
+        output = (
+          <div className="flex flex-col gap-3 py-1 text-sm">
+            <p className="text-muted-foreground">{MASTERS_LINE}</p>
+            {(Object.keys(TRACKS) as (keyof typeof TRACKS)[]).map((id) => {
+              const { done, total } = roadmapProgress(id);
+              const next = ROADMAP.find((r) => r.track === id && r.status !== "done");
+              return (
+                <div key={id} className="grid gap-1 sm:grid-cols-[6rem_6rem_1fr]">
+                  <span className="text-primary font-bold">{TRACKS[id].title}</span>
+                  <span className="tabular-nums">
+                    {done}/{total} done
+                  </span>
+                  <span className="text-muted-foreground">next: {next?.title ?? "all done"}</span>
+                </div>
+              );
+            })}
+            <p className="text-muted-foreground">
+              certs: {CERTS.filter((c) => c.status === "earned").map((c) => c.name).join(", ")} earned;{" "}
+              {CERTS.filter((c) => c.status === "planned").length} planned.{" "}
+              <a href="/roadmap" className="text-primary underline">
+                open /roadmap
+              </a>
+            </p>
           </div>
         );
         break;
@@ -559,7 +593,7 @@ export const QuakeTerminal: FC = () => {
         </span>
         <TerminalIcon className="size-3.5 text-primary transition-transform group-hover:scale-110" />
         <span className="hidden sm:inline font-semibold">~/terminal</span>
-        <kbd className="rounded border border-border/80 bg-background/80 px-1 text-[10px] text-muted-foreground group-hover:text-primary">
+        <kbd className="rounded border border-border/80 bg-background/80 px-1 text-[11px] text-muted-foreground group-hover:text-primary">
           `
         </kbd>
       </button>
@@ -792,7 +826,7 @@ export const QuakeTerminal: FC = () => {
                     <span className="opacity-0">{input}</span>
                     <span className="text-muted-foreground/50 select-none">
                       {ghostSuggestion}
-                      <span className="ml-2.5 rounded bg-muted/80 px-1.5 py-0.5 text-[10px] text-muted-foreground font-mono">
+                      <span className="ml-2.5 rounded bg-muted/80 px-1.5 py-0.5 text-[11px] text-muted-foreground font-mono">
                         TAB
                       </span>
                     </span>

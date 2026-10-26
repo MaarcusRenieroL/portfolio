@@ -10,7 +10,7 @@ const highlights = [
   },
   {
     k: "strongest fit",
-    v: "frontend-heavy full-stack roles, internal tools, saas workflows",
+    v: "frontend-heavy full-stack roles, internal tools, saas workflows. next: a masters in ai, cloud, and cybersecurity",
   },
   {
     k: "daily stack",
@@ -19,9 +19,11 @@ const highlights = [
 ];
 
 const proof = [
+  "building nyx, a local-first desktop launcher in tauri and rust: instant search, a clipboard manager, and a local ai assistant that never leaves the machine.",
+  "running life os, a self-hosted personal operating system: eleven spring boot modules in one process, with web, phone, and desktop clients.",
   "built zentro as a multi-tenant collaboration product experiment with organizations, permissions, workspaces, and activity-heavy workflows.",
   "created next-kit to reduce repeated setup decisions when starting opinionated next.js projects.",
-  "maintain this portfolio and dotfiles as living proof of product taste, code organization, and day-to-day engineering habits.",
+  "keep this portfolio, scanforge, and my dotfiles as living proof of product taste, code organization, and day-to-day engineering habits.",
 ];
 
 export function RecruiterBrief() {
@@ -37,16 +39,16 @@ export function RecruiterBrief() {
       <div className="grid gap-5 lg:grid-cols-[0.95fr_1fr]">
         <Reveal>
           <div className="border border-border/60 bg-card/40 p-6">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
               at a glance
             </p>
             <div className="mt-4 grid gap-3">
               {highlights.map((h) => (
                 <div key={h.k} className="border border-border/60 bg-background/50 p-3.5">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                     {h.k}
                   </p>
-                  <p className="mt-1 text-sm leading-6 text-foreground">{h.v}</p>
+                  <p className="mt-1 text-base leading-7 text-foreground">{h.v}</p>
                 </div>
               ))}
             </div>
@@ -56,11 +58,11 @@ export function RecruiterBrief() {
         <Reveal delay={0.1}>
           <div className="flex h-full flex-col justify-between gap-6 border border-border/60 bg-background/50 p-6">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
                 why keep reading
               </p>
-              <h3 className="mt-2 text-xl font-semibold">proof worth checking</h3>
-              <ul className="mt-4 space-y-3 text-sm leading-7 text-foreground/85">
+              <h3 className="mt-2 text-2xl font-semibold">proof worth checking</h3>
+              <ul className="mt-4 space-y-4 text-base leading-7 text-foreground/90">
                 {proof.map((p) => (
                   <li key={p} className="flex gap-3">
                     <span className="mt-2.5 size-1.5 shrink-0 bg-primary" />

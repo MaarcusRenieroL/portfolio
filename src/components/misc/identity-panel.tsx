@@ -25,7 +25,7 @@ type IdentityPanelProps = {
 
 const stats = [
   { label: "experience", value: "6+ yrs", sub: "tinkering & coding" },
-  { label: "core builds", value: "4 active", sub: "production & tools" },
+  { label: "core builds", value: "5 active", sub: "production & tools" },
   { label: "daily fuel", value: "3 shots", sub: "espresso & filter coffee" },
   { label: "base locale", value: "chennai", sub: "ist (utc+5:30)" },
 ];
@@ -43,7 +43,7 @@ const infoRows = [
   },
   {
     label: "preferred stack",
-    value: "TypeScript, Next.js 15, Spring Boot, PostgreSQL, Tailwind CSS",
+    value: "TypeScript, Next.js, Spring Boot, PostgreSQL, Rust (Tauri), Tailwind CSS",
     icon: CodeIcon,
   },
   {
@@ -70,7 +70,7 @@ const hardwareSpecs = [
     label: "Shell & Runtime",
     value: "Ghostty + Neovim + tmux",
     icon: CpuIcon,
-    detail: "Sub-2ms keyboard latency, custom Lua mappings & persistent sessions",
+    detail: "Custom Lua mappings, persistent sessions & a reproducible dotfiles setup",
   },
   {
     label: "Audio Telemetry",
@@ -102,7 +102,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
                   playBlip();
                 }}
                 className={cn(
-                  "relative px-2.5 py-0.5 text-[10px] uppercase font-mono transition-colors active:scale-95",
+                  "relative px-2.5 py-0.5 text-[11px] uppercase font-mono transition-colors active:scale-95",
                   activeTab === "overview"
                     ? "text-primary-foreground font-bold"
                     : "text-muted-foreground hover:text-foreground",
@@ -124,7 +124,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
                   playThock();
                 }}
                 className={cn(
-                  "relative px-2.5 py-0.5 text-[10px] uppercase font-mono transition-colors active:scale-95",
+                  "relative px-2.5 py-0.5 text-[11px] uppercase font-mono transition-colors active:scale-95",
                   activeTab === "hardware"
                     ? "text-primary-foreground font-bold"
                     : "text-muted-foreground hover:text-foreground",
@@ -141,7 +141,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
               </button>
             </div>
           )}
-          <span className="text-muted-foreground text-[10px] hidden sm:inline">
+          <span className="text-muted-foreground text-[11px] hidden sm:inline">
             COORDS: 13.0827° N, 80.2707° E
           </span>
         </div>
@@ -176,7 +176,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
             ) : (
               <div className="relative grid size-32 place-items-center border border-primary/60 bg-primary/10 font-mono text-4xl font-black text-primary shadow-[inset_0_0_50px_rgba(74,222,128,0.18)]">
                 <span>MR</span>
-                <span className="absolute bottom-1 right-2 text-[9px] font-mono text-primary/70 uppercase">
+                <span className="absolute bottom-1 right-2 text-[11px] font-mono text-primary/70 uppercase">
                   v2.4
                 </span>
               </div>
@@ -190,11 +190,11 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
                   key={s.label}
                   className="border border-border/60 bg-background/70 p-3 transition-colors hover:border-primary/50"
                 >
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
                     {s.label}
                   </p>
                   <p className="mt-1 text-base font-bold text-primary">{s.value}</p>
-                  <p className="text-[9px] text-muted-foreground/75 mt-0.5">{s.sub}</p>
+                  <p className="text-[11px] text-muted-foreground/75 mt-0.5">{s.sub}</p>
                 </div>
               ))}
             </div>
@@ -205,11 +205,11 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
         <div className="flex flex-col justify-between gap-6 p-6 sm:p-8">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] text-primary/80 uppercase tracking-widest">
+              <span className="font-mono text-[11px] text-primary/80 uppercase tracking-widest">
                 {"// SPEC_01"}
               </span>
               <span className="text-border">·</span>
-              <span className="font-mono text-[10px] text-muted-foreground uppercase">
+              <span className="font-mono text-[11px] text-muted-foreground uppercase">
                 {activeTab === "overview" ? "ENGINEER PROFILE" : "LOCAL HARDWARE & DX RIG"}
               </span>
             </div>
@@ -240,7 +240,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
                   >
                     <Icon className="mt-0.5 size-4 text-primary transition-transform group-hover:scale-110" />
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                         {label}
                       </p>
                       <p className="mt-0.5 text-xs sm:text-sm text-foreground/90 font-medium">
@@ -267,7 +267,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
                     <Icon className="mt-0.5 size-4 text-primary transition-transform group-hover:scale-110" />
                     <div>
                       <div className="flex items-center justify-between">
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                        <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
                           {label}
                         </p>
                       </div>
@@ -284,7 +284,7 @@ export function IdentityPanel({ compact = false }: IdentityPanelProps) {
             )}
           </AnimatePresence>
 
-          <div className="pt-2 flex items-center justify-between border-t border-border/40 font-mono text-[10px] text-muted-foreground">
+          <div className="pt-2 flex items-center justify-between border-t border-border/40 font-mono text-[11px] text-muted-foreground">
             <span>LOCATION: CHENNAI, TN (IN)</span>
             <span className="text-primary font-bold">STATUS: AVAILABLE FOR IMPACT</span>
           </div>

@@ -62,7 +62,7 @@ export function SpotifyNowPlaying() {
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+        <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
           {track?.isPlaying ? (
             <>
               <Equalizer />

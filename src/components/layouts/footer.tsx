@@ -25,29 +25,36 @@ export const Footer = () => {
             key={link.name}
             href={link.url}
             target="_blank"
-            className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+            className="text-base text-muted-foreground transition-colors duration-300 hover:text-primary"
           >
             {link.name}
           </Link>
         ))}
 
         <Link
+          href="/stack"
+          className="text-base text-muted-foreground transition-colors duration-300 hover:text-primary"
+        >
+          stack
+        </Link>
+
+        <Link
           href="/about"
-          className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+          className="text-base text-muted-foreground transition-colors duration-300 hover:text-primary"
         >
           about
         </Link>
 
         <Link
           href="/contact"
-          className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+          className="text-base text-muted-foreground transition-colors duration-300 hover:text-primary"
         >
           contact
         </Link>
 
         <Link
           href="/resume"
-          className="text-sm text-muted-foreground transition-colors duration-300 hover:text-primary"
+          className="text-base text-muted-foreground transition-colors duration-300 hover:text-primary"
         >
           resume
         </Link>

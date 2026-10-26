@@ -36,7 +36,7 @@ export default function ContactPage() {
   return (
     <section className="flex w-full flex-col gap-10">
       <SectionHeading
-        index="05"
+        index="07"
         title="contact"
         eyebrow="open channel"
         description="reach out for full-stack work, product builds, collaborations, or just a good technical conversation."
@@ -54,12 +54,13 @@ export default function ContactPage() {
             <span>CHENNAI, INDIA</span>
           </div>
 
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">
             available for focused builds
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             best fit: frontend-heavy full-stack work, internal tools, saas
             workflows, project architecture, and product-minded implementation.
+            also keen on ai, cloud, and security projects as i prepare for a masters in those areas.
           </p>
 
           <div className="mt-5 flex items-center gap-2 font-mono text-xs text-muted-foreground">
@@ -103,10 +104,10 @@ export default function ContactPage() {
               </span>
 
               <span className="min-w-0">
-                <span className="block font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="block font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   {link.label}
                 </span>
-                <span className="mt-0.5 block truncate text-sm font-medium text-foreground">
+                <span className="mt-0.5 block truncate text-base font-medium text-foreground">
                   {link.value}
                 </span>
               </span>

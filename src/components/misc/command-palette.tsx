@@ -10,6 +10,7 @@ import {
   LayersIcon,
   MailIcon,
   MessageSquareIcon,
+  RouteIcon,
   SearchIcon,
   UserIcon,
 } from "lucide-react";
@@ -39,6 +40,13 @@ const pageActions = [
     description: "learn the person behind the repos",
     href: "/about",
     icon: UserIcon,
+  },
+  {
+    label: "roadmap",
+    shortcut: "d",
+    description: "ai, cloud and security: what is done and what is next",
+    href: "/roadmap",
+    icon: RouteIcon,
   },
   {
     label: "stack",
@@ -253,7 +261,7 @@ export function CommandPalette() {
       >
         <SearchIcon className="size-3.5" />
         <span className="hidden text-[11px] sm:inline">search</span>
-        <span className="hidden min-w-10 border border-border/60 bg-background/70 px-1.5 py-0.5 text-center text-[10px] leading-none text-muted-foreground sm:inline">
+        <span className="hidden min-w-10 border border-border/60 bg-background/70 px-1.5 py-0.5 text-center text-[11px] leading-none text-muted-foreground sm:inline">
           ⌘K
         </span>
       </button>
@@ -274,7 +282,7 @@ export function CommandPalette() {
                   command center
                 </span>
 
-                <span className="min-w-9 border border-border/60 px-2 py-1 text-center text-[10px] text-muted-foreground">
+                <span className="min-w-9 border border-border/60 px-2 py-1 text-center text-[11px] text-muted-foreground">
                   esc
                 </span>
               </div>
@@ -335,7 +343,7 @@ export function CommandPalette() {
                       </span>
                     </span>
 
-                    <span className="hidden min-w-12 shrink-0 border border-border/60 px-2 py-1 text-center text-[10px] text-muted-foreground sm:inline">
+                    <span className="hidden min-w-12 shrink-0 border border-border/60 px-2 py-1 text-center text-[11px] text-muted-foreground sm:inline">
                       {action.shortcut}
                     </span>
                   </button>

@@ -224,7 +224,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
               Curated Production Architectures
             </h2>
           </div>
-          <span className="font-mono text-[10px] text-muted-foreground uppercase hidden sm:inline">
+          <span className="font-mono text-[11px] text-muted-foreground uppercase hidden sm:inline">
             PROVEN DEPLOYMENT CONFIGS
           </span>
         </div>
@@ -245,7 +245,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                   <div className="flex items-center justify-between gap-2">
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 border px-2 py-0.5 font-mono text-[9px] font-semibold tracking-wider uppercase",
+                        "inline-flex items-center gap-1 border px-2 py-0.5 font-mono text-[11px] font-semibold tracking-wider uppercase",
                         preset.accent,
                       )}
                     >
@@ -265,7 +265,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                     {preset.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="rounded border border-border/70 bg-background/70 px-2 py-0.5 font-mono text-[10px] text-foreground/85"
+                        className="rounded border border-border/70 bg-background/70 px-2 py-0.5 font-mono text-[11px] text-foreground/85"
                       >
                         {tech}
                       </span>
@@ -274,7 +274,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                 </div>
 
                 <div className="mt-5 border-t border-border/40 pt-3">
-                  <p className="font-mono text-[10px] text-primary/90 flex items-center gap-1.5">
+                  <p className="font-mono text-[11px] text-primary/90 flex items-center gap-1.5">
                     <CheckCircle2Icon className="size-3 text-primary shrink-0" />
                     <span>{preset.metric}</span>
                   </p>
@@ -295,7 +295,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                 Architectural Rationales: &quot;Why I Picked This&quot;
               </h3>
             </div>
-            <span className="font-mono text-[10px] text-muted-foreground">
+            <span className="font-mono text-[11px] text-muted-foreground">
               CLICK A FLAGSHIP TOOL TO VIEW TRADEOFF ANALYSIS
             </span>
           </div>
@@ -342,7 +342,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                 className="grid gap-3 sm:grid-cols-2 border border-border/50 bg-background/60 p-4 font-mono text-xs"
               >
                 <div>
-                  <span className="text-[10px] uppercase text-primary font-semibold tracking-wider flex items-center gap-1">
+                  <span className="text-[11px] uppercase text-primary font-semibold tracking-wider flex items-center gap-1">
                     <ArrowRightIcon className="size-3" /> Core Engineering Advantage
                   </span>
                   <p className="mt-1 text-sm font-sans leading-relaxed text-foreground/90">
@@ -350,7 +350,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                   </p>
                 </div>
                 <div className="border-t border-border/40 sm:border-t-0 sm:border-l sm:pl-4 pt-2 sm:pt-0">
-                  <span className="text-[10px] uppercase text-amber-400 font-semibold tracking-wider flex items-center gap-1">
+                  <span className="text-[11px] uppercase text-amber-400 font-semibold tracking-wider flex items-center gap-1">
                     {"// Evaluated Tradeoff"}
                   </span>
                   <p className="mt-1 text-sm font-sans leading-relaxed text-muted-foreground">
@@ -497,7 +497,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                   <div className="mb-4 flex items-baseline justify-between border-b border-border/40 pb-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] text-primary/70">
+                        <span className="font-mono text-[11px] text-primary/70">
                           [{String(i + 1).padStart(2, "0")}]
                         </span>
                         <p className="font-mono text-xs font-semibold uppercase tracking-wider text-primary">
@@ -508,7 +508,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                         {group.title}
                       </h2>
                     </div>
-                    <span className="rounded border border-border/70 bg-background/70 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                    <span className="rounded border border-border/70 bg-background/70 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
                       {String(group.items.length).padStart(2, "0")} units
                     </span>
                   </div>
@@ -548,7 +548,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                           )}
                           <span>{item}</span>
                           {hasProjects && (
-                            <span className="text-[9px] text-primary/70 font-semibold opacity-70 group-hover/item:opacity-100">
+                            <span className="text-[11px] text-primary/70 font-semibold opacity-70 group-hover/item:opacity-100">
                               [{connectedProjects.length}]
                             </span>
                           )}
@@ -559,7 +559,7 @@ export function StackExplorer({ groups }: StackExplorerProps) {
                 </div>
 
                 {/* Micro Footer Notice */}
-                <div className="mt-5 pt-3 border-t border-border/30 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+                <div className="mt-5 pt-3 border-t border-border/30 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
                   <span>DISCIPLINE_VERIFIED</span>
                   <span className="text-primary/80">READY FOR PRODUCTION</span>
                 </div>

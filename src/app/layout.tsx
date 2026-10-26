@@ -6,7 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "~/components/providers/theme-provider";
 import { HighlightProvider } from "~/components/providers/highlight-provider";
 import { ClickRipple } from "~/components/misc/click-ripple";
-import { QuakeTerminal } from "~/components/misc/quake-terminal";
+import { LazyTerminal } from "~/components/misc/lazy-terminal";
 import { HudTelemetry } from "~/components/misc/hud-telemetry";
 import { Navbar } from "~/components/layouts/navbar";
 import { Footer } from "~/components/layouts/footer";
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     template: "%s | maarcus reniero l",
   },
   description:
-    "full-stack software engineer building product-minded web apps across frontend, backend, data, and tooling.",
+    "full-stack software engineer in chennai building product-minded web apps and local-first tools, now moving toward ai, cloud, and cybersecurity.",
 
   metadataBase: new URL(
     process.env.NODE_ENV === "development"
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "maarcus reniero l",
     description:
-      "full-stack software engineer building product-minded web apps across frontend, backend, data, and tooling.",
+      "full-stack software engineer in chennai building product-minded web apps and local-first tools, now moving toward ai, cloud, and cybersecurity.",
     url: "https://maarcus.dev",
     siteName: "maarcus reniero l",
     images: [
@@ -89,8 +89,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} min-h-screen antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} min-h-svh antialiased`}
       >
+        <a
+          href="#main"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 border border-primary bg-background px-4 py-2 text-sm text-primary focus:translate-y-0"
+        >
+          skip to content
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
@@ -101,12 +107,12 @@ export default function RootLayout({
               <PageTransitionProvider>
                 <ScrollProgress />
                 <ClickRipple />
-                <QuakeTerminal />
+                <LazyTerminal />
                 <Navbar />
 
-                <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
+                <div className="mx-auto flex min-h-svh w-full max-w-6xl flex-col border-x border-border/55 bg-background/90 px-5 py-5 shadow-[0_0_80px_rgba(0,0,0,0.18)] backdrop-blur md:px-10 md:py-8">
                   <HudTelemetry />
-                  <main className="flex flex-1 pb-12 pt-4 md:pb-16 md:pt-6">{children}</main>
+                  <main id="main" className="flex flex-1 pb-12 pt-4 md:pb-16 md:pt-6">{children}</main>
 
                   <Footer />
                 </div>

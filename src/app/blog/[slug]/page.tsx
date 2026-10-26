@@ -96,7 +96,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.title}
           </h1>
 
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {post.description}
           </p>
 
@@ -105,7 +105,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
+                  className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
                 >
                   #{tag}
                 </span>
@@ -115,7 +115,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {/* Markdown Content */}
-        <div className="prose prose-zinc max-w-none pt-8 text-foreground/90 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-code:border prose-code:border-border/60 prose-code:bg-background/80 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-xs prose-pre:border prose-pre:border-border/60 prose-pre:bg-background/90">
+        <div className="prose prose-zinc sm:prose-lg max-w-none pt-8 text-foreground/90 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-code:border prose-code:border-border/60 prose-code:bg-background/80 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-xs prose-pre:border prose-pre:border-border/60 prose-pre:bg-background/90">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}

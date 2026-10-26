@@ -88,7 +88,7 @@ export function DiscordPresence() {
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+        <span className="block font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
           {statusLabel[status]}
         </span>
         <span className="mt-0.5 block truncate text-sm text-foreground">

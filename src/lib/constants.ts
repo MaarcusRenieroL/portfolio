@@ -8,6 +8,161 @@ import {
 
 export const PROJECTS: Project[] = [
   {
+    id: "nyx",
+    title: "nyx",
+    description:
+      "a local-first desktop launcher and command layer for macOS: instant file and app search, a clipboard manager, and a local ai assistant that never leaves the machine.",
+    features: [
+      "warm command window summoned by a global hotkey, with inline calculations and grouped results",
+      "native rust search core over a full-text index of local files",
+      "local ai through ollama, with source citations and streamed tokens",
+      "clipboard history with automatic redaction of card numbers and api keys",
+      "sandboxed plugins with a manifest format and an importer for raycast and alfred packages",
+      "zero-egress log inspector that shows the app makes no outbound calls",
+    ],
+    githubLink: "https://github.com/MaarcusRenieroL/nyx",
+    hostedLink: "",
+    startDate: "2026-10-19",
+    endDate: null,
+    isOngoing: true,
+    category: "desktop app",
+    tracks: ["ai", "security"],
+    skills: ["tauri", "rust", "react", "typescript", "next.js", "tailwind css", "sqlite", "ollama"],
+    highlight: true,
+    status: "active",
+    role: "designer and sole developer",
+    impact:
+      "an everyday launcher built around two constraints: results appear in microseconds, and nothing is ever sent to a server.",
+    challenge:
+      "a launcher is judged in the first hundred milliseconds. search, the window itself and the ai side all had to stay fast and stay offline at the same time.",
+    approach: [
+      "kept one warm window alive in memory so opening it costs nothing.",
+      "put search, telemetry and secret scanning in a rust core behind tauri 2, with a react 19 interface on top.",
+      "designed the whole surface set first (launcher, action panel, clipboard, settings, plugin docs) and built the web landing page and docs from the same design tokens.",
+    ],
+    outcome: [
+      "seventeen designed surfaces across the desktop app and the web site.",
+      "a benchmark in the repo reports a 420 µs average search over 50,000 files.",
+      "a monorepo with a shared types and design-token package between desktop and web.",
+    ],
+    decisions: [
+      "treated privacy as a build constraint: no outbound network code, and a log inspector to prove it.",
+      "ran the ai through a local ollama bridge instead of a hosted model.",
+      "made plugin authors write against a small sandboxed api instead of full system access.",
+    ],
+    lessons: [
+      "speed is a product decision made on day one, not an optimisation you add later.",
+      "a design system pays for itself the moment a second app needs it.",
+    ],
+    nextSteps: [
+      "ship signed installers.",
+      "open the plugin registry.",
+      "finish the encrypted peer-to-peer sync.",
+    ],
+    preview: "terminal",
+  },
+  {
+    id: "life-os",
+    title: "life os",
+    description:
+      "a self-hosted personal operating system: passwords, money, jobs, habits, notes, tasks, calendar and workouts in one backend, with web, phone and desktop clients.",
+    features: [
+      "eleven backend modules in one spring boot process, each with its own postgres schema",
+      "password vault with browser-extension autofill",
+      "finance tracker, job tracker, habit tracker, notes, tasks and goals, calendar, workouts",
+      "react web app, react native phone app and a tauri desktop app in one monorepo",
+      "one-command docker install that generates its own secrets",
+      "private remote access through tailscale or a cloudflare tunnel",
+    ],
+    githubLink: "https://github.com/MaarcusRenieroL/life-os",
+    hostedLink: "",
+    startDate: "2026-07-11",
+    endDate: null,
+    isOngoing: true,
+    category: "full stack",
+    tracks: ["security", "cloud"],
+    skills: ["java", "spring boot", "postgresql", "react", "react native", "tauri", "docker", "nginx"],
+    highlight: true,
+    status: "active",
+    role: "architect and sole developer",
+    impact:
+      "replaces a stack of separate apps with one system i own, run and back up myself.",
+    challenge:
+      "many separate services would have been simpler to draw and far harder to run. the goal was clean module boundaries without paying the cost of microservices.",
+    approach: [
+      "built each domain as its own library jar with its own migrations and schema, then assembled them into a single spring boot app.",
+      "used in-process events and caches instead of a message broker.",
+      "put nginx in front as the one gateway and wrote an installer so a fresh machine needs one command.",
+    ],
+    outcome: [
+      "eleven modules behind one process and one database.",
+      "web, phone and desktop clients over the same api.",
+      "ci that tests every module and builds the web and mobile apps.",
+    ],
+    decisions: [
+      "chose a modular monolith over microservices, for operations and for solo maintenance.",
+      "gave every module its own schema and migration history so it can be split out later.",
+      "kept secrets generated at install time and out of the repository.",
+    ],
+    lessons: [
+      "module boundaries matter more than process boundaries.",
+      "a project you use daily finds its own bugs faster than any test plan.",
+    ],
+    nextSteps: [
+      "automate deploys and image publishing.",
+      "add more automation rules in the core module.",
+      "harden backups and restore drills.",
+    ],
+    preview: "system",
+  },
+  {
+    id: "scan-forge",
+    title: "scanforge",
+    description:
+      "an interactive terminal tool that scans a project, lets you pick files or whole extensions, and copies their contents to the clipboard, ready to paste into a prompt or a ticket.",
+    features: [
+      "arrow-key navigation, space to select, live fuzzy search",
+      "two modes, by extension or by individual file, switched with tab",
+      "respects .gitignore and skips binary files",
+      "copies straight to the clipboard on macOS",
+      "one-line install script",
+    ],
+    githubLink: "https://github.com/MaarcusRenieroL/scan-forge",
+    hostedLink: "",
+    startDate: "2026-04-12",
+    endDate: null,
+    isOngoing: false,
+    category: "cli",
+    skills: ["java", "cli"],
+    status: "shipped",
+    role: "designer and developer",
+    impact:
+      "turns the slow job of collecting the right files from a repository into a few keystrokes.",
+    challenge:
+      "a picker has to feel instant on a large repository and never offer files that don't belong, such as build output or binaries.",
+    approach: [
+      "read the .gitignore first so ignored folders are never walked.",
+      "detected binary files up front and left them out of the list.",
+      "kept the interface to a handful of keys so it can be used without looking.",
+    ],
+    outcome: [
+      "a single command that goes from a project folder to pasted context.",
+      "installs with one curl command.",
+    ],
+    decisions: [
+      "required java 17 and macOS (it uses pbcopy) rather than half-supporting every platform.",
+      "built selection by extension as the default, since most requests are 'all the java files'.",
+    ],
+    lessons: [
+      "a small tool that does one job well gets opened more often than a big one.",
+    ],
+    nextSteps: [
+      "support linux and windows clipboards.",
+      "add output size estimates before copying.",
+    ],
+    preview: "terminal",
+  },
+  {
     id: "dotfiles",
     title: "dotfiles",
     description:
@@ -173,6 +328,7 @@ export const PROJECTS: Project[] = [
     endDate: null,
     isOngoing: true,
     category: "full stack",
+    tracks: ["security"],
     skills: [
       "next.js",
       "tailwind css",
@@ -332,9 +488,9 @@ export const NAV_LINKS: NavLink = [
   "home",
   "projects",
   "experience",
+  "roadmap",
   "blog",
   "about",
-  "stack",
   "contact",
   "resume",
 ];

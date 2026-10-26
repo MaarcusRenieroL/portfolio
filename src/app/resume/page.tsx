@@ -9,7 +9,7 @@ export default function ResumePage() {
     <section className="flex w-full flex-col gap-10">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <SectionHeading
-          index="06"
+          index="08"
           eyebrow="career snapshot"
           title="resume"
           description="a downloadable pdf version of my experience, projects, and technical skills."
@@ -51,7 +51,7 @@ export default function ResumePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
             <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse" />
             <span>ready</span>
           </div>

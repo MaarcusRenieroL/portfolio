@@ -122,30 +122,33 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       />
 
       {/* 01 / 02 Index Numbering */}
-      <div className="pointer-events-none absolute right-4 top-4 font-mono text-[10px] tabular-nums text-muted-foreground/70 group-hover:text-primary transition-colors">
+      <div className="pointer-events-none absolute right-4 top-4 font-mono text-[11px] tabular-nums text-muted-foreground/70 group-hover:text-primary transition-colors">
         {String(index + 1).padStart(2, "0")}
       </div>
 
       {/* Category & Status */}
-      <div className="pointer-events-none relative flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+      <div className="pointer-events-none relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
         <span>{project.category}</span>
         <span className="h-px w-4 bg-primary/40" />
         <span className="text-muted-foreground">{project.status}</span>
+        {project.tracks?.length ? (
+          <span className="text-muted-foreground">· {project.tracks.join(" · ")}</span>
+        ) : null}
         {isHighlighted && (
-          <span className="ml-auto inline-flex items-center gap-1 text-[9px] text-primary animate-pulse">
+          <span className="ml-auto inline-flex items-center gap-1 text-[11px] text-primary animate-pulse">
             ★ MATCH: {hoveredSkill}
           </span>
         )}
       </div>
 
       {/* Title */}
-      <h3 className="pointer-events-none relative mt-3 text-2xl font-semibold tracking-tight">
+      <h3 className="pointer-events-none relative mt-3 text-3xl font-semibold tracking-tight">
         {project.title}
         <ArrowUpRightIcon className="ml-1 inline size-5 -translate-y-0.5 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:-translate-y-1 group-hover:text-primary" />
       </h3>
 
       {/* Description */}
-      <p className="pointer-events-none relative mt-3 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-muted-foreground">
+      <p className="pointer-events-none relative mt-3 line-clamp-3 min-h-[5.25rem] text-base leading-7 text-muted-foreground">
         {project.description}
       </p>
 

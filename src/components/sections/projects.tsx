@@ -11,7 +11,7 @@ export const Projects = () => {
   return (
     <section className="flex w-full flex-col gap-8">
       <SectionHeading
-        index="02"
+        index="03"
         eyebrow="selected work"
         title="featured projects"
         description="products, tools, and experiments — the ones i point to when someone asks how i think."

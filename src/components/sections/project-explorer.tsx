@@ -6,13 +6,15 @@ import { FolderGit2Icon, SearchIcon, XIcon } from "lucide-react";
 import { ProjectCard } from "../projects/project-card";
 import { Reveal } from "../misc/reveal";
 import { motion } from "motion/react";
-import { Category, Project } from "~/lib/types";
+import { Category, Project, TrackId } from "~/lib/types";
 import { cn } from "~/lib/utils";
 import { playBlip, playThock } from "~/lib/audio";
 
 const filters: Array<"all" | Category> = [
   "all",
   "full stack",
+  "desktop app",
+  "cli",
   "front end",
   "miscellaneous",
   "freelance",
@@ -25,14 +27,18 @@ type ProjectExplorerProps = {
 export function ProjectExplorer({ projects }: ProjectExplorerProps) {
   const [activeFilter, setActiveFilter] = useState<"all" | Category>("all");
   const [query, setQuery] = useState("");
+  const [track, setTrack] = useState<"all" | TrackId>("all");
 
   const visibleProjects = useMemo(() => {
     const value = query.trim().toLowerCase();
 
-    const filtered =
+    const byCategory =
       activeFilter === "all"
         ? projects
         : projects.filter((project) => project.category === activeFilter);
+
+    const filtered =
+      track === "all" ? byCategory : byCategory.filter((project) => project.tracks?.includes(track));
 
     if (!value) {
       return filtered;
@@ -51,7 +57,7 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
         .toLowerCase()
         .includes(value),
     );
-  }, [activeFilter, projects, query]);
+  }, [activeFilter, projects, query, track]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -87,11 +93,12 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
             </div>
 
             {/* Quick Reset Filter */}
-            {(activeFilter !== "all" || query) && (
+            {(activeFilter !== "all" || query || track !== "all") && (
               <button
                 type="button"
                 onClick={() => {
                   setActiveFilter("all");
+                  setTrack("all");
                   setQuery("");
                   playBlip();
                 }}
@@ -101,6 +108,30 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
                 <XIcon className="size-3" />
               </button>
             )}
+          </div>
+
+          {/* Track filter */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-1" role="group" aria-label="filter by track">
+            <span className="mr-1 font-mono text-[11px] text-muted-foreground">track</span>
+            {(["all", "ai", "cloud", "security"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                aria-pressed={track === t}
+                onClick={() => {
+                  setTrack(t);
+                  playBlip();
+                }}
+                className={cn(
+                  "h-8 border px-3 font-mono text-[11px] uppercase tracking-wider transition-colors",
+                  track === t
+                    ? "border-primary bg-primary/15 text-primary"
+                    : "border-border/60 bg-background/50 text-muted-foreground hover:border-primary/40 hover:text-primary",
+                )}
+              >
+                {t}
+              </button>
+            ))}
           </div>
 
           {/* Category Pills */}
@@ -164,6 +195,7 @@ export function ProjectExplorer({ projects }: ProjectExplorerProps) {
             onClick={() => {
               setQuery("");
               setActiveFilter("all");
+              setTrack("all");
               playBlip();
             }}
             className="mt-4 inline-flex items-center gap-1.5 border border-primary/50 bg-primary/10 px-4 py-1.5 font-mono text-xs text-primary hover:bg-primary hover:text-primary-foreground transition-all"

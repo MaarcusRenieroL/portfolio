@@ -41,7 +41,7 @@ export function ZoroLoader({ text = "loading" }: ZoroLoaderProps) {
               {text}
             </p>
 
-            <p className="text-[10px] tracking-[0.4em] text-green-700/60 dark:text-green-300/50">
+            <p className="text-[11px] tracking-[0.4em] text-green-700/60 dark:text-green-300/50">
               stand by
             </p>
           </div>

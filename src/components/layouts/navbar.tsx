@@ -91,8 +91,8 @@ export const Navbar: FC = () => {
           <span className="grid size-7 shrink-0 place-items-center border border-primary/45 bg-primary/10 text-xs text-primary">
             mr
           </span>
-          <span className="hidden truncate sm:inline">maarcus.dev</span>
-          <span className="truncate text-xs font-medium text-muted-foreground sm:hidden">
+          <span className="hidden truncate xl:inline">maarcus.dev</span>
+          <span className="truncate text-xs font-medium text-muted-foreground lg:hidden">
             {activeLink}
           </span>
         </Link>

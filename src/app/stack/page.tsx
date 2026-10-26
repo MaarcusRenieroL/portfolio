@@ -58,6 +58,24 @@ const PERSONAL_STACK: StackSection = {
   description: "My go-to tools for side projects, open source, and personal builds.",
   groups: [
     {
+      label: "AI & Security",
+      items: [
+        { name: "Ollama", url: "https://ollama.com" },
+        { name: "Wireshark", url: "https://www.wireshark.org" },
+        { name: "Linux", url: "https://www.kernel.org" },
+      ],
+    },
+    {
+      label: "Desktop & Systems",
+      items: [
+        { name: "Tauri", url: "https://tauri.app" },
+        { name: "Rust", url: "https://www.rust-lang.org" },
+        { name: "Spring Boot", url: "https://spring.io/projects/spring-boot" },
+        { name: "React Native", url: "https://reactnative.dev" },
+        { name: "Nginx", url: "https://nginx.org" },
+      ],
+    },
+    {
       label: "Frontend",
       items: [
         { name: "Next.js", url: "https://nextjs.org" },
@@ -149,12 +167,12 @@ export default function StackPage() {
   return (
     <section className="flex w-full flex-col gap-10">
       <SectionHeading
-        index="04"
+        index="06"
         title="stack"
         eyebrow="tools and range"
         description="the tools i use, the systems i am comfortable around, and the edges i am actively sharpening."
         action={
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             {totalCount} entries
           </span>
         }
@@ -213,16 +231,16 @@ export default function StackPage() {
             <Reveal key={section.title} delay={si * 0.05}>
               <div className="flex flex-col gap-5">
                 <div className="border-b border-border/50 pb-3">
-                  <h2 className="text-lg font-bold tracking-tight text-foreground">
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground">
                     {section.title}
                   </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{section.description}</p>
+                  <p className="mt-1 text-base text-muted-foreground">{section.description}</p>
                 </div>
 
                 <div className="flex flex-col gap-6">
                   {section.groups.map((group) => (
                     <div key={group.label} className="flex flex-col gap-3">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+                      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
                         {group.label}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -232,10 +250,10 @@ export default function StackPage() {
                             href={item.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="group inline-flex items-center gap-1.5 border border-border/60 bg-card/40 px-3 py-1.5 font-mono text-xs text-foreground/85 transition-all hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
+                            className="group inline-flex items-center gap-1.5 border border-border/60 bg-card/40 px-3.5 py-2 font-mono text-sm text-foreground/90 transition-all hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
                           >
                             {item.name}
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[9px] text-primary/70">↗</span>
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-primary/70">↗</span>
                           </a>
                         ))}
                       </div>

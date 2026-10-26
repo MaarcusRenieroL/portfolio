@@ -1,3 +1,5 @@
+export type TrackId = "ai" | "cloud" | "security";
+
 export type Project = {
   id: string;
   title: string;
@@ -13,6 +15,8 @@ export type Project = {
   /** optional screenshot/preview, e.g. "/projects/zentro.png" in /public */
   image?: string;
   highlight?: boolean;
+  /** which career tracks this project is evidence for */
+  tracks?: TrackId[];
   status: "active" | "maintained" | "shipped" | "archived";
   role: string;
   impact: string;
@@ -53,40 +57,9 @@ export type StackGroup = {
 export type Category =
   | "full stack"
   | "front end"
+  | "desktop app"
+  | "cli"
   | "miscellaneous"
   | "freelance";
 
-export type Skill =
-  | "next.js"
-  | "typescript"
-  | "next auth"
-  | "tailwind css"
-  | "shadcn ui"
-  | "zod"
-  | "react hook form"
-  | "resend"
-  | "prisma"
-  | "postgresql"
-  | "trpc"
-  | "uploadthing"
-  | "html"
-  | "css"
-  | "js"
-  | "server actions"
-  | "mongodb"
-  | "unsplash api"
-  | "upstash redis"
-  | "drizzle orm"
-  | "stripe"
-  | "lua"
-  | "yml"
-  | "toml"
-  | "clerk"
-  | "webhooks"
-  | "middleware"
-  | "vercel"
-  | "node.js"
-  | "javascript"
-  | "expressjs"
-  | "liquid"
-  | "shopify";
+export type Skill = string;

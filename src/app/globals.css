@@ -193,19 +193,13 @@
 
   body,
   nav,
-  header,
-  main,
   footer,
   button,
-  input,
-  [class*="bg-"],
-  [class*="border-"],
-  [class*="text-"] {
+  input {
     transition:
       background-color 250ms ease,
       border-color 250ms ease,
-      color 250ms ease,
-      box-shadow 250ms ease;
+      color 250ms ease;
   }
 }
 
@@ -263,7 +257,12 @@ kbd,
 
 /* fixed project card body region */
 .project-card {
-  min-height: 340px;
+  min-height: 0;
+}
+@media (min-width: 640px) {
+  .project-card {
+    min-height: 360px;
+  }
 }
 
 /* pagination */
@@ -504,6 +503,12 @@ html[data-theme-transition="bottom-left"]::view-transition-new(root) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .grid-pulse,
+  .animate-pulse,
+  .animate-ping,
+  .matrix-column {
+    animation: none !important;
+  }
   *,
   *::before,
   *::after {

@@ -16,7 +16,7 @@ export const WorkExperience: FC = () => {
   return (
     <section className="flex flex-col gap-8">
       <SectionHeading
-        index="03"
+        index="04"
         eyebrow="timeline"
         title="work experience"
         description="a compact map of the teams and problems i've contributed to."
@@ -46,7 +46,7 @@ export const WorkExperience: FC = () => {
                   />
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <div>
-                      <h3 className="text-lg font-semibold leading-tight">
+                      <h3 className="text-xl font-semibold leading-tight">
                         {exp.title}
                       </h3>
                       {exp.href && (
@@ -54,14 +54,14 @@ export const WorkExperience: FC = () => {
                           href={exp.href}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-0.5 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                          className="mt-0.5 inline-flex items-center gap-1 text-base text-primary hover:underline"
                         >
                           {exp.company}
                           <ArrowUpRightIcon className="size-3.5" />
                         </a>
                       )}
                       {!exp.href && (
-                        <p className="mt-0.5 text-sm text-primary">
+                        <p className="mt-0.5 text-base text-primary">
                           {exp.company}
                         </p>
                       )}
@@ -70,7 +70,7 @@ export const WorkExperience: FC = () => {
                       {formatExperienceDuration(exp)}
                     </span>
                   </div>
-                  <ul className="mt-3 space-y-1.5 text-sm leading-6 text-foreground/85">
+                  <ul className="mt-3 space-y-2 text-base leading-7 text-foreground/90">
                     {exp.highlights.map((h) => (
                       <li key={h} className="flex gap-2.5">
                         <span className="mt-2 size-1 shrink-0 bg-primary/60" />

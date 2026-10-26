@@ -25,16 +25,23 @@ export function HudTelemetry() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
 
+    // one update per frame, and only when the rounded percentage changes
+    let frame = 0;
     const onScroll = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollable > 0) {
-        setScrollPos(Math.round((window.scrollY / scrollable) * 100));
-      }
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollable > 0) {
+          setScrollPos(Math.round((window.scrollY / scrollable) * 100));
+        }
+      });
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       clearInterval(interval);
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
@@ -49,7 +56,7 @@ export function HudTelemetry() {
         <span className="text-foreground font-semibold tabular-nums">{timeStr || "10:00:00 AM"}</span>
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="hidden items-center gap-1.5 sm:flex">
         <ActivityIcon className="size-3.5 text-primary animate-pulse" />
         <span>STATUS:</span>
         <span className="text-primary font-medium">SYS_ONLINE [24ms]</span>

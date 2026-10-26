@@ -85,6 +85,14 @@ const milestones = [
     deliverables: ["Zentro multi-tenancy", "Trackwise finance engine", "Custom dotfiles / Neovim DX"],
   },
   {
+    year: "2026",
+    badge: "SYSTEMS",
+    title: "Nyx, Life OS & ScanForge",
+    detail:
+      "Built a local-first desktop launcher with a Rust core and a local AI assistant, a self-hosted personal operating system on a modular Spring Boot backend, and a terminal file picker.",
+    deliverables: ["Nyx (Tauri 2 + Rust)", "Life OS (11 modules, 3 clients)", "ScanForge CLI"],
+  },
+  {
     year: "2025 – PRESENT",
     badge: "ENTERPRISE",
     title: "Developer 1 — Software Engineering @ UST Healthproof",
@@ -135,7 +143,7 @@ export default function AboutPage() {
   return (
     <section className="flex w-full flex-col gap-10">
       <SectionHeading
-        index="03"
+        index="05"
         title="about"
         eyebrow="person behind the repos"
         description="a full-stack developer from chennai who builds across the stack and is growing toward understanding, building, and running serious software end to end."
@@ -169,7 +177,7 @@ export default function AboutPage() {
               from the ground up. To make that ambition real, I deliberately cultivate cross-disciplinary
               range: from the physical and networking fundamentals (CCNA/CCNP, Linux system administration)
               to heavy enterprise batch pipelines (Spring Batch, Java 21, MySQL Server), modern type-safe
-              web products (Next.js 15, TypeScript, Tailwind CSS, tRPC, Drizzle ORM), and custom developer
+              web products (Next.js, TypeScript, Tailwind CSS, tRPC, Drizzle ORM), and custom developer
               workflows (Neovim, tmux, Ghostty).
             </p>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -180,13 +188,20 @@ export default function AboutPage() {
             </p>
           </div>
 
+          <p className="mt-4 text-muted-foreground text-sm sm:text-base leading-relaxed">
+            Next, I&apos;m preparing for a masters in AI, cloud, and cybersecurity. Nyx (local AI and privacy),
+            Life OS (self-hosted infrastructure and secrets) and my network training are the starting evidence;
+            the <a href="/roadmap" className="text-primary underline underline-offset-4">roadmap</a> shows what is
+            done and what is still ahead.
+          </p>
+
           {/* Current Station Highlight Box */}
           <div className="mt-6 border border-primary/30 bg-primary/5 p-4 sm:p-5">
             <div className="flex items-center gap-2 font-mono text-xs text-primary font-bold">
               <BriefcaseIcon className="size-4" />
               <span>CURRENT: UST HEALTHPROOF</span>
             </div>
-            <p className="mt-2 text-xs sm:text-sm text-foreground/85 leading-relaxed">
+            <p className="mt-2 text-sm sm:text-base text-foreground/90 leading-relaxed">
               At UST Healthproof, I work across healthcare IT systems designing robust batch processing
               pipelines with Spring Batch, optimizing relational transactions on MySQL, building modular
               frontend solutions in Angular, and collaborating across cross-functional teams to deliver
@@ -198,15 +213,15 @@ export default function AboutPage() {
 
       {/* Engineering Principles */}
       <Reveal>
-        <div className="border border-border/60 bg-card/40 p-6 sm:p-8">
+        <div className="py-2">
           <div className="flex items-baseline justify-between border-b border-border/40 pb-4">
             <div className="flex items-center gap-2">
               <SparklesIcon className="size-4 text-primary" />
-              <h2 className="text-xl font-bold sm:text-2xl tracking-tight">
+              <h2 className="text-2xl font-bold sm:text-3xl tracking-tight">
                 Engineering Principles
               </h2>
             </div>
-            <span className="font-mono text-[10px] text-muted-foreground uppercase">
+            <span className="font-mono text-[11px] text-muted-foreground uppercase">
               04 CORE CONVICTIONS
             </span>
           </div>
@@ -223,14 +238,14 @@ export default function AboutPage() {
                 <div>
                   <div className="flex items-center justify-between font-mono text-xs">
                     <span className="font-bold text-primary">{"// "}{p.num}</span>
-                    <span className="text-[10px] uppercase text-muted-foreground tracking-wider">
+                    <span className="text-[11px] uppercase text-muted-foreground tracking-wider">
                       {p.tag}
                     </span>
                   </div>
                   <h3 className="mt-2 text-base font-semibold text-foreground group-hover:text-primary transition-colors">
                     {p.title}
                   </h3>
-                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm sm:text-base leading-relaxed text-muted-foreground">
                     {p.desc}
                   </p>
                 </div>
@@ -242,15 +257,15 @@ export default function AboutPage() {
 
       {/* Engineering Journey */}
       <Reveal>
-        <div className="border border-border/60 bg-card/40 p-6 sm:p-8">
+        <div className="py-2">
           <div className="flex items-baseline justify-between border-b border-border/40 pb-4 mb-6">
             <div className="flex items-center gap-2">
               <MilestoneIcon className="size-4 text-primary" />
-              <h2 className="text-xl font-bold sm:text-2xl tracking-tight">
+              <h2 className="text-2xl font-bold sm:text-3xl tracking-tight">
                 Engineering Journey
               </h2>
             </div>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
               2020 — PRESENT
             </span>
           </div>
@@ -266,14 +281,14 @@ export default function AboutPage() {
                 <div className="border border-border/60 bg-background/60 p-4 sm:p-5 transition-all hover:border-primary/50 hover:bg-background/90">
                   <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-xs">
                     <span className="font-bold text-primary">{m.year}</span>
-                    <span className="rounded bg-primary/10 border border-primary/30 px-2 py-0.5 text-[10px] text-primary font-semibold uppercase">
+                    <span className="rounded bg-primary/10 border border-primary/30 px-2 py-0.5 text-[11px] text-primary font-semibold uppercase">
                       {m.badge}
                     </span>
                   </div>
                   <h3 className="mt-2 text-base sm:text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                     {m.title}
                   </h3>
-                  <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-1.5 text-sm sm:text-base leading-relaxed text-muted-foreground">
                     {m.detail}
                   </p>
 
@@ -281,7 +296,7 @@ export default function AboutPage() {
                     {m.deliverables.map((d) => (
                       <span
                         key={d}
-                        className="rounded border border-border/60 bg-card/60 px-2 py-0.5 font-mono text-[10px] text-foreground/80"
+                        className="rounded border border-border/60 bg-card/60 px-2 py-0.5 font-mono text-[11px] text-foreground/80"
                       >
                         {d}
                       </span>
@@ -296,12 +311,12 @@ export default function AboutPage() {
 
       {/* Away From Keyboard */}
       <Reveal>
-        <section className="border border-border/60 bg-card/40 p-6 sm:p-8">
+        <section className="py-2">
           <div className="flex items-baseline justify-between border-b border-border/40 pb-4 mb-6">
-            <h2 className="text-xl font-bold sm:text-2xl tracking-tight">
+            <h2 className="text-2xl font-bold sm:text-3xl tracking-tight">
               Away from the Keyboard
             </h2>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
               OFFLINE
             </span>
           </div>
@@ -318,10 +333,10 @@ export default function AboutPage() {
                     <Icon className="size-4 text-primary transition-transform group-hover:scale-110" />
                     <div>
                       <p className="text-sm font-semibold text-foreground">{item.name}</p>
-                      <p className="text-[10px] font-mono text-primary/70">{item.subtitle}</p>
+                      <p className="text-[11px] font-mono text-primary/70">{item.subtitle}</p>
                     </div>
                   </div>
-                  <p className="text-xs leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {item.desc}
                   </p>
                 </div>

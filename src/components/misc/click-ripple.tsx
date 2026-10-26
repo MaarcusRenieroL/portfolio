@@ -57,7 +57,7 @@ export function ClickRipple() {
           <div className="absolute inset-0 size-8 rounded-full border border-primary/40 animate-pulse" />
 
           {/* Micro Coordinate Tag */}
-          <span className="absolute left-4 -top-3 font-mono text-[9px] text-primary/80 tracking-wider whitespace-nowrap animate-out fade-out slide-out-to-top duration-700">
+          <span className="absolute left-4 -top-3 font-mono text-[11px] text-primary/80 tracking-wider whitespace-nowrap animate-out fade-out slide-out-to-top duration-700">
             [{Math.round(r.x)}, {Math.round(r.y)}]
           </span>
         </div>

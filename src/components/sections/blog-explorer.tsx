@@ -269,10 +269,10 @@ export function BlogExplorer({ posts }: BlogExplorerProps) {
 
                   {/* Title & Description */}
                   <div className="mt-4">
-                    <h3 className="text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary leading-snug">
+                    <h3 className="text-2xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary leading-snug">
                       {post.title}
                     </h3>
-                    <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                    <p className="mt-2.5 text-base leading-relaxed text-muted-foreground line-clamp-3">
                       {post.description}
                     </p>
                   </div>
@@ -284,7 +284,7 @@ export function BlogExplorer({ posts }: BlogExplorerProps) {
                     {post.tags.slice(0, 3).map((t) => (
                       <span
                         key={t}
-                        className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[10px] text-muted-foreground"
+                        className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
                       >
                         #{t}
                       </span>

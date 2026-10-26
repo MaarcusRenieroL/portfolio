@@ -54,13 +54,13 @@ export const Header: FC = () => {
                 <span className="relative size-1.5 rounded-full bg-primary" />
               </span>
               <span className="text-muted-foreground">
-                available for focused builds — q3 2026
+                available for focused builds
               </span>
             </div>
 
             {/* Name and Title */}
             <div>
-              <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl">
+              <h1 className="text-6xl font-semibold leading-[1.02] tracking-tight sm:text-7xl md:text-8xl">
                 <span className="block text-foreground/95">
                   <ScrambleText text="maarcus reniero l" />
                 </span>
@@ -71,8 +71,8 @@ export const Header: FC = () => {
             </div>
 
             {/* Tagline */}
-            <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              full-stack engineer building product-minded web apps across frontend, backend, data, and tooling. strongest work: next.js, typescript, multi-tenant product architecture, internal tools, clean interfaces.
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+              full-stack engineer building product-minded web apps across frontend, backend, data, and tooling. strongest work: next.js, typescript, a local-first desktop launcher (nyx), a self-hosted life os, multi-tenant product architecture, internal tools, clean interfaces.
             </p>
 
             {/* Meta Info */}
@@ -109,29 +109,29 @@ export const Header: FC = () => {
 
         {/* Stats Section */}
         <Reveal delay={0.1}>
-          <div className="grid gap-3 border-t border-border/60 pt-12 md:grid-cols-3">
-            <div className="border border-border/60 bg-card/40 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+          <div className="grid gap-4 border-t border-border/60 pt-12 md:grid-cols-3">
+            <div className="border border-border/60 bg-card/40 p-5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
                 focus
               </p>
-              <p className="mt-2 text-sm leading-6 text-foreground">
+              <p className="mt-2 text-base leading-7 text-foreground">
                 product-focused full-stack development
               </p>
             </div>
-            <div className="border border-border/60 bg-card/40 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+            <div className="border border-border/60 bg-card/40 p-5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
                 daily stack
               </p>
-              <p className="mt-2 text-sm leading-6 text-foreground">
+              <p className="mt-2 text-base leading-7 text-foreground">
                 typescript, next.js, react, spring boot, sql
               </p>
             </div>
-            <div className="border border-border/60 bg-card/40 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+            <div className="border border-border/60 bg-card/40 p-5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">
                 looking for
               </p>
-              <p className="mt-2 text-sm leading-6 text-foreground">
-                frontend-heavy full-stack roles, internal tools
+              <p className="mt-2 text-base leading-7 text-foreground">
+                frontend-heavy full-stack roles, internal tools, then a masters in ai, cloud, and security
               </p>
             </div>
           </div>

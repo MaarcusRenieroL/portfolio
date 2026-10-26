@@ -54,7 +54,7 @@ export default function ExperiencePage() {
                   {/* Header row */}
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <h2 className="text-lg font-semibold leading-tight text-foreground">
+                      <h2 className="text-xl font-semibold leading-tight text-foreground">
                         {exp.title}
                       </h2>
                       {exp.href ? (
@@ -62,13 +62,13 @@ export default function ExperiencePage() {
                           href={exp.href}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-0.5 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                          className="mt-0.5 inline-flex items-center gap-1 text-base text-primary hover:underline"
                         >
                           {exp.company}
                           <ArrowUpRightIcon className="size-3.5" />
                         </a>
                       ) : (
-                        <p className="mt-0.5 text-sm text-primary">{exp.company}</p>
+                        <p className="mt-0.5 text-base text-primary">{exp.company}</p>
                       )}
                     </div>
                     <div className="text-right">
@@ -76,7 +76,7 @@ export default function ExperiencePage() {
                         {formatExperienceDuration(exp)}
                       </span>
                       {exp.isOngoing && (
-                        <p className="mt-0.5 flex items-center justify-end gap-1 font-mono text-[10px] text-primary">
+                        <p className="mt-0.5 flex items-center justify-end gap-1 font-mono text-[11px] text-primary">
                           <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse" />
                           current
                         </p>
@@ -85,7 +85,7 @@ export default function ExperiencePage() {
                   </div>
 
                   {/* Highlights */}
-                  <ul className="mt-4 space-y-2 text-sm leading-6 text-foreground/85">
+                  <ul className="mt-4 space-y-2.5 text-base leading-7 text-foreground/90">
                     {exp.highlights.map((h) => (
                       <li key={h} className="flex gap-2.5">
                         <span className="mt-2 size-1 shrink-0 bg-primary/60" />
