@@ -1,129 +1,92 @@
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, ClockIcon, FlameIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
-
-import { getPost, getPostSlugs } from "~/lib/data/blog";
+import remarkGfm from "remark-gfm";
+import { CopyLink, PostProgress, Toc } from "~/components/site/blog-client";
+import { getPost, getPosts } from "~/lib/data/blog";
 import { formatLongDate } from "~/lib/utils/date";
 
-type BlogPostPageProps = {
-  params: Promise<{ slug: string }>;
-};
+type Props = { params: Promise<{ slug: string }> };
+
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 export function generateStaticParams() {
-  return getPostSlugs().map((slug) => ({ slug }));
+  return getPosts().map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
-
-  if (!post) {
-    return {};
-  }
-
-  const ogImage = `/og?title=${encodeURIComponent(
-    post.title,
-  )}&subtitle=${encodeURIComponent(post.description)}`;
-
-  return {
-    title: post.title,
-    description: post.description,
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      url: `https://maarcus.dev/blog/${post.slug}`,
-      images: [{ url: ogImage, width: 1200, height: 630 }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-      images: [ogImage],
-    },
-  };
+  if (!post) return {};
+  const og = `/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.description)}`;
+  return { title: post.title, description: post.description, openGraph: { title: post.title, description: post.description, type: "article", images: [og] } };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const post = getPost(slug);
+  if (!post) notFound();
 
-  if (!post) {
-    return notFound();
-  }
+  const toc = [...post.content.matchAll(/^(#{2,3})\s+(.+)$/gm)].map((m) => ({ depth: m[1].length, text: m[2].trim(), id: slugify(m[2]) }));
+  const more = getPosts().filter((p) => p.slug !== slug).slice(0, 2);
+  const heading = (Tag: "h2" | "h3") =>
+    function H({ children }: { children?: React.ReactNode }) {
+      const text = String(Array.isArray(children) ? children.join("") : children ?? "");
+      return <Tag id={slugify(text)}>{children}</Tag>;
+    };
 
   return (
-    <article className="flex w-full flex-col gap-8">
-      {/* Back to Blog Button */}
-      <Link
-        href="/blog"
-        className="inline-flex w-fit items-center gap-2 border border-border/60 bg-card/40 px-3.5 py-1.5 font-mono text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
-      >
-        <ArrowLeftIcon className="size-3.5" />
-        <span>Return to dispatches</span>
-      </Link>
-
-      {/* Article Specimen Container */}
-      <div className="relative overflow-hidden border border-border/60 bg-card/35 p-6 sm:p-10">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-        />
-
-        <header className="flex flex-col gap-4 border-b border-border/40 pb-6">
-          <div className="flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
-            <div className="flex items-center gap-2 text-primary font-bold">
-              <FlameIcon className="size-3.5 text-primary" />
-              <span className="uppercase tracking-wider text-[11px]">DISPATCH // {post.slug}</span>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground text-[11px]">
-              <span>{formatLongDate(post.date)}</span>
-              <span>·</span>
-              <span className="flex items-center gap-1">
-                <ClockIcon className="size-3 text-primary/70" />
-                {post.readingTime}
-              </span>
-            </div>
+    <>
+      <PostProgress />
+      <header className="section-sm" style={{ paddingBottom: 56 }}>
+        <div className="atmos" />
+        <div className="wrap-narrow stack" style={{ gap: 24, position: "relative" }}>
+          <Link className="link-arrow rise" href="/blog">← All posts</Link>
+          <div className="row rise" style={{ gap: 14, flexWrap: "wrap" }}>
+            <span className="label">{formatLongDate(post.date)}</span>
+            <span className="label">·</span>
+            <span className="label">{post.readingTime}</span>
+            {post.tags.map((t) => <span key={t} className="tag">{t}</span>)}
           </div>
+          <h1 className="h1 wipe">{post.title}</h1>
+          <p className="lead rise" style={{ animationDelay: "200ms" }}>{post.description}</p>
+        </div>
+      </header>
+      <div className="wrap-narrow"><div className="katana"><span className="tsuka" /><span className="tsuba" /><span className="ha" /></div></div>
 
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-            {post.title}
-          </h1>
+      <section className="section-sm" style={{ paddingTop: 56 }}>
+        <div className="wrap post-grid">
+          <article className="prose">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={{ h2: heading("h2"), h3: heading("h3") }}>
+              {post.content.replace(/^#\s+.+\n+/, "")}
+            </ReactMarkdown>
+            <div className="row stack-m" style={{ gap: 12, marginTop: 56, paddingTop: 32, borderTop: "1px solid var(--line)", flexWrap: "wrap" }}>
+              <span className="small" style={{ flex: 1 }}>Written by Maarcus</span>
+              <CopyLink />
+              <Link className="btn btn-ghost btn-sm" href="/contact">Discuss</Link>
+            </div>
+          </article>
+          <Toc items={toc} />
+        </div>
+      </section>
 
-          <p className="max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {post.description}
-          </p>
-
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="border border-border/60 bg-background/60 px-2 py-0.5 font-mono text-[11px] text-muted-foreground"
-                >
-                  #{tag}
-                </span>
+      {more.length > 0 && (
+        <section className="section-sm" style={{ borderTop: "1px solid var(--line)", background: "var(--bg-1)" }}>
+          <div className="wrap stack" style={{ gap: 24 }}>
+            <span className="label">Keep reading</span>
+            <div className="grid-2">
+              {more.map((p) => (
+                <Link key={p.slug} className="card stack" href={`/blog/${p.slug}`} style={{ gap: 10, color: "inherit" }} data-tilt>
+                  <span className="label">{formatLongDate(p.date)}</span>
+                  <span className="h3">{p.title}</span>
+                </Link>
               ))}
             </div>
-          )}
-        </header>
-
-        {/* Markdown Content */}
-        <div className="prose prose-zinc sm:prose-lg max-w-none pt-8 text-foreground/90 dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 prose-code:border prose-code:border-border/60 prose-code:bg-background/80 prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-xs prose-pre:border prose-pre:border-border/60 prose-pre:bg-background/90">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
-          >
-            {post.content}
-          </ReactMarkdown>
-        </div>
-      </div>
-    </article>
+          </div>
+        </section>
+      )}
+    </>
   );
 }

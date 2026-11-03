@@ -1,21 +1,14 @@
+# Deployment only: `docker compose --profile full up -d --build`. Locally, run `pnpm dev` so no extra
+# containers use up the Docker VM's RAM.
+
 services:
   web:
+    profiles: [full]
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: portfolio-web
-    restart: unless-stopped
+    restart: "no"
     environment:
-      NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
-      CI: "true"
     ports:
       - "${WEB_PORT:-3500}:3000"
-    volumes:
-      - .:/app
-      - portfolio-web-node-modules:/app/node_modules
-      - portfolio-web-next:/app/.next
-
-volumes:
-  portfolio-web-node-modules:
-  portfolio-web-next:

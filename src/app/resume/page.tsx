@@ -1,100 +1,63 @@
-import { Download, ExternalLink, FileText } from "lucide-react";
-import { SectionHeading } from "~/components/misc/section-heading";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Download, External } from "~/components/site/icons";
+import { Eyebrow } from "~/components/site/ui";
+import { UPDATED } from "~/lib/content";
+
+export const metadata: Metadata = { title: "Resume", description: "One-page resume: Java/Spring Boot, TypeScript/Next.js, healthcare ETL at HealthEdge." };
 
 export default function ResumePage() {
-  const resumeUrl = "/resume.pdf";
-  const downloadUrl = "/api/resume";
-
   return (
-    <section className="flex w-full flex-col gap-10">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeading
-          index="08"
-          eyebrow="career snapshot"
-          title="resume"
-          description="a downloadable pdf version of my experience, projects, and technical skills."
-        />
-
-        <div className="flex gap-2">
-          <a
-            href={resumeUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-10 items-center gap-2 border border-border/60 bg-background/50 px-4 font-mono text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:border-primary/50 hover:bg-primary/5"
-          >
-            <ExternalLink className="size-3.5" />
-            view in tab
-          </a>
-
-          <a
-            href={downloadUrl}
-            download="maarcus-reniero-resume.pdf"
-            className="inline-flex h-10 items-center gap-2 border border-primary/50 bg-primary px-4 font-mono text-xs font-bold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Download className="size-3.5" />
-            download pdf
-          </a>
-        </div>
-      </div>
-
-      <section className="relative overflow-hidden border border-border/60 bg-card/35">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-        />
-
-        <div className="flex items-center justify-between border-b border-border/60 bg-background/50 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <FileText className="size-4 text-primary" />
-            <p className="font-mono text-xs font-semibold text-foreground">
-              maarcus-reniero-resume.pdf
-            </p>
+    <>
+      <header className="section-sm" style={{ paddingBottom: 40 }}>
+        <div className="atmos" />
+        <div className="wrap row stack-m" style={{ justifyContent: "space-between", alignItems: "flex-end", gap: 32, position: "relative", flexWrap: "wrap" }}>
+          <div className="stack" style={{ gap: 20 }}>
+            <Eyebrow kanji="履" className="rise">Resume · 1 page · PDF</Eyebrow>
+            <h1 className="d-l wipe" style={{ animationDelay: "100ms" }}>Resume</h1>
+            <span className="label rise">Last updated {UPDATED}</span>
           </div>
-
-          <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
-            <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse" />
-            <span>ready</span>
+          <div className="row stack-m rise" style={{ gap: 12, flexWrap: "wrap" }}>
+            <a className="btn btn-primary" href="/api/resume" download>Download PDF <Download /></a>
+            <a className="btn btn-ghost" href="/resume.pdf" target="_blank" rel="noopener">Open in new tab <External /></a>
           </div>
         </div>
-
-        <div className="bg-card/25 p-2 sm:p-4">
-          {/* embedded pdf preview is reliable on larger screens only */}
-          <div className="hidden overflow-hidden border border-border/60 bg-background sm:block">
-            <iframe
-              src={`${resumeUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-              className="h-[82vh] w-full bg-background"
-              title="maarcus reniero resume pdf"
-            />
-          </div>
-
-          {/* mobile: inline pdf rendering is unreliable, so offer clear actions */}
-          <div className="flex flex-col items-center gap-4 border border-border/60 bg-background/45 p-8 text-center sm:hidden">
-            <FileText className="size-8 text-primary" />
-            <p className="text-sm text-muted-foreground">
-              open the resume in your pdf viewer for the best experience on mobile.
-            </p>
-            <div className="flex gap-2">
-              <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 items-center gap-2 border border-border/60 bg-background/45 px-4 text-xs font-mono uppercase tracking-wider font-semibold transition-colors hover:border-primary/50 hover:bg-primary/5"
-              >
-                <ExternalLink className="size-3.5" />
-                open
-              </a>
-              <a
-                href={downloadUrl}
-                download="maarcus-reniero-resume.pdf"
-                className="inline-flex h-10 items-center gap-2 border border-primary/50 bg-primary px-4 text-xs font-mono uppercase tracking-wider font-bold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                <Download className="size-3.5" />
-                download
-              </a>
+      </header>
+      <section style={{ paddingBottom: 112 }}>
+        <div className="wrap split" style={{ gridTemplateColumns: "minmax(0, 9fr) minmax(0, 3fr)", gap: 32, alignItems: "start" }}>
+          <div className="viewer" data-reveal="scale">
+            <div className="sheet" role="img" aria-label="Resume preview">
+              <div className="r" style={{ alignItems: "flex-end" }}>
+                <div>
+                  <div style={{ fontFamily: "var(--f-display)", fontSize: 26, lineHeight: 1, color: "#0c1a11" }}>Maarcus Reniero L</div>
+                  <p style={{ marginTop: 6 }}>Full Stack Engineer · Java/Spring Boot · TypeScript/Next.js</p>
+                </div>
+                <p style={{ textAlign: "right" }}>Chennai, India<br />maarcus.dev · maarcusreniero.l@gmail.com<br />github.com/MaarcusRenieroL</p>
+              </div>
+              <div><h3>Summary</h3><p>Backend-leaning full stack engineer with ~2.5 years across Java/Spring and TypeScript/Next.js. Builds healthcare ETL services at HealthEdge and is moving toward security, cloud and AI.</p></div>
+              <div>
+                <h3>Experience</h3>
+                <div className="r"><b>HealthEdge — Developer I, Software Engineering</b><span>Jan 2025 – present</span></div>
+                <p>Spring Boot / Spring Batch microservices for healthcare transaction ETL. Core developer across all four modules, with unit and integration tests in each. Shining Star Award ×2.</p>
+                <div className="r" style={{ marginTop: 6 }}><b>Matlync — Full Stack Next.js Developer</b><span>Jan – Feb 2024</span></div>
+                <p>Boutique CRM: Next.js front end, Strapi back end.</p>
+                <div className="r" style={{ marginTop: 6 }}><b>STEAM Troops Innovation Labs — Full Stack Next.js Developer</b><span>Sep 2023 – Jan 2024</span></div>
+                <p>Learning management system: Next.js, NextAuth, REST, Docker, AWS, GitHub Actions CI/CD.</p>
+                <div className="r" style={{ marginTop: 6 }}><b>Systech — Intern, Hardware and Networking</b><span>Jan 2023</span></div>
+                <p>Trained on the CCNA and CCNP curriculum.</p>
+              </div>
+              <div><h3>Projects</h3><p><b>zentro</b>: multi-tenant workspace, Next.js/tRPC, in beta. <b>life os</b>: self-hosted personal OS, 10 modules in one Spring Boot service. <b>nyx</b>: open-source launcher, Tauri/Rust/Ollama, v1.0. <b>next-kit</b>: Next.js scaffolder on npm.</p></div>
+              <div><h3>Skills</h3><p>Java 21, Spring Boot, Spring Batch, Spring Security · TypeScript, React, Next.js, tRPC · PostgreSQL, Drizzle, Redis · Docker, GitHub Actions, AWS S3/CloudWatch</p></div>
+              <div><h3>Education + languages</h3><div className="r"><b>B.Tech, Computer Science and Business Systems</b><span>2020 – 2024</span></div><p>Rajalakshmi Engineering College · GPA 7.98/10 · English, Tamil (native) · German (A1)</p></div>
             </div>
           </div>
+          <aside className="stack" style={{ gap: 16 }}>
+            <div className="panel stack" style={{ gap: 12, padding: 24 }} data-reveal><span className="label">At a glance</span><span className="h4">~2.5 yrs · Java/Spring + TS/Next.js</span><span className="small">Current: HealthEdge, since Jan 2025</span></div>
+            <div className="panel stack" style={{ gap: 12, padding: 24 }} data-reveal><span className="label">For admissions</span><span className="small">B.Tech CS &amp; Business Systems, GPA 7.98/10. Transcripts on request.</span><Link className="link-arrow" href="/contact">Request documents <span className="arr">→</span></Link></div>
+            <div className="panel stack" style={{ gap: 12, padding: 24 }} data-reveal><span className="label">Shortcut</span><span className="small row" style={{ gap: 8 }}><span className="kbd">⌘</span><span className="kbd">D</span> downloads from any page</span></div>
+          </aside>
         </div>
       </section>
-    </section>
+    </>
   );
 }

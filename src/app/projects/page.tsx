@@ -1,20 +1,20 @@
-import { SectionHeading } from "~/components/misc/section-heading";
-import { ProjectExplorer } from "~/components/sections/project-explorer";
-import { getProjects } from "~/lib/data/projects";
+import type { Metadata } from "next";
+import { ProjectGrid } from "~/components/site/project-grid";
+import { PageHeader } from "~/components/site/ui";
+import { PROJECTS } from "~/lib/content";
 
-export default async function ProjectsPage() {
-  const sortedProjects = getProjects();
+export const metadata: Metadata = { title: "Projects", description: "A multi-tenant SaaS, a self-hosted personal OS, a launcher, a CLI and more." };
 
+export default function ProjectsPage() {
   return (
-    <section className="flex w-full flex-col gap-10">
-      <SectionHeading
-        index="01"
-        title="projects"
-        eyebrow="filtered archive"
-        description="active builds, experiments, and tools that shaped how i work."
+    <>
+      <PageHeader
+        kanji="作"
+        eyebrow={`Projects · ${PROJECTS.length}`}
+        title="Projects"
+        lead="Each one exists because I wanted to understand something end to end: a multi-tenant SaaS, a self-hosted personal OS, a launcher, a CLI."
       />
-
-      <ProjectExplorer projects={sortedProjects} />
-    </section>
+      <ProjectGrid />
+    </>
   );
 }

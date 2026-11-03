@@ -1,30 +1,19 @@
-import { SectionHeading } from "~/components/misc/section-heading";
-import { BlogExplorer } from "~/components/sections/blog-explorer";
+import type { Metadata } from "next";
+import { PostSearch } from "~/components/site/blog-client";
+import { PageHeader } from "~/components/site/ui";
 import { getPosts } from "~/lib/data/blog";
+import { formatLongDate } from "~/lib/utils/date";
 
-export const metadata = {
-  title: "blog",
-  description:
-    "writing about building things — developer tools, the web, and lessons from actually shipping.",
-};
+export const metadata: Metadata = { title: "Blog", description: "What I learn while building: backend, systems, and the road to security and cloud." };
 
 export default function BlogPage() {
-  const posts = getPosts();
-
+  const posts = getPosts().map((p) => ({ slug: p.slug, title: p.title, description: p.description, date: formatLongDate(p.date), tag: p.tags[0] ?? "" }));
   return (
-    <section className="flex w-full flex-col gap-10">
-      <SectionHeading
-        index="04"
-        title="blog"
-        eyebrow="notes and write-ups"
-        description="writing about building things — developer tools, the web, and lessons from actually shipping."
-      />
-
-      {posts.length === 0 ? (
-        <p className="text-sm text-muted-foreground">no posts yet.</p>
-      ) : (
-        <BlogExplorer posts={posts} />
-      )}
-    </section>
+    <>
+      <PageHeader kanji="記" eyebrow="Blog · building in public" title="Notes from the forge" lead="What I learn while building — backend, systems, and the road to security and cloud." />
+      <section className="wrap" style={{ paddingBottom: 112 }}>
+        <PostSearch posts={posts} />
+      </section>
+    </>
   );
 }

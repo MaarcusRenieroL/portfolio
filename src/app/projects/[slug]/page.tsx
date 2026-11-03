@@ -1,265 +1,173 @@
-import Link from "next/link";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, ArrowRightIcon, GlobeIcon } from "lucide-react";
-import { GithubIcon } from "~/components/icons";
+import { ChapterRail, ReadingProgress } from "~/components/site/case-study-client";
+import { CodeBlock } from "~/components/site/code-block";
+import { External } from "~/components/site/icons";
+import { Eyebrow, Shot } from "~/components/site/ui";
+import { CASE_STUDIES, CHAPTERS, PROJECTS } from "~/lib/content";
 
-import { MagneticCTA } from "~/components/misc/magnetic-cta";
-import { Reveal } from "~/components/misc/reveal";
-import { ProjectPreview } from "~/components/projects/project-preview";
-import { ProjectExplainer } from "~/components/projects/project-explainer";
-import {
-  getProject,
-  getProjectNeighbors,
-  getProjects,
-  formatDuration,
-} from "~/lib/data/projects";
-
-type ProjectPageProps = {
-  params: Promise<{ slug: string }>;
-};
+type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return getProjects().map((project) => ({
-    slug: project.id,
-  }));
+  return Object.keys(CASE_STUDIES).map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: ProjectPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
-
-  if (!project) {
-    return {};
-  }
-
-  const ogImage = `/og?title=${encodeURIComponent(
-    project.title,
-  )}&subtitle=${encodeURIComponent(project.impact)}`;
-
+  const cs = CASE_STUDIES[slug];
+  if (!cs) return {};
   return {
-    title: project.title,
-    description: project.impact,
-    openGraph: {
-      title: project.title,
-      description: project.impact,
-      url: `https://maarcus.dev/projects/${project.id}`,
-      images: [{ url: ogImage, width: 1200, height: 630 }],
-      type: "article",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: project.title,
-      description: project.impact,
-      images: [ogImage],
-    },
+    title: `${cs.title} — case study`,
+    description: cs.lead,
+    openGraph: { images: [`/og?title=${encodeURIComponent(cs.title)}&subtitle=${encodeURIComponent(cs.lead.slice(0, 120))}`] },
   };
 }
 
-export default async function ProjectPage({ params }: ProjectPageProps) {
+function Inline({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(`[^`]+`)/g).map((part, i) => (part.startsWith("`") ? <code key={i}>{part.slice(1, -1)}</code> : <span key={i}>{part}</span>))}
+    </>
+  );
+}
+
+function Chapter({ id, kanji, label, first, children }: { id: string; kanji: string; label: string; first?: boolean; children: React.ReactNode }) {
+  return (
+    <section id={id} className="chap" data-reveal>
+      <div className="eyebrow" style={{ margin: first ? "0 0 8px" : "48px 0 8px" }}>
+        <span className="kanji" aria-hidden="true">{kanji}</span>
+        {label}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export default async function CaseStudyPage({ params }: Props) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const cs = CASE_STUDIES[slug];
+  if (!cs) notFound();
 
-  if (!project) {
-    return notFound();
-  }
-
-  const { previous, next } = getProjectNeighbors(project.id);
+  const keys = Object.keys(CASE_STUDIES);
+  const idx = keys.indexOf(slug);
+  const prev = CASE_STUDIES[keys[(idx - 1 + keys.length) % keys.length]];
+  const next = CASE_STUDIES[keys[(idx + 1) % keys.length]];
+  const pnum = PROJECTS.find((p) => p.slug === slug)?.num ?? "00";
+  const C = Object.fromEntries(CHAPTERS.map((c) => [c.id, c]));
 
   return (
-    <article className="flex w-full flex-col gap-10">
-      <Link
-        href="/projects"
-        className="inline-flex w-fit items-center gap-2 font-mono text-xs text-muted-foreground transition-colors hover:text-primary"
-      >
-        <ArrowLeftIcon className="size-3.5" />
-        all projects
-      </Link>
-
-      {/* Header */}
-      <Reveal>
-        <header className="border border-border/60 bg-card/40 p-6 sm:p-10">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
-            <span className="text-primary">{project.category}</span>
-            <span>·</span>
-            <span>{project.status}</span>
-            <span>·</span>
-            <span>{formatDuration(project)}</span>
+    <>
+      <ReadingProgress />
+      <header className="section-sm" style={{ paddingBottom: 56 }}>
+        <div className="atmos" />
+        <div className="wrap stack" style={{ gap: 28, position: "relative" }}>
+          <Link className="link-arrow rise" href="/projects"><span className="arr" style={{ transform: "none" }}>←</span> All projects</Link>
+          <Eyebrow kanji="作" className="rise">Case study · {pnum} / {String(PROJECTS.length).padStart(2, "0")}</Eyebrow>
+          <h1 className="d-xl wipe" style={{ animationDelay: "100ms" }}>{cs.title}</h1>
+          <p className="lead rise" style={{ maxWidth: 720, animationDelay: "260ms" }}>{cs.lead}</p>
+          <div className="row stack-m rise" style={{ gap: 12, flexWrap: "wrap", animationDelay: "360ms" }}>
+            {cs.site && <a className="btn btn-ghost" href={cs.site.href}>{cs.site.label} <External /></a>}
+            {cs.repo.href && <a className="btn btn-quiet" href={cs.repo.href}>{cs.repo.label} ↗</a>}
           </div>
-
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-            {project.title}
-          </h1>
-
-          <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
-            {project.description}
-          </p>
-
-          {/* Links */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            <MagneticCTA href={project.githubLink} variant="ghost" external>
-              <GithubIcon className="size-4" />
-              repository
-            </MagneticCTA>
-            {project.hostedLink && (
-              <MagneticCTA href={project.hostedLink} external>
-                <GlobeIcon className="size-4" />
-                live
-              </MagneticCTA>
-            )}
-          </div>
-
-          {/* Skills */}
-          <div className="mt-6 flex flex-wrap gap-1.5">
-            {project.skills.map((skill) => (
-              <span key={skill} className="chip">
-                {skill}
-              </span>
+          <div className="meta" data-reveal>
+            {cs.meta.map((m) => (
+              <div key={m.label} className="stack" style={{ gap: 6 }}>
+                <span className="label">{m.label}</span>
+                {m.learning ? (
+                  <span className="status s-learning"><span className="dot dot-learning" />{m.value}</span>
+                ) : (
+                  <span className="h4">{m.value}</span>
+                )}
+              </div>
             ))}
           </div>
-        </header>
-      </Reveal>
+        </div>
+      </header>
 
-      <Reveal>
-        <ProjectPreview id={project.id} />
-      </Reveal>
-
-      <Reveal>
-        <ProjectExplainer projectId={project.id} />
-      </Reveal>
-
-      {/* Key info row */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Reveal>
-          <div className="h-full border border-border/60 bg-card/40 p-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">role</p>
-            <p className="mt-2 text-base text-foreground">{project.role}</p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.05}>
-          <div className="h-full border border-border/60 bg-card/40 p-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">impact</p>
-            <p className="mt-2 text-base leading-7 text-foreground/90">{project.impact}</p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <div className="h-full border border-border/60 bg-card/40 p-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">challenge</p>
-            <p className="mt-2 text-base leading-7 text-foreground/90">{project.challenge}</p>
-          </div>
-        </Reveal>
+      <div className="wrap" data-reveal="scale">
+        <Shot label={cs.hero} ratio="16-9" />
       </div>
 
-      {/* Approach */}
-      {project.approach?.length > 0 && (
-        <Reveal>
-          <section className="border border-border/60 bg-card/40 p-5 sm:p-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">approach</p>
-            <ul className="mt-4 space-y-3 text-base leading-7 text-foreground/90">
-              {project.approach.map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span className="mt-2 size-1 shrink-0 bg-primary/70" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </Reveal>
-      )}
+      <section className="section-sm">
+        <div className="wrap cs">
+          <ChapterRail />
+          <article className="prose" style={{ maxWidth: 760 }}>
+            <Chapter id="challenge" kanji={C.challenge.kanji} label="Challenge" first>
+              <h2 style={{ marginTop: 8 }}>{cs.challenge.title}</h2>
+              <p><Inline text={cs.challenge.body} /></p>
+            </Chapter>
 
-      {/* Outcome */}
-      {project.outcome?.length > 0 && (
-        <Reveal>
-          <section className="border border-border/60 bg-card/40 p-5 sm:p-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">outcome</p>
-            <ul className="mt-4 space-y-3 text-base leading-7 text-foreground/90">
-              {project.outcome.map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span className="mt-2 size-1 shrink-0 bg-primary/70" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </Reveal>
-      )}
+            <Chapter id="approach" kanji={C.approach.kanji} label="Approach">
+              <h2 style={{ marginTop: 8 }}>{cs.approach.title}</h2>
+              <p><Inline text={cs.approach.body} /></p>
+              {cs.approach.code && <CodeBlock {...cs.approach.code} />}
+            </Chapter>
 
-      {/* Lessons & Next Steps — side by side */}
-      {(project.lessons?.length > 0 || project.nextSteps?.length > 0) && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {project.lessons?.length > 0 && (
-            <Reveal>
-              <section className="h-full border border-border/60 bg-card/40 p-5">
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">lessons</p>
-                <ul className="mt-4 space-y-3 text-base leading-7 text-foreground/90">
-                  {project.lessons.map((item) => (
-                    <li key={item} className="flex gap-2.5">
-                      <span className="mt-2 size-1 shrink-0 bg-primary/70" />
-                      <span>{item}</span>
-                    </li>
+            <Chapter id="decisions" kanji={C.decisions.kanji} label="Key decisions">
+              <h2 style={{ marginTop: 8 }}>Four calls that shaped it</h2>
+              <div className="dec">
+                {cs.decisions.map((d, i) => (
+                  <div key={i} className="card stack" style={{ gap: 10, padding: 22, ["--d" as string]: `${i * 80}ms` }} data-reveal data-tilt>
+                    <span className="label">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="h4">{d.title}</span>
+                    <span className="small">{d.body}</span>
+                  </div>
+                ))}
+              </div>
+            </Chapter>
+
+            <Chapter id="outcome" kanji={C.outcome.kanji} label="Outcome">
+              <h2 style={{ marginTop: 8 }}>{cs.outcome.title}</h2>
+              {cs.outcome.stats && (
+                <div className="stats">
+                  {cs.outcome.stats.map((s) => (
+                    <div key={s.label}>
+                      <span className="stat">
+                        <span data-count={s.value.replace("~", "")}>{s.value.replace("~", "")}</span>
+                        {s.value.startsWith("~") ? "" : ""}
+                        {s.unit && <span className="fg3" style={{ fontSize: 18 }}>{s.unit}</span>}
+                      </span>
+                      <span className="small">{s.label}</span>
+                    </div>
                   ))}
-                </ul>
-              </section>
-            </Reveal>
-          )}
-          {project.nextSteps?.length > 0 && (
-            <Reveal delay={0.05}>
-              <section className="h-full border border-border/60 bg-card/40 p-5">
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">next steps</p>
-                <ul className="mt-4 space-y-3 text-base leading-7 text-foreground/90">
-                  {project.nextSteps.map((item) => (
-                    <li key={item} className="flex gap-2.5">
-                      <span className="mt-2 size-1 shrink-0 bg-primary/70" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </Reveal>
-          )}
+                </div>
+              )}
+              <p className="small" style={{ margin: 0 }}>{cs.outcome.note}</p>
+            </Chapter>
+
+            <Chapter id="lessons" kanji={C.lessons.kanji} label="Lessons">
+              <h3 style={{ marginTop: 8 }}>The hardest problem</h3>
+              <p>{cs.lessons.hardest}</p>
+              {cs.lessons.quote && <blockquote>{cs.lessons.quote}</blockquote>}
+              <p>{cs.lessons.body}</p>
+            </Chapter>
+
+            <Chapter id="next" kanji={C.next.kanji} label="Next steps">
+              <p>{cs.next}</p>
+            </Chapter>
+
+            <Chapter id="tech" kanji={C.tech.kanji} label="Tech">
+              <div className="tags">
+                {cs.tech.map((t) => <span key={t} className="tag">{t}</span>)}
+              </div>
+            </Chapter>
+          </article>
         </div>
-      )}
+      </section>
 
-      {/* Prev / Next nav */}
-      <nav className="flex flex-col gap-2 border-t border-border/50 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        {previous ? (
-          <Link
-            href={`/projects/${previous.id}`}
-            className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
-          >
-            <ArrowLeftIcon className="size-4 transition-transform group-hover:-translate-x-0.5" />
-            <span>
-              <span className="block font-mono text-[11px] uppercase tracking-[0.2em]">
-                previous
-              </span>
-              <span className="block text-foreground">{previous.title}</span>
-            </span>
+      <section className="section-sm" style={{ borderTop: "1px solid var(--line)" }}>
+        <div className="wrap grid-2">
+          <Link className="card stack" href={`/projects/${prev.slug}`} style={{ gap: 8, color: "inherit" }} data-tilt data-reveal="left">
+            <span className="label">← Previous</span>
+            <span className="h3">{prev.title}</span>
           </Link>
-        ) : (
-          <span />
-        )}
-        {next ? (
-          <Link
-            href={`/projects/${next.id}`}
-            className="group inline-flex items-center gap-2 text-right text-sm text-muted-foreground hover:text-primary"
-          >
-            <span>
-              <span className="block font-mono text-[11px] uppercase tracking-[0.2em]">
-                next
-              </span>
-              <span className="block text-foreground">{next.title}</span>
-            </span>
-            <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+          <Link className="card stack" href={`/projects/${next.slug}`} style={{ gap: 8, color: "inherit", alignItems: "flex-end", textAlign: "right" }} data-tilt data-reveal="right">
+            <span className="label">Next →</span>
+            <span className="h3">{next.title}</span>
           </Link>
-        ) : (
-          <MagneticCTA href="/contact" variant="ghost">
-            get in touch
-            <ArrowRightIcon className="size-4" />
-          </MagneticCTA>
-        )}
-      </nav>
-    </article>
+        </div>
+      </section>
+    </>
   );
 }
