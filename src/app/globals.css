@@ -1789,3 +1789,15 @@ h1, h2, .title { text-wrap: balance; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
+
+/* ---------- Resume PDF ---------- */
+
+.pdf {
+  display: block;
+  width: 100%;
+  height: min(88dvh, 1100px);
+  min-height: 560px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--hover);
+}
