@@ -1,69 +1,99 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Download } from "~/components/site/icons";
-import { Eyebrow, SecHead } from "~/components/site/ui";
-import { BEYOND, ROLES } from "~/lib/content";
+import { Pic } from "~/components/site/media";
+import { MEDIA, ROLES, SKILLS } from "~/lib/content";
 
-export const metadata: Metadata = { title: "Experience", description: "Networking first, then two full stack Next.js roles, then production backends for healthcare." };
+export const metadata: Metadata = { title: "Experience", description: "From networking to full stack Next.js to production healthcare backends in Java. Here is the work, and every skill it took." };
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+type Entry = { url?: string; key: string; date: string; org: string; sub: string; logo: string; minor?: boolean; now?: boolean; points?: string[]; tags?: string[] };
+
+/** One flat, newest-first list: a role's company renames become their own short steps. */
+const entries: Entry[] = ROLES.flatMap((r): Entry[] => {
+  const points = r.points.filter((p) => !p.startsWith("["));
+  if (!r.path) {
+    return [{ key: r.org, date: r.date, org: r.org, sub: `${r.title}${r.place ? ` · ${r.place}` : ""}`, logo: r.org, url: r.url, points, tags: r.tags }];
+  }
+  const [top, ...before] = r.path;
+  return [
+    { key: top.org, date: `${top.date} — now`, org: top.org, sub: `${r.title} · ${r.place ?? ""}`.replace(/ · $/, ""), logo: r.org, url: r.url, now: true, points, tags: r.tags },
+    ...before.map((st): Entry => ({ key: st.org, date: st.date, org: st.org, sub: st.note, logo: r.org, minor: true })),
+  ];
+});
 
 export default function ExperiencePage() {
   return (
-    <>
-      <header className="section-sm" style={{ paddingBottom: 64 }}>
-        <div className="atmos" />
-        <div className="wrap row stack-m" style={{ justifyContent: "space-between", alignItems: "flex-end", gap: 32, position: "relative" }}>
-          <div className="stack" style={{ gap: 24, maxWidth: 700 }}>
-            <Eyebrow kanji="歴" className="rise">Experience · {ROLES.length} roles</Eyebrow>
-            <h1 className="d-l wipe" style={{ animationDelay: "100ms" }}>Experience</h1>
-            <p className="lead rise" style={{ animationDelay: "260ms" }}>Networking first, then two full stack Next.js roles, then production backends for healthcare. Newest first.</p>
-          </div>
-          <Link className="btn btn-ghost rise" href="/resume" style={{ animationDelay: "360ms" }}>Resume · PDF <Download /></Link>
-        </div>
+    <div className="wrap page">
+      <header className="stack g24">
+        <h1 className="title">Experience</h1>
+        <p className="lead">From networking to full stack Next.js to production healthcare backends in Java. Here is the work, and every skill it took.</p>
+        <Link className="action" href="/resume">
+          Resume
+        </Link>
       </header>
 
-      <section className="section-sm" style={{ paddingTop: 24 }}>
-        <div className="wrap">
-          <div className="tl">
-            {ROLES.map((r) => (
-              <div className="tl-item" key={r.org} style={{ paddingBottom: 64 }}>
-                <div className="tl-date stack" style={{ gap: 6, paddingTop: 6 }}>
-                  <span className={`label${r.now ? " blade" : ""}`}>{r.date}</span>
-                  {r.place && <span className="label">{r.place}</span>}
-                </div>
-                <div className="tl-rail"><span className={`tl-node${r.now ? " now" : ""}`} /></div>
-                <div className="card stack" style={{ gap: 18 }} data-reveal="right">
-                  <div className="row stack-m" style={{ justifyContent: "space-between", gap: 12 }}>
-                    <div className="stack" style={{ gap: 4 }}>
-                      <span className="h2">{r.org}</span>
-                      <span className="h4 blade">{r.title}</span>
-                    </div>
-                    {r.now && <span className="tag tag-blade">Current</span>}
-                  </div>
-                  <ul className="pts">
-                    {r.points.map((p) => <li key={p}>{p}</li>)}
-                  </ul>
-                  <div className="tags">{r.tags.map((t) => <span key={t} className="tag">{t}</span>)}</div>
+      <ol className="tl" aria-label="Career timeline">
+        {entries.map((e) => (
+          <li key={e.key} data-minor={e.minor ? "" : undefined} data-now={e.now ? "" : undefined}>
+            <span className="tl-when">{e.date}</span>
+            <div className="tl-body">
+              <div className="tl-head">
+                <Pic className="logo" src={MEDIA.logos[e.logo] ?? ""} alt="" fallback={initials(e.logo)} />
+                <div className="stack">
+                  <h2 className="tl-org">{e.url ? <a className="orglink" href={e.url} target="_blank" rel="noopener noreferrer">{e.org} ↗</a> : e.org}</h2>
+                  <span className="muted small">{e.sub}</span>
                 </div>
               </div>
-            ))}
-          </div>
+              {e.points && e.points.length > 0 && (
+                <ul className="points">
+                  {e.points.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+              )}
+              {e.tags && (
+                <span className="tags">
+                  {e.tags.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <section className="section" aria-labelledby="used-h">
+        <h2 id="used-h" className="h2">Skills I use</h2>
+        <div>
+          {SKILLS.used.map((g) => (
+            <div className="skillrow" key={g.name}>
+              <span>{g.name}</span>
+              <span className="tags" style={{ fontSize: 13, gap: "4px 16px" }}>
+                {g.items.map((t) => (
+                  <span key={t} style={{ color: "var(--fg-2)" }}>{t}</span>
+                ))}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="section-sm" style={{ background: "var(--bg-1)", borderTop: "1px solid var(--line)" }}>
-        <div className="wrap stack" style={{ gap: 40 }}>
-          <SecHead kanji="賞" eyebrow="Beyond the job" title="Leadership and hackathons" />
-          <div className="grid-auto">
-            {BEYOND.map((b, i) => (
-              <div key={b.title} className="panel stack" style={{ gap: 10, padding: 24, ["--d" as string]: `${i * 90}ms` }} data-reveal>
-                <span className="label">{b.label}</span>
-                <span className="h4">{b.title}</span>
-                <span className="small">{b.body}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <section className="section" aria-labelledby="learn-h">
+        <h2 id="learn-h" className="h2">Currently learning</h2>
+        <p className="tags" style={{ fontSize: 13, gap: "4px 16px" }}>
+          {SKILLS.learning.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </p>
       </section>
-    </>
+    </div>
   );
 }

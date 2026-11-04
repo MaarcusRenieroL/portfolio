@@ -3,13 +3,13 @@
 import { Resend } from "resend";
 import { z } from "zod";
 
-const REASONS = { role: "A full-time role", freelance: "A freelance project", msc: "Master's admissions", hi: "Just saying hi" } as const;
+const REASONS = { role: "A full-time role", freelance: "A freelance project", hi: "Just saying hi" } as const;
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(100),
   email: z.email("Please enter a valid email").max(200),
   org: z.string().trim().max(150).optional(),
-  reason: z.enum(["role", "freelance", "msc", "hi"]),
+  reason: z.enum(["role", "freelance", "hi"]),
   message: z.string().trim().min(10, "Message should be at least 10 characters").max(5000, "Message is too long"),
 });
 
