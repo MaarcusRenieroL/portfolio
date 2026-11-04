@@ -36,14 +36,30 @@ function parseFrontmatter(raw: string): {
   const [, frontmatter, content] = match;
   const data: Record<string, unknown> = {};
 
+  let listKey: string | null = null;
+
   for (const line of frontmatter.split("\n")) {
+    const item = /^\s+-\s+(.*)$/.exec(line);
+    if (item && listKey) {
+      (data[listKey] as string[]).push(item[1].trim().replace(/^["']|["']$/g, ""));
+      continue;
+    }
+
     const separator = line.indexOf(":");
     if (separator === -1) continue;
 
     const key = line.slice(0, separator).trim();
     if (!key) continue;
 
-    data[key] = parseScalar(line.slice(separator + 1));
+    const rest = line.slice(separator + 1);
+    if (rest.trim() === "") {
+      listKey = key;
+      data[key] = [];
+      continue;
+    }
+
+    listKey = null;
+    data[key] = parseScalar(rest);
   }
 
   return { data, content: content ?? "" };
@@ -56,6 +72,7 @@ export type PostMeta = {
   date: string;
   tags: string[];
   readingTime: string;
+  featured: boolean;
 };
 
 export type Post = PostMeta & { content: string };
@@ -83,6 +100,7 @@ function readPost(slug: string): (Post & { published: boolean }) | null {
     date: typeof data.date === "string" ? data.date : "",
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
     readingTime: estimateReadingTime(content),
+    featured: data.featured === true,
     published: data.published !== false,
     content,
   };
@@ -95,7 +113,7 @@ export function getPostSlugs() {
 
   return fs
     .readdirSync(BLOG_DIR)
-    .filter((file) => file.endsWith(".md"))
+    .filter((file) => file.endsWith(".md") && !file.startsWith("_"))
     .map((file) => file.replace(/\.md$/, ""));
 }
 
@@ -111,6 +129,7 @@ export function getPosts(): PostMeta[] {
       date: post.date,
       tags: post.tags,
       readingTime: post.readingTime,
+      featured: post.featured,
     }));
 }
 
@@ -128,6 +147,37 @@ export function getPost(slug: string): Post | null {
     date: post.date,
     tags: post.tags,
     readingTime: post.readingTime,
+    featured: post.featured,
     content: post.content,
   };
+}
+
+export type Heading = { id: string; text: string; level: 2 | 3 };
+
+export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+/** h2/h3 headings of a markdown body, skipping fenced code. */
+export function getHeadings(content: string): Heading[] {
+  const out: Heading[] = [];
+  let fence = false;
+  for (const line of content.split("\n")) {
+    if (line.startsWith("```")) fence = !fence;
+    if (fence) continue;
+    const m = /^(#{2,3})\s+(.+?)\s*$/.exec(line);
+    if (m) out.push({ id: slugify(m[2]), text: m[2], level: m[1].length as 2 | 3 });
+  }
+  return out;
+}
+
+/** Other posts ranked by shared tags, newest first on ties. */
+export function getRelated(slug: string, limit = 3): PostMeta[] {
+  const all = getPosts();
+  const me = all.find((p) => p.slug === slug);
+  if (!me) return [];
+  return all
+    .filter((p) => p.slug !== slug)
+    .map((p) => ({ p, score: p.tags.filter((t) => me.tags.includes(t)).length }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((x) => x.p);
 }

@@ -1,78 +1,65 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check } from "./icons";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { SearchIcon } from "~/components/site/icons";
+import { useListNav } from "~/components/site/use-list-nav";
+import type { PostMeta } from "~/lib/data/blog";
+import { formatShortDate } from "~/lib/utils/date";
 
-export function PostProgress() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const on = () => {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      if (ref.current) ref.current.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
-    };
-    on();
-    addEventListener("scroll", on, { passive: true });
-    return () => removeEventListener("scroll", on);
-  }, []);
-  return (
-    <div style={{ position: "sticky", top: 0, height: 2, background: "var(--line)", zIndex: 41 }} aria-hidden="true">
-      <div ref={ref} style={{ height: "100%", background: "var(--blade)", transformOrigin: "left", transform: "scaleX(0)" }} />
-    </div>
-  );
-}
-
-export function Toc({ items }: { items: { id: string; text: string; depth: number }[] }) {
-  const [active, setActive] = useState(items[0]?.id);
-  useEffect(() => {
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: "-20% 0px -70% 0px" });
-    items.forEach((i) => {
-      const el = document.getElementById(i.id);
-      if (el) io.observe(el);
-    });
-    return () => io.disconnect();
-  }, [items]);
-  return (
-    <nav className="toc" aria-label="On this page">
-      <span className="label" style={{ marginBottom: 10 }}>On this page</span>
-      {items.map((i) => (
-        <a key={i.id} href={`#${i.id}`} className={active === i.id ? "on" : ""} style={i.depth > 2 ? { paddingLeft: 12 } : undefined}>{i.text}</a>
-      ))}
-    </nav>
-  );
-}
-
-export function CopyLink() {
-  const [ok, setOk] = useState(false);
-  return (
-    <button className="btn btn-ghost btn-sm" type="button" onClick={async () => { await navigator.clipboard?.writeText(location.href); setOk(true); setTimeout(() => setOk(false), 1600); }}>
-      {ok ? (<><Check style={{ color: "var(--blade)" }} /> Copied</>) : "Copy link"}
-    </button>
-  );
-}
-
-export function PostSearch({ posts }: { posts: { slug: string; title: string; description: string; date: string; tag: string }[] }) {
+export function BlogClient({ posts }: { posts: PostMeta[] }) {
+  const router = useRouter();
   const [q, setQ] = useState("");
-  const list = posts.filter((p) => (p.title + p.description + p.tag).toLowerCase().includes(q.toLowerCase()));
+  const [tag, setTag] = useState("all");
+
+  const tags = useMemo(() => [...new Set(posts.flatMap((p) => p.tags))].sort(), [posts]);
+  const rows = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return posts.filter((p) => (tag === "all" || p.tags.includes(tag)) && (!needle || [p.title, p.description, ...p.tags].join(" ").toLowerCase().includes(needle)));
+  }, [posts, q, tag]);
+
+  const { active, setActive, search } = useListNav(rows.length, (i) => router.push(`/blog/${rows[i].slug}`));
+
   return (
     <>
-      <div className="field" style={{ width: 320, maxWidth: "100%" }}>
-        <label htmlFor="b-s">Search posts</label>
-        <input className="input" id="b-s" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Spring Batch, Rust, AWS…" />
+      <div className="filters">
+        <label className="search">
+          <SearchIcon aria-hidden="true" />
+          <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search posts or tags" aria-label="Search posts" />
+          <kbd aria-hidden="true">/</kbd>
+        </label>
+        <div className="chips" role="group" aria-label="Filter by tag">
+          {["all", ...tags].map((t) => (
+            <button key={t} type="button" className="chip" aria-pressed={tag === t} onClick={() => setTag(t)}>
+              {t === "all" ? "All" : t}
+            </button>
+          ))}
+        </div>
       </div>
-      <div style={{ gridColumn: "1 / -1" }}>
-        {list.map((p) => (
-          <Link key={p.slug} className="post" href={`/blog/${p.slug}`}>
-            <span className="label">{p.date}</span>
-            <div className="stack" style={{ gap: 8 }}>
-              <span className="pt h3" style={{ transition: "color var(--dur-2)" }}>{p.title}</span>
-              <span className="small">{p.description}</span>
-            </div>
-            <span className="label" style={{ textAlign: "right" }}>{p.tag}</span>
-          </Link>
+
+      <ul className="rows" aria-live="polite">
+        {rows.map((p, i) => (
+          <li key={p.slug} data-row={i} data-active={active === i ? "" : undefined} onMouseEnter={() => setActive(i)}>
+            <Link className="leader" href={`/blog/${p.slug}`}>
+              <span className="name">{p.title}</span>
+              <span className="when">
+                {formatShortDate(p.date)} · {p.readingTime}
+              </span>
+              <span className="desc">{p.description}</span>
+              <span className="tags" style={{ gridColumn: "1 / -1" }}>
+                {p.tags.map((t) => (
+                  <span key={t}>#{t}</span>
+                ))}
+              </span>
+            </Link>
+          </li>
         ))}
-        {list.length === 0 && <p className="small" style={{ padding: "32px 0" }}>Nothing matches “{q}”.</p>}
-      </div>
+      </ul>
+      {rows.length === 0 && <p className="muted">Nothing matches. Try another word or clear the filter.</p>}
+      <p className="help kbd-help">
+        <kbd>j</kbd> <kbd>k</kbd> move · <kbd>gg</kbd> <kbd>G</kbd> jump · <kbd>Enter</kbd> open · <kbd>/</kbd> search
+      </p>
     </>
   );
 }
