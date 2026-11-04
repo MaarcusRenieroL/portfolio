@@ -104,71 +104,6 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
     tech: ["Rust", "Tauri 2", "React 19", "TypeScript", "SQLite FTS5", "QuickJS", "Ollama"],
   },
 
-  zentro: {
-    slug: "zentro",
-    title: "zentro",
-    lead: "One workspace for everything a company runs on. Fourteen modules, from projects and docs to HR and payroll, with every organization's data kept separate.",
-    site: { label: "zentro.maarcus.dev", href: "https://zentro.maarcus.dev" },
-    repo: { label: "Source", href: "https://github.com/maarcusrenierol/zentro" },
-    meta: [
-      { label: "Role", value: "Solo: design, build, ship" },
-      { label: "Platform", value: "Web · multi-tenant SaaS" },
-      { label: "Stack", value: "Next.js 16 · tRPC · Drizzle · Better Auth" },
-      { label: "Status", value: "Beta", learning: true },
-    ],
-    hero: "[zentro]",
-    cover: "02-projects.webp",
-    shots: [
-      { file: "01-landing.webp", mobile: "01-landing-mobile.webp", alt: "zentro landing page", caption: "The landing page." },
-      { file: "02-projects.webp", mobile: "02-projects-mobile.webp", alt: "zentro projects list", caption: "Projects, scoped to the active organization." },
-      { file: "03-task-detail.webp", mobile: "03-task-detail-mobile.webp", alt: "zentro task detail", caption: "A task with comments and audit trail." },
-      { file: "04-docs.webp", mobile: "04-docs-mobile.webp", alt: "zentro docs editor", caption: "Docs." },
-      { file: "05-roles-permissions.webp", mobile: "05-roles-permissions-mobile.webp", alt: "zentro roles and permissions", caption: "Roles and permissions, editable per organization." },
-    ],
-    challenge: {
-      title: "One workspace, many companies, no leaks",
-      body: "A workspace that holds a company's projects, chat, mail and payroll must be sure whose data a request may touch and what the person asking may do with it, across 14 modules and three scopes: organization, team and project.",
-    },
-    approach: {
-      title: "Tenancy in the application, enforced by tests",
-      body: "Every tenant table carries an `organizationId`, the tRPC context comes from the session, and every query filters on the active organization. A test seeds two organizations and checks that one cannot reach the other.",
-      code: {
-        file: "packages/api/src/routers/goals.ts",
-        hl: 1,
-        lines: [
-          "const organizationId = ctx.activeOrganization.id;",
-          "const goals = await ctx.db",
-          "  .select()",
-          "  .from(objectives)",
-          "  .where(eq(objectives.organizationId, organizationId))",
-          "  .orderBy(asc(objectives.createdAt));",
-        ],
-      },
-    },
-    decisions: [
-      { title: "Permissions come from the modules", body: "Each module declares its permissions into one catalog, with keys like `tasks.update_own` and `tasks.update_any`." },
-      { title: "A pure engine", body: "Deny overrides, then the base role, scoped assignments and allow overrides. Anything you can't see answers NOT_FOUND, so ids can't be probed." },
-      { title: "Security as build rules", body: "Procedures declare permissions and audit events as metadata, and coverage tests fail the build when one doesn't." },
-    ],
-    outcome: {
-      title: "Built to be provable",
-      stats: [
-        { value: "14", label: "modules, all enabled" },
-        { value: "58", label: "database migrations" },
-        { value: "8", label: "system roles" },
-        { value: "400", label: "commits since April" },
-      ],
-      note: "Two procedures are still stubs: one in files and one in search.",
-    },
-    lessons: {
-      hardest:
-        "The permissions engine. Scoped assignments, own versus any keys, list filters and hidden resources all had to agree, and later fixes still found leaks through side paths like the access log.",
-      body: "Failing the build when a procedure declares nothing turns security from something you remember into something enforced. The caveat: without a database-level backstop, one forgotten `where` leaks.",
-    },
-    next: "Replace the two stubs, finish notifications and dashboards, and add Postgres row-level security as a tenancy backstop.",
-    tech: ["Next.js 16", "React 19", "tRPC", "Drizzle", "Better Auth", "PostgreSQL", "Turborepo"],
-  },
-
   "life-os": {
     slug: "life-os",
     title: "life os",
@@ -348,7 +283,6 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
 /** Card and hero image per project; dotfiles has shots but no case study page. */
 export const COVERS: Record<string, string> = {
   nyx: shotUrl("nyx", "03-launcher-search.webp"),
-  zentro: shotUrl("zentro", "02-projects.webp"),
   "life-os": shotUrl("life-os", "01-dashboard.webp"),
   "next-kit": shotUrl("next-kit", "01-cli-summary.webp"),
   dotfiles: shotUrl("dotfiles", "01-tmux-neovim.webp"),

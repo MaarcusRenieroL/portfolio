@@ -65,7 +65,7 @@ export const PROJECTS: Project[] = [
     skills: ["Next.js", "tRPC", "Drizzle", "PostgreSQL", "Better Auth"],
     site: "https://zentro.maarcus.dev",
     github: `${GH}/zentro`,
-    study: true,
+    study: false,
   },
   {
     slug: "life-os",
