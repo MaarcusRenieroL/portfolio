@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChapterRail, ReadingProgress } from "~/components/site/case-study-client";
-import { CodeBlock } from "~/components/site/code-block";
-import { External } from "~/components/site/icons";
-import { Eyebrow, Shot } from "~/components/site/ui";
-import { CASE_STUDIES, CHAPTERS, PROJECTS } from "~/lib/content";
+import { Pic } from "~/components/site/media";
+import { CASE_STUDIES, MEDIA, SITE, shotUrl } from "~/lib/content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -32,13 +29,21 @@ function Inline({ text }: { text: string }) {
   );
 }
 
-function Chapter({ id, kanji, label, first, children }: { id: string; kanji: string; label: string; first?: boolean; children: React.ReactNode }) {
+/** A stat value; plain numbers count up when scrolled into view (see Life). */
+function Count({ value }: { value: string }) {
+  const m = /^(~?)(\d+(?:\.(\d+))?)$/.exec(value);
+  if (!m || Number(m[2]) === 0) return <>{value}</>;
   return (
-    <section id={id} className="chap" data-reveal>
-      <div className="eyebrow" style={{ margin: first ? "0 0 8px" : "48px 0 8px" }}>
-        <span className="kanji" aria-hidden="true">{kanji}</span>
-        {label}
-      </div>
+    <span data-count={m[2]} data-decimals={m[3]?.length ?? 0} data-prefix={m[1]}>
+      {value}
+    </span>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="stack g16">
+      <h2 className="h2">{title}</h2>
       {children}
     </section>
   );
@@ -53,121 +58,160 @@ export default async function CaseStudyPage({ params }: Props) {
   const idx = keys.indexOf(slug);
   const prev = CASE_STUDIES[keys[(idx - 1 + keys.length) % keys.length]];
   const next = CASE_STUDIES[keys[(idx + 1) % keys.length]];
-  const pnum = PROJECTS.find((p) => p.slug === slug)?.num ?? "00";
-  const C = Object.fromEntries(CHAPTERS.map((c) => [c.id, c]));
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Projects", item: `${SITE.url}/projects` },
+      { "@type": "ListItem", position: 2, name: cs.title, item: `${SITE.url}/projects/${cs.slug}` },
+    ],
+  };
 
   return (
-    <>
-      <ReadingProgress />
-      <header className="section-sm" style={{ paddingBottom: 56 }}>
-        <div className="atmos" />
-        <div className="wrap stack" style={{ gap: 28, position: "relative" }}>
-          <Link className="link-arrow rise" href="/projects"><span className="arr" style={{ transform: "none" }}>←</span> All projects</Link>
-          <Eyebrow kanji="作" className="rise">Case study · {pnum} / {String(PROJECTS.length).padStart(2, "0")}</Eyebrow>
-          <h1 className="d-xl wipe" style={{ animationDelay: "100ms" }}>{cs.title}</h1>
-          <p className="lead rise" style={{ maxWidth: 720, animationDelay: "260ms" }}>{cs.lead}</p>
-          <div className="row stack-m rise" style={{ gap: 12, flexWrap: "wrap", animationDelay: "360ms" }}>
-            {cs.site && <a className="btn btn-ghost" href={cs.site.href}>{cs.site.label} <External /></a>}
-            {cs.repo.href && <a className="btn btn-quiet" href={cs.repo.href}>{cs.repo.label} ↗</a>}
-          </div>
-          <div className="meta" data-reveal>
-            {cs.meta.map((m) => (
-              <div key={m.label} className="stack" style={{ gap: 6 }}>
-                <span className="label">{m.label}</span>
-                {m.learning ? (
-                  <span className="status s-learning"><span className="dot dot-learning" />{m.value}</span>
-                ) : (
-                  <span className="h4">{m.value}</span>
-                )}
-              </div>
-            ))}
-          </div>
+    <article className="wrap page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <header className="stack g24">
+        <Link className="back" href="/projects">
+          ← Projects
+        </Link>
+        <h1 className="title">{cs.title}</h1>
+        <p className="lead">{cs.lead}</p>
+        <div className="row" style={{ gap: "8px 28px" }}>
+          {cs.site && (
+            <a className="action" href={cs.site.href} rel="noopener noreferrer">
+              {cs.site.label} ↗
+            </a>
+          )}
+          {cs.repo.href && (
+            <a className="action" href={cs.repo.href} rel="noopener noreferrer">
+              {cs.repo.label} ↗
+            </a>
+          )}
         </div>
+        <dl className="facts" style={{ marginTop: 16 }}>
+          {cs.meta.map((m) => (
+            <div key={m.label}>
+              <dt>{m.label}</dt>
+              <dd>{m.value}</dd>
+            </div>
+          ))}
+        </dl>
       </header>
 
-      <div className="wrap" data-reveal="scale">
-        <Shot label={cs.hero} ratio="16-9" />
+      <Pic className="hero-shot" src={MEDIA.shot(cs.slug)} alt={`${cs.title} screenshot`} fallback={<span className="placeholder">{cs.hero}</span>} />
+
+      <div className="stack g40 col">
+        <Section title={cs.challenge.title}>
+          <p className="muted">
+            <Inline text={cs.challenge.body} />
+          </p>
+        </Section>
+
+        <Section title={cs.approach.title}>
+          <p className="muted">
+            <Inline text={cs.approach.body} />
+          </p>
+          {cs.approach.code && (
+            <div className="prose">
+              <pre>
+                <code>{cs.approach.code.lines.join("\n")}</code>
+              </pre>
+              <span className="help">{cs.approach.code.file}</span>
+            </div>
+          )}
+        </Section>
+
+        <Section title="Key decisions">
+          <ol className="stack g24">
+            {cs.decisions.map((d) => (
+              <li key={d.title} className="stack" style={{ gap: 4 }}>
+                <span className="item-title">{d.title}</span>
+                <span className="muted"><Inline text={d.body} /></span>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        {cs.sections?.map((s) => (
+          <Section key={s.title} title={s.title}>
+            <p className="muted">
+              <Inline text={s.body} />
+            </p>
+          </Section>
+        ))}
+
+        <Section title={cs.outcome.title}>
+          {cs.outcome.stats && (
+            <dl className="stats">
+              {cs.outcome.stats.map((s) => (
+                <div key={s.label}>
+                  <dt>
+                    <Count value={s.value} />
+                    {s.unit && <span className="faint" style={{ fontSize: "0.55em", fontWeight: 400 }}>{s.unit}</span>}
+                  </dt>
+                  <dd>{s.label}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <p className="help">{cs.outcome.note}</p>
+        </Section>
+
+        <Section title="What I learned">
+          <p className="muted">{cs.lessons.hardest}</p>
+          {cs.lessons.quote && <blockquote className="prose">{cs.lessons.quote}</blockquote>}
+          <p className="muted">{cs.lessons.body}</p>
+        </Section>
+
+        <Section title="Next">
+          <p className="muted">{cs.next}</p>
+        </Section>
+
+        <div className="tags">
+          {cs.tech.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </div>
       </div>
 
-      <section className="section-sm">
-        <div className="wrap cs">
-          <ChapterRail />
-          <article className="prose" style={{ maxWidth: 760 }}>
-            <Chapter id="challenge" kanji={C.challenge.kanji} label="Challenge" first>
-              <h2 style={{ marginTop: 8 }}>{cs.challenge.title}</h2>
-              <p><Inline text={cs.challenge.body} /></p>
-            </Chapter>
-
-            <Chapter id="approach" kanji={C.approach.kanji} label="Approach">
-              <h2 style={{ marginTop: 8 }}>{cs.approach.title}</h2>
-              <p><Inline text={cs.approach.body} /></p>
-              {cs.approach.code && <CodeBlock {...cs.approach.code} />}
-            </Chapter>
-
-            <Chapter id="decisions" kanji={C.decisions.kanji} label="Key decisions">
-              <h2 style={{ marginTop: 8 }}>Four calls that shaped it</h2>
-              <div className="dec">
-                {cs.decisions.map((d, i) => (
-                  <div key={i} className="card stack" style={{ gap: 10, padding: 22, ["--d" as string]: `${i * 80}ms` }} data-reveal data-tilt>
-                    <span className="label">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="h4">{d.title}</span>
-                    <span className="small">{d.body}</span>
-                  </div>
-                ))}
+      {(cs.shots.length > 0 || cs.video) && (
+        <section className="stack g24" aria-labelledby="shots-h">
+          <h2 id="shots-h" className="h2">
+            Screenshots
+          </h2>
+          {cs.video && (
+            <figure className="shot-fig">
+              <video className="shot-img" src={shotUrl(cs.slug, cs.video.file)} controls muted loop playsInline preload="metadata" />
+              <figcaption>{cs.video.caption}</figcaption>
+            </figure>
+          )}
+          {cs.shots.filter((s) => s.file !== cs.cover).map((s) => (
+            <figure key={s.file} className={s.mobile ? "shot-fig has-mobile" : "shot-fig"}>
+              <div className="shot-pair">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="shot-img" src={shotUrl(cs.slug, s.file)} alt={s.alt} decoding="async" />
+                {s.mobile && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="shot-img shot-mobile" src={shotUrl(cs.slug, s.mobile)} alt={`${s.alt}, mobile`} decoding="async" />
+                )}
               </div>
-            </Chapter>
+              <figcaption>{s.caption}</figcaption>
+            </figure>
+          ))}
+        </section>
+      )}
 
-            <Chapter id="outcome" kanji={C.outcome.kanji} label="Outcome">
-              <h2 style={{ marginTop: 8 }}>{cs.outcome.title}</h2>
-              {cs.outcome.stats && (
-                <div className="stats">
-                  {cs.outcome.stats.map((s) => (
-                    <div key={s.label}>
-                      <span className="stat">
-                        <span data-count={s.value.replace("~", "")}>{s.value.replace("~", "")}</span>
-                        {s.value.startsWith("~") ? "" : ""}
-                        {s.unit && <span className="fg3" style={{ fontSize: 18 }}>{s.unit}</span>}
-                      </span>
-                      <span className="small">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <p className="small" style={{ margin: 0 }}>{cs.outcome.note}</p>
-            </Chapter>
-
-            <Chapter id="lessons" kanji={C.lessons.kanji} label="Lessons">
-              <h3 style={{ marginTop: 8 }}>The hardest problem</h3>
-              <p>{cs.lessons.hardest}</p>
-              {cs.lessons.quote && <blockquote>{cs.lessons.quote}</blockquote>}
-              <p>{cs.lessons.body}</p>
-            </Chapter>
-
-            <Chapter id="next" kanji={C.next.kanji} label="Next steps">
-              <p>{cs.next}</p>
-            </Chapter>
-
-            <Chapter id="tech" kanji={C.tech.kanji} label="Tech">
-              <div className="tags">
-                {cs.tech.map((t) => <span key={t} className="tag">{t}</span>)}
-              </div>
-            </Chapter>
-          </article>
-        </div>
-      </section>
-
-      <section className="section-sm" style={{ borderTop: "1px solid var(--line)" }}>
-        <div className="wrap grid-2">
-          <Link className="card stack" href={`/projects/${prev.slug}`} style={{ gap: 8, color: "inherit" }} data-tilt data-reveal="left">
-            <span className="label">← Previous</span>
-            <span className="h3">{prev.title}</span>
-          </Link>
-          <Link className="card stack" href={`/projects/${next.slug}`} style={{ gap: 8, color: "inherit", alignItems: "flex-end", textAlign: "right" }} data-tilt data-reveal="right">
-            <span className="label">Next →</span>
-            <span className="h3">{next.title}</span>
-          </Link>
-        </div>
-      </section>
-    </>
+      <nav className="pager" aria-label="More case studies">
+        <Link href={`/projects/${prev.slug}`}>
+          <small>← Previous</small>
+          <strong>{prev.title}</strong>
+        </Link>
+        <Link href={`/projects/${next.slug}`}>
+          <small>Next →</small>
+          <strong>{next.title}</strong>
+        </Link>
+      </nav>
+    </article>
   );
 }

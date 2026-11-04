@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
-import { ProjectGrid } from "~/components/site/project-grid";
-import { PageHeader } from "~/components/site/ui";
-import { PROJECTS } from "~/lib/content";
+import { ProjectsClient } from "~/components/site/projects-client";
 
 export const metadata: Metadata = { title: "Projects", description: "A multi-tenant SaaS, a self-hosted personal OS, a launcher, a CLI and more." };
 
 export default function ProjectsPage() {
   return (
-    <>
-      <PageHeader
-        kanji="作"
-        eyebrow={`Projects · ${PROJECTS.length}`}
-        title="Projects"
-        lead="Each one exists because I wanted to understand something end to end: a multi-tenant SaaS, a self-hosted personal OS, a launcher, a CLI."
-      />
-      <ProjectGrid />
-    </>
+    <div className="wrap page">
+      <header className="stack g24">
+        <h1 className="title">Projects</h1>
+        <p className="lead">Eight things I built because I wanted to understand them end to end. Each links to the live site and the code.</p>
+      </header>
+      <ProjectsClient />
+    </div>
   );
 }

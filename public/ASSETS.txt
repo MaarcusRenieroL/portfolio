@@ -1,0 +1,9 @@
+Drop your real images here. Missing files fall back to a placeholder.
+
+  public/me.jpg                         profile photo (square, at least 400x400)
+  public/logos/healthedge.png           company logos (square or wide, transparent PNG ok)
+  public/logos/matlync.png
+  public/logos/steam-troops.png
+  public/logos/systech.png
+  public/projects/<slug>.png            project screenshots, 4:5 portrait works best
+      slugs: zentro, life-os, nyx, next-kit, dotfiles, portfolio
