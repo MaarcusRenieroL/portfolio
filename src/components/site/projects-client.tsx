@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -42,8 +43,9 @@ export function ProjectsClient() {
       </div>
 
       <ul className="rows" aria-live="polite">
+        <AnimatePresence mode="popLayout" initial>
         {rows.map((p, i) => (
-          <li key={p.slug} className="prow" data-row={i} data-active={active === i ? "" : undefined} onMouseEnter={() => setActive(i)}>
+          <motion.li key={p.slug} layout="position" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: Math.min(i, 8) * 0.04 }} className="prow" data-row={i} data-active={active === i ? "" : undefined} onMouseEnter={() => setActive(i)}>
             <ProjectIcon slug={p.slug} />
             <div className="pbody">
               <div className="phead">
@@ -82,8 +84,9 @@ export function ProjectsClient() {
                 </span>
               </div>
             </div>
-          </li>
+          </motion.li>
         ))}
+        </AnimatePresence>
       </ul>
       {rows.length === 0 && <p className="muted">Nothing matches. Try another word or clear the filter.</p>}
       <p className="help kbd-help">

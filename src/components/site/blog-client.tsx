@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -39,8 +40,9 @@ export function BlogClient({ posts }: { posts: PostMeta[] }) {
       </div>
 
       <ul className="rows" aria-live="polite">
+        <AnimatePresence mode="popLayout" initial>
         {rows.map((p, i) => (
-          <li key={p.slug} data-row={i} data-active={active === i ? "" : undefined} onMouseEnter={() => setActive(i)}>
+          <motion.li key={p.slug} layout="position" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: Math.min(i, 8) * 0.04 }} data-row={i} data-active={active === i ? "" : undefined} onMouseEnter={() => setActive(i)}>
             <Link className="leader" href={`/blog/${p.slug}`}>
               <span className="name">{p.title}</span>
               <span className="when">
@@ -53,8 +55,9 @@ export function BlogClient({ posts }: { posts: PostMeta[] }) {
                 ))}
               </span>
             </Link>
-          </li>
+          </motion.li>
         ))}
+        </AnimatePresence>
       </ul>
       {rows.length === 0 && <p className="muted">Nothing matches. Try another word or clear the filter.</p>}
       <p className="help kbd-help">

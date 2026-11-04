@@ -3,8 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Footer, Nav } from "~/components/site/chrome";
-import { Loader } from "~/components/site/loader";
 import { Life } from "~/components/site/life";
+import { Motion } from "~/components/site/motion";
 import { SITE } from "~/lib/content";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main">{children}</main>
           <Footer />
         </div>
-        <Loader />
+        <Motion />
         <Life />
         <Analytics />
       </body>
