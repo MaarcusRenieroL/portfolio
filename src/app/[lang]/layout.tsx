@@ -82,6 +82,8 @@ function paletteItems(lang: Lang, showWriting: boolean, showNotes: boolean, proj
   const navLabel = (href: string) => d.nav[(href === "/" ? "home" : href === "/blog" ? "writing" : href.slice(1)) as keyof typeof d.nav];
   return [
     ...NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map((l): PaletteItem => ({ id: `page-${l.href}`, group: "Pages", label: navLabel(l.href), hint: localePath(lang, l.href), run: "href", value: localePath(lang, l.href) })),
+    { id: "page-now", group: "Pages", label: "Now", hint: localePath(lang, "/now"), run: "href", value: localePath(lang, "/now") },
+    { id: "page-schedule", group: "Pages", label: "Schedule Call", hint: localePath(lang, "/schedule"), run: "href", value: localePath(lang, "/schedule") },
     ...projects
       .filter((p) => p.site ?? p.github)
       .map((p): PaletteItem => ({ id: `project-${p.slug}`, group: "Projects", label: p.name, hint: p.kind, keywords: p.skills.join(" "), run: "external", value: p.site ?? p.github })),
