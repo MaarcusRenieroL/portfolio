@@ -2,14 +2,12 @@
 
 import { useId, useMemo } from "react";
 import { useQueryState } from "~/components/site/use-query-state";
-import { useDict, useLang } from "~/components/site/locale";
-import { skillsFor } from "~/lib/localize";
+import { useDict } from "~/components/site/locale";
+import type { SkillGroup } from "~/lib/site-content";
 
 /** Skills as pills: a text search plus a category filter, both combined. */
-export function SkillsClient() {
-  const lang = useLang();
+export function SkillsClient({ groups }: { groups: SkillGroup[] }) {
   const t = useDict().skills;
-  const groups = useMemo(() => skillsFor(lang), [lang]);
   const [q, setQ] = useQueryState("q");
   const [catRaw, setCat] = useQueryState("cat");
   const cat = catRaw || null;

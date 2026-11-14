@@ -6,7 +6,8 @@ import { MEDIA } from "~/lib/content";
 import { DICT } from "~/lib/dict";
 import { localePath, type Lang } from "~/lib/i18n";
 import { langOf } from "~/lib/lang";
-import { educationFor, rolesFor } from "~/lib/localize";
+import { getSiteContent } from "~/lib/site-content";
+import type { Role } from "~/lib/schema";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   return pageMeta("experience", await langOf(params), "/experience");
@@ -23,8 +24,8 @@ const initials = (name: string) =>
 type Entry = { url?: string; key: string; date: string; org: string; sub: string; logo: string; minor?: boolean; now?: boolean; points?: string[]; tags?: string[] };
 
 /** One flat, newest-first list: a role's company renames become their own short steps. */
-const entriesFor = (lang: Lang): Entry[] =>
-  rolesFor(lang).flatMap((r): Entry[] => {
+const entriesFor = (roles: Role[], lang: Lang): Entry[] =>
+  roles.flatMap((r): Entry[] => {
   const points = r.points.filter((p) => !p.startsWith("["));
   if (!r.path) {
     return [{ key: r.org, date: r.date, org: r.org, sub: `${r.title}${r.place ? ` · ${r.place}` : ""}`, logo: r.org, url: r.url, points, tags: r.tags }];
@@ -39,7 +40,8 @@ const entriesFor = (lang: Lang): Entry[] =>
 export default async function ExperiencePage({ params }: { params: Promise<{ lang: string }> }) {
   const lang = await langOf(params);
   const t = DICT[lang].experience;
-  const entries = entriesFor(lang);
+  const { roles, education } = await getSiteContent(lang);
+  const entries = entriesFor(roles, lang);
   return (
     <div className="wrap page">
       <header className="stack g24">
@@ -84,7 +86,7 @@ export default async function ExperiencePage({ params }: { params: Promise<{ lan
       <section className="section" aria-labelledby="edu-h">
         <h2 id="edu-h" className="h2">{t.education}</h2>
         <div>
-          {educationFor(lang).map((e) => (
+          {education.map((e) => (
             <div className="skillrow" key={e.school}>
               <span>{e.date}</span>
               <span className="stack" style={{ gap: 2 }}>

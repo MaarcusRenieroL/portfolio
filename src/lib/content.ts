@@ -65,6 +65,7 @@ const PROJECT_DATA = [
   },
   {
     slug: "dotfiles",
+    hidden: true,
     cover: "01-tmux-neovim.webp",
     name: "dotfiles",
     kind: "Config",
@@ -77,6 +78,7 @@ const PROJECT_DATA = [
   },
   {
     slug: "portfolio",
+    hidden: true,
     name: "portfolio",
     kind: "Web",
     status: "This site",
@@ -92,8 +94,11 @@ const PROJECT_DATA = [
 /** Plain <img> tags don't get Next's basePath, so prefix it here (empty in production). */
 export const shotUrl = (slug: string, file: string) => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/projects/${slug}/${file}`;
 
-export const PROJECTS: Project[] = PROJECT_DATA.map((p, i) => ({
-  ...check("project", p.slug, projectSchema, p),
+/** Every project in the data, including hidden ones. The site shows `PROJECTS`. */
+export const ALL_PROJECT_DATA = PROJECT_DATA.map((p) => check("project", p.slug, projectSchema, p));
+
+export const PROJECTS: Project[] = ALL_PROJECT_DATA.filter((p) => !p.hidden).map((p, i) => ({
+  ...p,
   num: String(i + 1).padStart(2, "0"),
 }));
 

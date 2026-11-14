@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
-import { PROJECTS, SITE } from "~/lib/content";
+import { SITE } from "~/lib/content";
+import { getSiteContent } from "~/lib/site-content";
 import { getPost } from "~/lib/data/blog";
 import { DICT } from "~/lib/dict";
 import { OG_PAGES, type OgPage } from "~/lib/seo";
@@ -7,7 +8,7 @@ import { allowOg, clientKeyFrom } from "~/lib/rate-limit";
 
 const DEFAULT_SUBTITLE = "Full stack engineer · Java/Spring Boot · TypeScript/Next.js";
 
-function resolve(params: URLSearchParams): { title: string; subtitle: string } {
+async function resolve(params: URLSearchParams): Promise<{ title: string; subtitle: string }> {
   const page = params.get("page");
   if (page && Object.hasOwn(OG_PAGES, page)) {
     if (params.get("lang") === "de" && Object.hasOwn(DICT.de.meta.pages, page)) {
@@ -18,7 +19,7 @@ function resolve(params: URLSearchParams): { title: string; subtitle: string } {
   }
   const project = params.get("project");
   if (project) {
-    const p = PROJECTS.find((x) => x.slug === project);
+    const p = (await getSiteContent("en")).projects.find((x) => x.slug === project);
     if (p) return { title: p.name, subtitle: p.desc };
   }
   const post = params.get("post");
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
     return new Response("Too many requests", { status: 429, headers: { "Retry-After": "60", "Cache-Control": "no-store" } });
   }
   const { searchParams } = new URL(request.url);
-  const { title, subtitle } = resolve(searchParams);
+  const { title, subtitle } = await resolve(searchParams);
 
   return new ImageResponse(
     (

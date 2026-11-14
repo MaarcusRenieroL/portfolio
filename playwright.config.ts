@@ -27,7 +27,7 @@ export default defineConfig({
   testDir: "tests/e2e",
   use: { baseURL: `http://localhost:${PORT}` },
   webServer: {
-    command: `pnpm dev --port ${PORT}`,
+    command: `rm -rf .next-e2e && pnpm dev --port ${PORT}`,
     env: {
       NEXT_DIST_DIR: ".next-e2e",
       DATABASE_URL: testDb,

@@ -7,7 +7,7 @@ import { getPosts } from "~/lib/data/blog";
 import { DICT } from "~/lib/dict";
 import { localePath } from "~/lib/i18n";
 import { langOf } from "~/lib/lang";
-import { projectsFor, rolesFor } from "~/lib/localize";
+import { getSiteContent } from "~/lib/site-content";
 import { formatShortDate } from "~/lib/utils/date";
 
 const initials = (name: string) =>
@@ -21,8 +21,7 @@ const initials = (name: string) =>
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
   const lang = await langOf(params);
   const t = DICT[lang];
-  const projects = projectsFor(lang);
-  const roles = rolesFor(lang);
+  const { projects, roles } = await getSiteContent(lang);
   const posts = getPosts().filter((p) => p.featured).slice(0, 3);
   const jobs = [roles.find((r) => r.now) ?? roles[0], roles.find((r) => !r.now)!];
   const href = (h: string) => localePath(lang, h);

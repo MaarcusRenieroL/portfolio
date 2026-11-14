@@ -1,11 +1,13 @@
-import { CERTIFICATES, EDUCATION, PROJECTS, ROLES, SITE, SKILLS } from "~/lib/content";
+import { SITE } from "~/lib/content";
+import type { SiteContent } from "~/lib/site-content";
 
 /**
  * A plain-HTML resume built from the site's own data. Hidden on screen (the PDF
  * viewer is shown there) and the only thing that prints on /resume, so Ctrl/⌘ P
  * gives a clean page instead of a screenshot of a PDF frame.
  */
-export function ResumePrint() {
+export function ResumePrint({ content }: { content: SiteContent }) {
+  const { roles: ROLES, projects: PROJECTS, skills, education: EDUCATION, certificates: CERTIFICATES } = content;
   return (
     <article className="resume-print" aria-hidden="true">
       <header>
@@ -49,7 +51,7 @@ export function ResumePrint() {
 
       <section>
         <h2>Skills</h2>
-        {SKILLS.used.map((g) => (
+        {skills.map((g) => (
           <p key={g.name} className="rp-line">
             <strong>{g.name}:</strong> {g.items.join(", ")}
           </p>

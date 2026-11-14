@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { cookies, draftMode, headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { clientKeyFrom } from "~/lib/rate-limit";
 import {
@@ -95,6 +95,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ step: s
       case "logout": {
         await revokeSession(jar.get(SESSION_COOKIE())?.value);
         jar.delete(SESSION_COOKIE());
+        (await draftMode()).disable();
         return ok();
       }
       default:

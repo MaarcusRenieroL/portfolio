@@ -5,6 +5,7 @@ import { ResumePrint } from "~/components/site/resume-print";
 import { UPDATED } from "~/lib/content";
 import { DICT } from "~/lib/dict";
 import { langOf } from "~/lib/lang";
+import { getSiteContent } from "~/lib/site-content";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   return pageMeta("resume", await langOf(params), "/resume");
@@ -15,6 +16,8 @@ const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
 export default async function ResumePage({ params }: { params: Promise<{ lang: string }> }) {
   const t = DICT[await langOf(params)].resume;
   const pdf = `${base}/resume.pdf`;
+  // The printable resume is English-only, like the PDF.
+  const content = await getSiteContent("en");
 
   return (
     <div className="wrap page">
@@ -38,7 +41,7 @@ export default async function ResumePage({ params }: { params: Promise<{ lang: s
         </p>
       </object>
 
-      <ResumePrint />
+      <ResumePrint content={content} />
     </div>
   );
 }

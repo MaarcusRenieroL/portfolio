@@ -7,12 +7,12 @@ import { ProjectIcon } from "~/components/site/project-icon";
 import { useQueryState } from "~/components/site/use-query-state";
 import { useListNav } from "~/components/site/use-list-nav";
 import { useDict, useLang } from "~/components/site/locale";
-import { categoriesFor, projectsFor } from "~/lib/localize";
+import { categoriesFor } from "~/lib/localize";
+import type { Project } from "~/lib/schema";
 
-export function ProjectsClient() {
+export function ProjectsClient({ projects: PROJECTS }: { projects: Project[] }) {
   const lang = useLang();
   const t = useDict().projects;
-  const PROJECTS = useMemo(() => projectsFor(lang), [lang]);
   const [q, setQ] = useQueryState("q");
   const [cat, setCat] = useQueryState("cat", "all");
 

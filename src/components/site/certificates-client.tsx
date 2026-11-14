@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useQueryState } from "~/components/site/use-query-state";
 import { Pic } from "~/components/site/media";
 import { useDict, useLang } from "~/components/site/locale";
-import { certificatesFor } from "~/lib/localize";
+import type { Certificate } from "~/lib/schema";
 
 const initials = (s: string) =>
   s
@@ -17,10 +17,9 @@ const initials = (s: string) =>
     .toUpperCase();
 
 /** Certificates as cards with a preview, filtered by issuer and a text search. */
-export function CertificatesClient() {
+export function CertificatesClient({ items }: { items: Certificate[] }) {
   const lang = useLang();
   const t = useDict().certs;
-  const items = useMemo(() => certificatesFor(lang), [lang]);
   const fmt = useMemo(() => new Intl.DateTimeFormat(lang, { month: "short", year: "numeric", timeZone: "UTC" }), [lang]);
   const [q, setQ] = useQueryState("q");
   const [issuerRaw, setIssuer] = useQueryState("issuer");

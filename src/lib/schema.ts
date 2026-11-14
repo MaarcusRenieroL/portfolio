@@ -31,7 +31,23 @@ export const projectSchema = z.object({
   github: url.optional(),
   /** Card image: a file in /public/projects/<slug>/. Without one the card shows the project's glyph. */
   cover: z.string().regex(/^[\w.-]+$/).optional(),
+  /** Kept in the data but not shown on the site. */
+  hidden: z.boolean().optional(),
 });
+
+export const postSchema = z.object({
+  slug,
+  title: text,
+  description: z.string(),
+  /** YYYY-MM-DD */
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "use YYYY-MM-DD"),
+  tags: z.array(text),
+  /** Markdown. */
+  body: z.string(),
+});
+export const skillGroupSchema = z.object({ name: text, items: z.array(text).min(1) });
+
+export type PostContent = z.infer<typeof postSchema>;
 
 export const roleSchema = z.object({
   date: text,

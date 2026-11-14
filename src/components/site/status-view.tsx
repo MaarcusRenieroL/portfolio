@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { SITE } from "~/lib/content";
 import { useDict, useLocalePath } from "~/components/site/locale";
 import { NotFoundSearch } from "~/components/site/not-found-search";
+import type { SearchData } from "~/lib/site-content";
 import type { Action, Status } from "~/lib/status";
 
 type Props = {
   status: Status;
+  search?: SearchData;
   /** Overrides "Try again": error boundaries pass their reset function. */
   onRetry?: () => void;
   /** Shown under the actions, for server errors. */
@@ -16,7 +18,7 @@ type Props = {
 };
 
 /** A system page: animated code, a request trace that plays back, and a way out. */
-export function StatusView({ status, onRetry, digest }: Props) {
+export function StatusView({ status, onRetry, digest, search }: Props) {
   const pathname = usePathname();
   const t = useDict().status;
   const href = useLocalePath();
@@ -70,7 +72,7 @@ export function StatusView({ status, onRetry, digest }: Props) {
           <div className="row" style={{ gap: "8px 10px" }}>
             {status.actions.map(action)}
           </div>
-          {status.code === "404" && <NotFoundSearch />}
+          {status.code === "404" && search && <NotFoundSearch data={search} />}
           {digest !== undefined && <p className="help">{t.errorId} {digest || "n/a"}</p>}
         </div>
 

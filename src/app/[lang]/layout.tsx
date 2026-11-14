@@ -16,7 +16,8 @@ import { NAV_LINKS, SITE } from "~/lib/content";
 import { getPosts } from "~/lib/data/blog";
 import { DICT } from "~/lib/dict";
 import { LANGS, isLang, localePath, type Lang } from "~/lib/i18n";
-import { projectsFor } from "~/lib/localize";
+import { getSiteContent } from "~/lib/site-content";
+import type { Project } from "~/lib/schema";
 import { jsonLdString } from "~/lib/utils";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -72,12 +73,12 @@ const personJsonLd = {
   sameAs: [SITE.github, SITE.linkedin],
 };
 
-function paletteItems(lang: Lang, showWriting: boolean): PaletteItem[] {
+function paletteItems(lang: Lang, showWriting: boolean, projects: Project[]): PaletteItem[] {
   const d = DICT[lang];
   const navLabel = (href: string) => d.nav[(href === "/" ? "home" : href === "/blog" ? "writing" : href.slice(1)) as keyof typeof d.nav];
   return [
     ...NAV_LINKS.filter((l) => showWriting || l.href !== "/blog").map((l): PaletteItem => ({ id: `page-${l.href}`, group: "Pages", label: navLabel(l.href), hint: localePath(lang, l.href), run: "href", value: localePath(lang, l.href) })),
-    ...projectsFor(lang)
+    ...projects
       .filter((p) => p.site ?? p.github)
       .map((p): PaletteItem => ({ id: `project-${p.slug}`, group: "Projects", label: p.name, hint: p.kind, keywords: p.skills.join(" "), run: "external", value: p.site ?? p.github })),
     { id: "theme", group: "Actions", label: d.palette.items.theme, keywords: "dark light mode hell dunkel", run: "theme" },
@@ -93,6 +94,7 @@ function paletteItems(lang: Lang, showWriting: boolean): PaletteItem[] {
 export default async function RootLayout({ children, params }: { children: React.ReactNode; params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
+  const { projects } = await getSiteContent(lang);
   const showWriting = getPosts().length > 0;
 
   return (
@@ -116,7 +118,7 @@ export default async function RootLayout({ children, params }: { children: React
           <Particles />
           <Motion />
           <Life />
-          <CommandPalette items={paletteItems(lang, showWriting)} />
+          <CommandPalette items={paletteItems(lang, showWriting, projects)} />
           <Analytics />
           <Events />
           <ShortcutsHelp />
