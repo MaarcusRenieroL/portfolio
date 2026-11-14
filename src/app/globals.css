@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-zoro-bg: #050505;
+  --color-zoro-surface: #090e0c;
+  --color-zoro-card: #0c120f;
+  --color-zoro-border: rgba(74, 222, 128, 0.15);
+  --color-zoro-border-glow: rgba(74, 222, 128, 0.4);
+  --color-zoro-emerald: #10b981;
+  --color-zoro-neon: #4ade80;
+  --color-zoro-glow: #00ff88;
+  --color-zoro-katana: #34d399;
+}
+
 /*
   maarcus.dev.
   Flat near-black, hairline dividers, small quiet type, ghost buttons.
