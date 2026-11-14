@@ -13,6 +13,7 @@ import { LocaleProvider } from "~/components/site/locale";
 import { Motion } from "~/components/site/motion";
 import { Particles } from "~/components/site/particles";
 import { ShortcutsHelp } from "~/components/site/shortcuts";
+import { ZoroAiBubble } from "~/components/zoro-ai/zoro-bubble";
 import { NAV_LINKS, SITE } from "~/lib/content";
 import { getPostList } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
@@ -125,6 +126,7 @@ export default async function RootLayout({ children, params }: { children: React
           <Analytics />
           <Events />
           <ShortcutsHelp />
+          <ZoroAiBubble />
         </LocaleProvider>
       </body>
     </html>
