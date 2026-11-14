@@ -37,6 +37,8 @@ export function DiscordBadge() {
     };
   }, []);
 
+  if (!discord || discord.status === "offline") return null;
+
   const statusColor =
     discord?.status === "online"
       ? "bg-emerald-400 shadow-[0_0_8px_rgba(74,222,128,0.6)]"

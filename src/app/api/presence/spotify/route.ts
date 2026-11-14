@@ -17,17 +17,7 @@ export async function GET() {
   const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN;
 
   if (!clientId || !clientSecret || !refreshToken) {
-    // Elegant fallback when credentials aren't set in local env
-    const fallback: SpotifyResponse = {
-      isPlaying: false,
-      title: "Roronoa Zoro - Three Sword Style (Lofi Chill)",
-      artist: "Anime Lofi Beats",
-      album: "East Blue Beats",
-      songUrl: "https://open.spotify.com",
-    };
-    return NextResponse.json(fallback, {
-      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30" },
-    });
+    return NextResponse.json({ isPlaying: false });
   }
 
   try {

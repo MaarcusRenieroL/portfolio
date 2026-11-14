@@ -172,17 +172,12 @@ export function Nav({ showWriting = true, showNotes = true }: { showWriting?: bo
   );
 }
 
-import { LiveTelemetry } from "~/components/presence/live-telemetry";
-
 export function Footer() {
   const t = useDict().chrome;
   const href = useLocalePath();
   return (
     <footer className="footer">
       <div className="wrap">
-        <div style={{ marginBottom: 20 }}>
-          <LiveTelemetry />
-        </div>
         <div className="footer-in">
           <span>
             © {new Date().getFullYear()} {SITE.name}. {t.nothing}

@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// Default Discord User ID (or configured via DISCORD_USER_ID)
-const DEFAULT_USER_ID = "715494206584061982";
-
 export async function GET() {
-  const userId = process.env.DISCORD_USER_ID ?? DEFAULT_USER_ID;
+  const userId = process.env.DISCORD_USER_ID;
+  if (!userId) {
+    return NextResponse.json({ status: "offline" });
+  }
 
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`, {
@@ -15,15 +15,7 @@ export async function GET() {
     });
 
     if (!res.ok) {
-      return NextResponse.json({
-        status: "online",
-        customStatus: "Developing in Zoro mode",
-        activity: {
-          name: "Visual Studio Code",
-          details: "Editing portfolio · Next.js 16",
-          state: "Workspace: portfolio",
-        },
-      });
+      return NextResponse.json({ status: "offline" });
     }
 
     const data = await res.json();
