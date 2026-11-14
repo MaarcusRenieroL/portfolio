@@ -15,8 +15,8 @@ export const contactSchema = z.object({
   message: z.string().trim().min(10, "Message should be at least 10 characters").max(5000, "Message is too long"),
 });
 
-/** The browser form also carries the honeypot, which the server checks before anything else. */
-export const contactFormSchema = contactSchema.extend({ website: z.string().optional() });
+/** The browser form also carries the honeypot (checked first by the server) and the optional Turnstile token. */
+export const contactFormSchema = contactSchema.extend({ website: z.string().optional(), token: z.string().optional() });
 
 export type ContactField = "name" | "email" | "org" | "reason" | "message";
 export type ContactInput = z.input<typeof contactFormSchema>;

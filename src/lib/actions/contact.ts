@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { Resend } from "resend";
-import { allowContact } from "~/lib/rate-limit";
+import { allowContact, clientKeyFrom } from "~/lib/rate-limit";
 import { type ContactField, REASON_LABELS, contactSchema as schema } from "~/lib/contact-schema";
 
 const REASONS = REASON_LABELS;
@@ -17,11 +17,22 @@ export type ContactState = {
 
 async function clientKey() {
   try {
-    const h = await headers();
-    // Vercel sets x-vercel-forwarded-for itself; a client-sent cf-connecting-ip would be spoofable here.
-    return h.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    return clientKeyFrom(await headers());
   } catch {
     return "unknown";
+  }
+}
+
+/** Cloudflare Turnstile: only enforced when TURNSTILE_SECRET is set, so local dev and tests need nothing. */
+async function humanOk(token: FormDataEntryValue | null, ip: string) {
+  const secret = process.env.TURNSTILE_SECRET;
+  if (!secret) return true;
+  if (typeof token !== "string" || !token) return false;
+  try {
+    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret, response: token, remoteip: ip }) });
+    return ((await res.json()) as { success?: boolean }).success === true;
+  } catch {
+    return false;
   }
 }
 
@@ -46,8 +57,12 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     return { status: "error", message: "Please fix the highlighted fields.", fieldErrors };
   }
 
-  if (!allowContact(await clientKey())) {
+  const ip = await clientKey();
+  if (!allowContact(ip)) {
     return { status: "error", message: "Too many messages from this connection. Please try again later or email me directly." };
+  }
+  if (!(await humanOk(formData.get("token"), ip))) {
+    return { status: "error", message: "The spam check didn't pass. Please reload the check and try again, or email me directly." };
   }
 
   const { name, email, org, reason, message } = parsed.data;
@@ -67,6 +82,20 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     if (error) {
       console.error("[contact] resend error:", error);
       return { status: "error", message: "Couldn't send right now. Please try again or email me directly." };
+    }
+    // Off by default: replying to an unverified address can be abused to mail strangers. Turn on with CONTACT_AUTOREPLY=1 once Turnstile is on.
+    if (process.env.CONTACT_AUTOREPLY === "1") {
+      try {
+        await new Resend(apiKey).emails.send({
+          from,
+          to: email,
+          replyTo: to,
+          subject: "Thanks for your message",
+          text: `Hi ${name},\n\nThanks for getting in touch. I got your message and will reply personally, usually within a few days.\n\nMaarcus`,
+        });
+      } catch (err) {
+        console.error("[contact] auto-reply failed:", err);
+      }
     }
     return { status: "success", message: "sent" };
   } catch (err) {

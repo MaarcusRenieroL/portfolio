@@ -239,3 +239,56 @@ describe("sendContactMessage", () => {
   });
   it.todo("SUSPICION: no rate limiting; honeypot is only protection");
 });
+
+describe("spam check and auto-reply", () => {
+  beforeEach(() => send.mockResolvedValue({ error: null }));
+
+  it("without a Turnstile secret nothing extra is required", async () => {
+    expect((await run()).status).toBe("success");
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it("with a secret, a missing token is refused and nothing is sent", async () => {
+    vi.stubEnv("TURNSTILE_SECRET", "s");
+    const r = await run();
+    expect(r.status).toBe("error");
+    expect(r.message).toMatch(/spam check/i);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("with a secret, Cloudflare's verdict decides", async () => {
+    vi.stubEnv("TURNSTILE_SECRET", "s");
+    const fetchMock = vi.fn().mockResolvedValueOnce({ json: async () => ({ success: false }) }).mockResolvedValueOnce({ json: async () => ({ success: true }) });
+    vi.stubGlobal("fetch", fetchMock);
+    expect((await run({ token: "bad" })).status).toBe("error");
+    expect(send).not.toHaveBeenCalled();
+    expect((await run({ token: "good" })).status).toBe("success");
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(String(fetchMock.mock.calls[0][0])).toContain("challenges.cloudflare.com");
+    vi.unstubAllGlobals();
+  });
+
+  it("a Cloudflare outage fails closed", async () => {
+    vi.stubEnv("TURNSTILE_SECRET", "s");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("down")));
+    expect((await run({ token: "x" })).status).toBe("error");
+    vi.unstubAllGlobals();
+  });
+
+  it("auto-reply is off by default and sends a second email to the sender when enabled", async () => {
+    await run();
+    expect(send).toHaveBeenCalledTimes(1);
+
+    send.mockClear();
+    vi.stubEnv("CONTACT_AUTOREPLY", "1");
+    await run({ email: "grace@example.com", name: "Grace Hopper" });
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(send.mock.calls[1][0]).toMatchObject({ to: "grace@example.com", replyTo: "me@x.dev" });
+  });
+
+  it("a failing auto-reply never fails the message", async () => {
+    vi.stubEnv("CONTACT_AUTOREPLY", "1");
+    send.mockResolvedValueOnce({ error: null }).mockRejectedValueOnce(new Error("boom"));
+    expect((await run()).status).toBe("success");
+  });
+});
