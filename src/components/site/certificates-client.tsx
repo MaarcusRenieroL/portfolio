@@ -75,13 +75,14 @@ export function CertificatesClient({ items }: { items: Certificate[] }) {
                 <div className="cert-media">{thumb}</div>
               )}
               <div className="cert-body">
-                <h2 className="cert-title">{c.title}</h2>
-                <p className="cert-meta">
-                  {c.issuer} · {fmt.format(new Date(`${c.date}T00:00:00Z`))}
-                  {c.hours ? ` · ${c.hours} ${t.hours}` : ""}
-                </p>
-                <p className="muted small">{c.about}</p>
-                {c.instructors && <p className="muted small">{t.instructors}: {c.instructors}</p>}
+                <div className="cert-content">
+                  <h2 className="cert-title">{c.title}</h2>
+                  <p className="cert-meta">
+                    {c.issuer} · {fmt.format(new Date(`${c.date}T00:00:00Z`))}
+                    {c.hours ? ` · ${c.hours} ${t.hours}` : ""}
+                  </p>
+                  <p className="muted small cert-desc">{c.about}</p>
+                </div>
                 {(c.file || c.verify) && (
                   <p className="cert-links">
                     {c.file && (

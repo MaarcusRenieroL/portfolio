@@ -2417,13 +2417,15 @@ html[data-intro="seen"] .zoro { display: none; }
 
 .cert-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
   gap: 16px;
 }
 
 .cert {
   display: flex;
   flex-direction: column;
+  aspect-ratio: 1 / 1;
+  width: 100%;
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
@@ -2434,10 +2436,12 @@ html[data-intro="seen"] .zoro { display: none; }
 
 .cert-media {
   display: block;
-  aspect-ratio: 4 / 3;
+  height: 44%;
+  flex-shrink: 0;
   background: var(--hover);
   border-bottom: 1px solid var(--line);
   overflow: hidden;
+  position: relative;
 }
 
 .cert-img,
@@ -2445,10 +2449,60 @@ html[data-intro="seen"] .zoro { display: none; }
 .cert-media .pic-fallback { place-items: center; }
 .cert-fallback { color: var(--fg-3); font-size: 2rem; font-weight: 600; letter-spacing: 0.08em; }
 
-.cert-body { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px 18px; }
-.cert-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35; }
-.cert-meta { color: var(--fg-2); font-size: 12px; }
-.cert-links { display: flex; gap: 16px; margin-top: 6px; font-size: 13px; }
+.cert-body { 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  flex: 1; 
+  min-height: 0; 
+  gap: 4px; 
+  padding: 14px 16px; 
+  overflow: hidden; 
+}
+
+.cert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.cert-title { 
+  font-size: 13.5px; 
+  font-weight: 600; 
+  letter-spacing: -0.01em; 
+  line-height: 1.3; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cert-meta { 
+  color: var(--fg-2); 
+  font-size: 11.5px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.cert-desc {
+  font-size: 11.5px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cert-links { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
+  margin-top: auto; 
+  padding-top: 4px; 
+  font-size: 12px; 
+}
 
 
 /* ---------- Footer extras, shortcuts, print ---------- */
