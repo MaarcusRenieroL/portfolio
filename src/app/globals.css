@@ -12,6 +12,16 @@
   --color-zoro-katana: #34d399;
 }
 
+/* Equalizer keyframe animations */
+@keyframes music-bar {
+  0%, 100% { height: 25%; }
+  50% { height: 100%; }
+}
+
+.animate-music-bar-1 { animation: music-bar 850ms ease-in-out infinite; }
+.animate-music-bar-2 { animation: music-bar 600ms ease-in-out infinite 150ms; }
+.animate-music-bar-3 { animation: music-bar 750ms ease-in-out infinite 300ms; }
+
 /*
   maarcus.dev.
   Flat near-black, hairline dividers, small quiet type, ghost buttons.
