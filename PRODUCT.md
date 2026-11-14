@@ -15,8 +15,8 @@ Personal portfolio of Maarcus Reniero L (Chennai, IN). It shows four projects (n
 ## Capabilities and Constraints
 - Next.js app. Routes: home, projects, experience, skills, about, resume, contact, blog (hidden until a post exists). `/stack` redirects to `/skills`.
 - Copy lives in `src/lib/content.ts` and is schema-validated at import.
-- Case studies were removed on purpose; a different format is planned.
-- Notes and a knowledge base are planned (files as the CMS, opt-in publishing) and are on hold.
+- Content is edited in a private `/admin` CMS backed by Postgres, with the files as fallback. Blog posts and notes have a heading navigation.
+- Case studies were removed on purpose; a different format is planned. A rich-text editor, GitHub sync and a notes graph are not built.
 - A GitHub-driven project list is under discussion and not built.
 - Interactive extras kept: command palette (`Ctrl/⌘ K`), vim-style keys on lists, theme switch animation, particles and the intro loader (all off for reduced motion).
 

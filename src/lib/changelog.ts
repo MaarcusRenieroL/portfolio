@@ -4,6 +4,15 @@ export type ChangelogEntry = { date: string; title: string; points: string[] };
 export const CHANGELOG: ChangelogEntry[] = [
   {
     date: "2026-11-14",
+    title: "Writing and a private editor",
+    points: [
+      "Blog posts and short notes now have a heading navigation on the side, and page titles scramble in when you arrive.",
+      "I can edit everything on the site from a private admin, preview it live and publish when it is ready.",
+      "Visit counts are anonymous and cookieless: no tracking cookies, no addresses stored, and Do Not Track is respected.",
+    ],
+  },
+  {
+    date: "2026-11-14",
     title: "German version",
     points: [
       "The whole site is available in German. Use the EN/DE toggle in the header; the page stays where it is and your choice is remembered.",
