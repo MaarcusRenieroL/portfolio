@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export const SHORTCUTS_EVENT = "shortcuts:open";
 
 const groups = (r: ReturnType<typeof useDict>["shortcuts"]): [string, [string[], string][]][] => [
-  [r.anywhere, [[["Ctrl/⌘", "K"], r.rows.palette], [["~"], "Toggle Terminal"], [["Ctrl", "Shift", "D"], "Dev Mode HUD"], [["?"], r.rows.help], [["Esc"], r.rows.esc]]],
+  [r.anywhere, [[["Ctrl/⌘", "K"], r.rows.palette], [["~"], "Toggle Terminal"], [["?"], r.rows.help], [["Esc"], r.rows.esc]]],
   [r.lists, [[["j", "k"], r.rows.move], [["g", "g"], r.rows.first], [["G"], r.rows.last], [["Enter"], r.rows.open], [["/"], r.rows.search]]],
 ];
 

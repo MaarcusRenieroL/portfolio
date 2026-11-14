@@ -15,7 +15,6 @@ import { Particles } from "~/components/site/particles";
 import { ShortcutsHelp } from "~/components/site/shortcuts";
 import { ZoroAiBubble } from "~/components/zoro-ai/zoro-bubble";
 import { InteractiveTerminal } from "~/components/terminal/interactive-terminal";
-import { DevModeHud } from "~/components/dev-mode/dev-hud";
 import { NAV_LINKS, SITE } from "~/lib/content";
 import { getPostList } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
@@ -132,7 +131,6 @@ export default async function RootLayout({ children, params }: { children: React
           <ShortcutsHelp />
           <ZoroAiBubble />
           <InteractiveTerminal />
-          <DevModeHud />
         </LocaleProvider>
       </body>
     </html>
