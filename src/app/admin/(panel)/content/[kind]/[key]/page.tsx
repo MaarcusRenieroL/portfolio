@@ -1,13 +1,44 @@
 import { notFound } from "next/navigation";
-import { isKind, getRow } from "~/lib/server/store";
+import { isKind, getRow, listRows } from "~/lib/server/store";
+import { SPECS } from "~/lib/cms-fields";
 import { Editor } from "../../../../_components/editor";
 
-export default async function EditPage({ params }: { params: Promise<{ kind: string; key: string }> }) {
+export default async function EditPage({
+  params,
+}: {
+  params: Promise<{ kind: string; key: string }>;
+}) {
   const { kind, key: raw } = await params;
   if (!isKind(kind)) notFound();
   const key = decodeURIComponent(raw);
-  if (key === "new") return <Editor kind={kind} keyValue={null} data={{}} de={{}} machine={false} live={false} deleted={false} />;
-  const row = await getRow(kind, key);
-  if (!row) notFound();
-  return <Editor kind={kind} keyValue={row.key} data={row.draft} de={row.draft_de ?? {}} machine={row.de_machine} live={Boolean(row.published)} deleted={row.deleted} />;
+  const spec = SPECS[kind];
+
+  const [row, allRows] = await Promise.all([
+    key === "new" ? null : getRow(kind, key),
+    listRows(kind),
+  ]);
+
+  if (key !== "new" && !row) notFound();
+
+  const collectionItems = allRows.map((r) => ({
+    key: r.key,
+    title: String(
+      (r.draft as Record<string, unknown>)[spec.titleField] ?? r.key
+    ),
+    live: Boolean(r.published),
+    deleted: r.deleted,
+  }));
+
+  return (
+    <Editor
+      kind={kind}
+      keyValue={row ? row.key : null}
+      data={row ? row.draft : {}}
+      de={row ? (row.draft_de ?? {}) : {}}
+      machine={row ? row.de_machine : false}
+      live={Boolean(row?.published)}
+      deleted={Boolean(row?.deleted)}
+      collectionItems={collectionItems}
+    />
+  );
 }

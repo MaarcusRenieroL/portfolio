@@ -130,6 +130,49 @@ export async function translateItem(kindIn: string, rawData: unknown): Promise<R
   return r.ok ? { ok: true, de: r.de } : bad(r.message);
 }
 
+/** Add a skill to an existing group, or create the group with this skill */
+export async function addSkill(skillName: string, groupName: string): Promise<Result<{ key: string }>> {
+  await requireAdmin();
+  const trimmedSkill = skillName.trim();
+  const trimmedGroup = groupName.trim();
+  if (!trimmedSkill) return bad("Skill name cannot be empty.");
+  if (!trimmedGroup) return bad("Group name cannot be empty.");
+
+  const row = await getRow("skillgroup", trimmedGroup);
+  let items: string[] = [];
+  if (row && row.draft && Array.isArray((row.draft as Record<string, unknown>).items)) {
+    items = [...((row.draft as Record<string, unknown>).items as string[])];
+    if (items.some((it) => it.toLowerCase() === trimmedSkill.toLowerCase())) {
+      return bad(`Skill "${trimmedSkill}" already exists in "${trimmedGroup}".`);
+    }
+    items.push(trimmedSkill);
+  } else {
+    items = [trimmedSkill];
+  }
+
+  const rawDe = row?.draft_de ?? null;
+  const machine = row?.de_machine ?? false;
+  return saveItem("skillgroup", row ? trimmedGroup : null, { name: trimmedGroup, items }, rawDe, machine);
+}
+
+/** Remove a single skill from a group */
+export async function removeSkillFromGroup(skillName: string, groupName: string): Promise<Result<{ key: string }>> {
+  await requireAdmin();
+  const row = await getRow("skillgroup", groupName);
+  if (!row || !row.draft || !Array.isArray((row.draft as Record<string, unknown>).items)) {
+    return bad("Skill group not found.");
+  }
+  const items = ((row.draft as Record<string, unknown>).items as string[]).filter(
+    (s) => s.toLowerCase() !== skillName.trim().toLowerCase(),
+  );
+  if (items.length === 0) {
+    return bad("A group must have at least one skill. Delete the group instead if no longer needed.");
+  }
+  const rawDe = row.draft_de ?? null;
+  const machine = row.de_machine ?? false;
+  return saveItem("skillgroup", groupName, { name: groupName, items }, rawDe, machine);
+}
+
 /** Ends every admin session, including this one: the next request lands on the sign-in page. */
 export async function signOutEverywhere(): Promise<void> {
   await requireAdmin();

@@ -4,6 +4,8 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { Toc } from "~/components/site/toc";
+import { ReadingProgress } from "~/components/site/reading-progress";
+import { ClockIcon, CalendarIcon, ArrowLeftIcon } from "~/components/site/icons";
 import { SITE } from "~/lib/content";
 import { getHeadings, makeIdGenerator } from "~/lib/data/blog";
 import { DICT } from "~/lib/dict";
@@ -40,16 +42,40 @@ export async function Article({ kind, slug, lang }: { kind: ArticleKind; slug: s
 
   return (
     <article className="wrap page">
+      <ReadingProgress />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }} />
-      <header className="stack g24">
-        <Link className="back" href={t.base}>{t.back}</Link>
-        <h1 className="title col">{post.title}</h1>
-        <p className="lead">{post.description}</p>
-        <p className="faint small" style={{ textTransform: "capitalize" }}>
-          {formatLongDate(post.date)} · {post.readingTime}
-        </p>
+      <header className="stack g24 article-header">
+        <Link className="back blog-back-link" href={t.base}>
+          <ArrowLeftIcon width={13} height={13} />
+          <span>{t.back}</span>
+        </Link>
+
+        <div className="article-meta-row">
+          <span className="blog-kicker-badge" style={{ margin: 0 }}>
+            <span className="blog-kicker-dot" />
+            {kind === "post" ? "ESSAY" : "NOTE"}
+          </span>
+          <span className="article-meta-item">
+            <CalendarIcon width={12} height={12} />
+            <time dateTime={post.date}>{formatLongDate(post.date)}</time>
+          </span>
+          <span className="article-meta-item">
+            <ClockIcon width={12} height={12} />
+            <span>{post.readingTime}</span>
+          </span>
+        </div>
+
+        <h1 className="title col article-main-title">{post.title}</h1>
+        {post.description && <p className="lead article-lead">{post.description}</p>}
+
         {post.tags.length > 0 && (
-          <p className="tags">{post.tags.map((x) => <span key={x}>#{x}</span>)}</p>
+          <div className="blog-card-tags" style={{ marginTop: 4 }}>
+            {post.tags.map((x) => (
+              <span key={x} className="blog-tag-pill">
+                #{x}
+              </span>
+            ))}
+          </div>
         )}
       </header>
 

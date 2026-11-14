@@ -40,7 +40,9 @@ describe("encryption and hashing", () => {
     expect(decrypt(a)).toBe("secret value");
     expect(encrypt("secret value")).not.toBe(a);
     const [iv, tag, ct] = a.split(".");
-    const flipped = ct.slice(0, -2) + (ct.endsWith("A") ? "B" : "A") + ct.slice(-1);
+    const ctBuf = Buffer.from(ct, "base64url");
+    ctBuf[0] ^= 1;
+    const flipped = ctBuf.toString("base64url");
     expect(() => decrypt([iv, tag, flipped].join("."))).toThrow();
     expect(() => decrypt("nope")).toThrow();
   });

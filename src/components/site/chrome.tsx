@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LANG_COOKIE, stripLang } from "~/lib/i18n";
@@ -20,6 +21,110 @@ export function Nav({ showWriting = true, showNotes = true }: { showWriting?: bo
   const cur = (h: string) => (h === "/" ? pathname === "/" : pathname === h || pathname.startsWith(h + "/"));
   const other = lang === "en" ? "de" : "en";
   const label = (h: string) => t.nav[(h === "/" ? "home" : h === "/blog" ? "writing" : h.slice(1)) as keyof typeof t.nav];
+
+  const tabsRef = useRef<HTMLElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Check scroll position to toggle edge fade indicators
+  const updateScroll = useCallback(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 6);
+  }, []);
+
+  // Update on route change & scroll active tab into view
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+
+    updateScroll();
+
+    // Auto-scroll the active tab into view on mount or route transition
+    const active = el.querySelector<HTMLElement>('[aria-current="page"]');
+    if (active) {
+      const elRect = el.getBoundingClientRect();
+      const activeRect = active.getBoundingClientRect();
+      if (activeRect.left < elRect.left + 16 || activeRect.right > elRect.right - 16) {
+        active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    }
+
+    el.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", updateScroll);
+    return () => {
+      el.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("resize", updateScroll);
+    };
+  }, [pathname, updateScroll]);
+
+  // Mouse drag-to-scroll and trackpad wheel support for desktop / mobile emulation
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let initialScrollLeft = 0;
+    let draggedDistance = 0;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      isDown = true;
+      startX = e.clientX;
+      initialScrollLeft = el.scrollLeft;
+      draggedDistance = 0;
+      el.style.scrollBehavior = "auto";
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      const walk = e.clientX - startX;
+      draggedDistance = Math.abs(walk);
+      if (draggedDistance > 4) {
+        setIsDragging(true);
+        el.scrollLeft = initialScrollLeft - walk;
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDown) {
+        el.style.scrollBehavior = "smooth";
+        if (draggedDistance > 6) {
+          // Suppress accidental click navigation on dragged link
+          const preventClick = (clickEvent: MouseEvent) => {
+            clickEvent.preventDefault();
+            clickEvent.stopPropagation();
+            window.removeEventListener("click", preventClick, true);
+          };
+          window.addEventListener("click", preventClick, true);
+        }
+      }
+      isDown = false;
+      setIsDragging(false);
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && el.scrollWidth > el.clientWidth) {
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    el.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    el.addEventListener("wheel", handleWheel, { passive: true });
+
+    return () => {
+      el.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      el.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   return (
     <header className="header">
@@ -47,13 +152,21 @@ export function Nav({ showWriting = true, showNotes = true }: { showWriting?: bo
             <ThemeToggle />
           </div>
         </div>
-        <nav className="tabs" aria-label={t.chrome.primary}>
-          {NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map(({ href: h, label: en }) => (
-            <Link key={h} href={href(h)} data-tab={en.toLowerCase()} aria-current={cur(h) ? "page" : undefined}>
-              {label(h)}
-            </Link>
-          ))}
-        </nav>
+        <div
+          className={`tabs-wrapper ${canScrollLeft ? "has-left" : ""} ${canScrollRight ? "has-right" : ""}`}
+        >
+          <nav
+            ref={tabsRef}
+            className={`tabs ${isDragging ? "is-dragging" : ""}`}
+            aria-label={t.chrome.primary}
+          >
+            {NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map(({ href: h, label: en }) => (
+              <Link key={h} href={href(h)} data-tab={en.toLowerCase()} aria-current={cur(h) ? "page" : undefined}>
+                {label(h)}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   );

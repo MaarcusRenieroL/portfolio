@@ -7,7 +7,8 @@ export function Logout() {
   const router = useRouter();
   return (
     <button
-      className="link"
+      type="button"
+      className="admin-header-link"
       onClick={async () => {
         await post("logout");
         router.replace("/admin/login");
