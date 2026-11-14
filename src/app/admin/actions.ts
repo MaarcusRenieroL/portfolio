@@ -24,6 +24,14 @@ const SCHEMAS: Record<Kind, z.ZodType> = {
   note: postSchema,
 };
 
+/** Fields the schemas require but that a blank form leaves undefined (an unticked box, an empty list). */
+const DEFAULTS: Partial<Record<Kind, Record<string, unknown>>> = {
+  project: { featured: false },
+  role: { points: [], tags: [] },
+  post: { tags: [] },
+  note: { tags: [] },
+};
+
 export type Result<T = object> = ({ ok: true } & T) | { ok: false; errors: string[] };
 const bad = (...errors: string[]): { ok: false; errors: string[] } => ({ ok: false, errors });
 
@@ -60,7 +68,7 @@ export async function saveItem(kindIn: string, originalKey: string | null, rawDa
   if (!isKind(kindIn)) return bad("Unknown content type.");
   const kind = kindIn;
   const spec = SPECS[kind];
-  const parsed = SCHEMAS[kind].safeParse(clean(rawData));
+  const parsed = SCHEMAS[kind].safeParse({ ...DEFAULTS[kind], ...clean(rawData) });
   if (!parsed.success) return bad(...parsed.error.issues.map((i) => `${i.path.join(".") || spec.keyField}: ${i.message}`));
   const data = parsed.data as Record<string, unknown>;
   const key = String(data[spec.keyField]);

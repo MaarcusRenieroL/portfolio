@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { BlogClient } from "~/components/site/blog-client";
-import { getPosts } from "~/lib/data/blog";
+import { ArticleList } from "~/components/site/article-list";
+import { DICT } from "~/lib/dict";
+import { langOf } from "~/lib/lang";
 
-export const metadata: Metadata = { title: "Writing", description: "What I learn while building: backend, systems, and the road to security and cloud." };
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const t = DICT[await langOf(params)].blog;
+  return { title: t.title, description: t.lead, alternates: { canonical: t.base } };
+}
 
-export default function BlogPage() {
-  return (
-    <div className="wrap page">
-      <header className="stack g24">
-        <h1 className="title">Writing</h1>
-        <p className="lead">What I learn while building: backend, systems, and the road to security and cloud.</p>
-      </header>
-      <BlogClient posts={getPosts()} />
-    </div>
-  );
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+  return <ArticleList kind="post" lang={await langOf(params)} />;
 }

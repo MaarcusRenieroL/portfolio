@@ -27,7 +27,7 @@ export default defineConfig({
   testDir: "tests/e2e",
   use: { baseURL: `http://localhost:${PORT}` },
   webServer: {
-    command: `rm -rf .next-e2e && pnpm dev --port ${PORT}`,
+    command: `node scripts/e2e-reset.mjs && rm -rf .next-e2e && pnpm dev --port ${PORT}`,
     env: {
       NEXT_DIST_DIR: ".next-e2e",
       DATABASE_URL: testDb,

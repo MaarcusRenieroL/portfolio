@@ -11,7 +11,7 @@ import { FooterShortcutsButton } from "~/components/site/shortcuts";
 import { ThemeToggle } from "~/components/site/theme-toggle";
 
 /** Header: name left, tools right, underlined tabs below. */
-export function Nav({ showWriting = true }: { showWriting?: boolean }) {
+export function Nav({ showWriting = true, showNotes = true }: { showWriting?: boolean; showNotes?: boolean }) {
   const rawPath = usePathname();
   const lang = useLang();
   const t = useDict();
@@ -48,7 +48,7 @@ export function Nav({ showWriting = true }: { showWriting?: boolean }) {
           </div>
         </div>
         <nav className="tabs" aria-label={t.chrome.primary}>
-          {NAV_LINKS.filter((l) => showWriting || l.href !== "/blog").map(({ href: h, label: en }) => (
+          {NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map(({ href: h, label: en }) => (
             <Link key={h} href={href(h)} data-tab={en.toLowerCase()} aria-current={cur(h) ? "page" : undefined}>
               {label(h)}
             </Link>

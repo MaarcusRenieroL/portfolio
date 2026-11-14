@@ -1,11 +1,11 @@
 import { SITE } from "~/lib/content";
-import { getPosts } from "~/lib/data/blog";
+import { getPostList } from "~/lib/posts";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** RSS 2.0. Valid (and empty) until the first post is published. */
-export function GET() {
-  const posts = getPosts();
+export async function GET() {
+  const posts = await getPostList("post", "en");
   const items = posts
     .map((p) => {
       const url = `${SITE.url}/blog/${p.slug}`;

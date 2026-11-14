@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import "../globals.css";
 import { Events } from "~/components/site/events";
+import { Scramble } from "~/components/site/scramble";
 import { Loader } from "~/components/site/loader";
 import { Footer, Nav } from "~/components/site/chrome";
 import { CommandPalette, type PaletteItem } from "~/components/site/command-palette";
@@ -13,7 +14,7 @@ import { Motion } from "~/components/site/motion";
 import { Particles } from "~/components/site/particles";
 import { ShortcutsHelp } from "~/components/site/shortcuts";
 import { NAV_LINKS, SITE } from "~/lib/content";
-import { getPosts } from "~/lib/data/blog";
+import { getPostList } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
 import { LANGS, isLang, localePath, type Lang } from "~/lib/i18n";
 import { getSiteContent } from "~/lib/site-content";
@@ -73,11 +74,11 @@ const personJsonLd = {
   sameAs: [SITE.github, SITE.linkedin],
 };
 
-function paletteItems(lang: Lang, showWriting: boolean, projects: Project[]): PaletteItem[] {
+function paletteItems(lang: Lang, showWriting: boolean, showNotes: boolean, projects: Project[]): PaletteItem[] {
   const d = DICT[lang];
   const navLabel = (href: string) => d.nav[(href === "/" ? "home" : href === "/blog" ? "writing" : href.slice(1)) as keyof typeof d.nav];
   return [
-    ...NAV_LINKS.filter((l) => showWriting || l.href !== "/blog").map((l): PaletteItem => ({ id: `page-${l.href}`, group: "Pages", label: navLabel(l.href), hint: localePath(lang, l.href), run: "href", value: localePath(lang, l.href) })),
+    ...NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map((l): PaletteItem => ({ id: `page-${l.href}`, group: "Pages", label: navLabel(l.href), hint: localePath(lang, l.href), run: "href", value: localePath(lang, l.href) })),
     ...projects
       .filter((p) => p.site ?? p.github)
       .map((p): PaletteItem => ({ id: `project-${p.slug}`, group: "Projects", label: p.name, hint: p.kind, keywords: p.skills.join(" "), run: "external", value: p.site ?? p.github })),
@@ -95,7 +96,8 @@ export default async function RootLayout({ children, params }: { children: React
   const { lang } = await params;
   if (!isLang(lang)) notFound();
   const { projects } = await getSiteContent(lang);
-  const showWriting = getPosts().length > 0;
+  const showWriting = (await getPostList("post", lang)).length > 0;
+  const showNotes = (await getPostList("note", lang)).length > 0;
 
   return (
     <html lang={lang} className={`${sans.variable} ${code.variable}`} suppressHydrationWarning>
@@ -111,14 +113,15 @@ export default async function RootLayout({ children, params }: { children: React
             <a className="skip-link" href="#main">
               {DICT[lang].chrome.skip}
             </a>
-            <Nav showWriting={showWriting} />
+            <Nav showWriting={showWriting} showNotes={showNotes} />
             <main id="main">{children}</main>
             <Footer />
           </div>
           <Particles />
           <Motion />
+          <Scramble />
           <Life />
-          <CommandPalette items={paletteItems(lang, showWriting, projects)} />
+          <CommandPalette items={paletteItems(lang, showWriting, showNotes, projects)} />
           <Analytics />
           <Events />
           <ShortcutsHelp />

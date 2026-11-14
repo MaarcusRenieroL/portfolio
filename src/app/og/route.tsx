@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { SITE } from "~/lib/content";
 import { getSiteContent } from "~/lib/site-content";
-import { getPost } from "~/lib/data/blog";
+import { getPostBySlug } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
 import { OG_PAGES, type OgPage } from "~/lib/seo";
 import { allowOg, clientKeyFrom } from "~/lib/rate-limit";
@@ -24,7 +24,7 @@ async function resolve(params: URLSearchParams): Promise<{ title: string; subtit
   }
   const post = params.get("post");
   if (post) {
-    const p = getPost(post);
+    const p = (await getPostBySlug("post", post, "en")) ?? (await getPostBySlug("note", post, "en"));
     if (p) return { title: p.title, subtitle: p.description };
   }
   return { title: SITE.name, subtitle: DEFAULT_SUBTITLE };

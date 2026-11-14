@@ -44,6 +44,7 @@ export const postSchema = z.object({
   tags: z.array(text),
   /** Markdown. */
   body: z.string(),
+  featured: z.boolean().optional(),
 });
 export const skillGroupSchema = z.object({ name: text, items: z.array(text).min(1) });
 

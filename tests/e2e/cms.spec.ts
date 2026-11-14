@@ -114,3 +114,41 @@ test("a new item can be created, published and removed", async ({ page, context,
   await visitor.goto("/skills");
   await expect(visitor.getByText("Alpha")).toHaveCount(0);
 });
+
+const BODY = "Intro paragraph.\n\n## First heading\n\nSome text.\n\n## Second heading\n\nMore text.\n\n```ts\nconst x = 1;\n```\n";
+
+for (const [kind, base, tabLabel] of [["note", "/notes", "Notes"], ["post", "/blog", "Writing"]] as const) {
+  test(`a ${kind} written in the CMS appears on the site with the heading navigation`, async ({ page, context, browser }) => {
+    await signIn(context);
+    await page.goto(`/admin/content/${kind}/new`);
+    await page.locator("#f-slug").fill(`first-${kind}`);
+    await page.locator("#f-title").fill(`My first ${kind}`);
+    await page.locator("#f-description").fill("A short summary.");
+    await page.locator("#f-date").fill("2026-11-14");
+    await page.locator("#f-body").fill(BODY);
+    await expect.poll(async () => Number((await db.query("select count(*) n from content_item where kind=$1 and key=$2", [kind, `first-${kind}`])).rows[0].n), { timeout: 15_000 }).toBe(1);
+    await expect(page).toHaveURL(new RegExp(`${kind}/first-${kind}$`));
+    // The right-hand preview renders the draft article.
+    const frame = page.frameLocator('iframe[title="Live preview of the site"]');
+    await expect(frame.getByRole("heading", { name: `My first ${kind}` })).toBeVisible({ timeout: 30_000 });
+
+    // Before publishing, a visitor sees nothing.
+    const visitor = await (await browser.newContext()).newPage();
+    expect((await visitor.goto(`${base}/first-${kind}`))?.status()).toBe(404);
+
+    await page.getByRole("button", { name: "Publish", exact: true }).click();
+    await expect(page.getByText("Published.")).toBeVisible();
+
+    await visitor.goto("/");
+    await expect(visitor.locator(".tabs").getByRole("link", { name: tabLabel, exact: true })).toBeVisible();
+    await visitor.goto(base);
+    await expect(visitor.getByText(`My first ${kind}`)).toBeVisible();
+    await visitor.goto(`${base}/first-${kind}`);
+    await expect(visitor.getByRole("heading", { level: 1, name: `My first ${kind}` })).toBeVisible();
+    const toc = visitor.locator("nav.toc");
+    await expect(toc.getByRole("link")).toHaveCount(2);
+    await toc.getByRole("link", { name: "Second heading" }).click();
+    await expect(visitor).toHaveURL(/#second-heading$/);
+    await expect(visitor.locator("pre code")).toContainText("const x = 1");
+  });
+}

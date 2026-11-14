@@ -10,7 +10,7 @@ import type { SearchData } from "~/lib/site-content";
 type Entry = { label: string; hint: string; href: string; external?: boolean };
 
 const buildIndex = (lang: Lang, t: ReturnType<typeof useDict>, data: SearchData[Lang]): Entry[] => [
-  ...NAV_LINKS.filter((l) => l.href !== "/blog").map((l) => ({ label: t.nav[(l.href === "/" ? "home" : l.href.slice(1)) as keyof typeof t.nav], hint: t.notFound.page, href: localePath(lang, l.href) })),
+  ...NAV_LINKS.filter((l) => l.href !== "/blog" && l.href !== "/notes").map((l) => ({ label: t.nav[(l.href === "/" ? "home" : l.href.slice(1)) as keyof typeof t.nav], hint: t.notFound.page, href: localePath(lang, l.href) })),
   { label: t.chrome.changelog, hint: t.notFound.page, href: localePath(lang, "/changelog") },
   ...data.projects.map((p) => ({ label: p.name, hint: `${t.notFound.project} · ${p.kind}`, href: p.href, external: true })),
   ...data.certs.map((c) => ({ label: c.title, hint: `${t.notFound.cert} · ${c.issuer}`, href: localePath(lang, `/certifications?q=${encodeURIComponent(c.title.split(" ").slice(0, 3).join(" "))}`) })),

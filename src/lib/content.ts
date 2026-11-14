@@ -22,6 +22,7 @@ export const NAV_LINKS = [
   { href: "/experience", label: "Experience" },
   { href: "/certifications", label: "Certifications" },
   { href: "/blog", label: "Writing" },
+  { href: "/notes", label: "Notes" },
   { href: "/skills", label: "Skills" },
   { href: "/about", label: "About" },
   { href: "/resume", label: "Resume" },

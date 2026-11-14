@@ -3,7 +3,7 @@ import { FileIcon, GithubIcon, LinkedinIcon, MailIcon } from "~/components/site/
 import { Pic, Portrait } from "~/components/site/media";
 import { ProjectIcon } from "~/components/site/project-icon";
 import { MEDIA, SITE } from "~/lib/content";
-import { getPosts } from "~/lib/data/blog";
+import { getPostList } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
 import { localePath } from "~/lib/i18n";
 import { langOf } from "~/lib/lang";
@@ -22,7 +22,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const lang = await langOf(params);
   const t = DICT[lang];
   const { projects, roles } = await getSiteContent(lang);
-  const posts = getPosts().filter((p) => p.featured).slice(0, 3);
+  const posts = (await getPostList("post", lang)).filter((p) => p.featured).slice(0, 3);
   const jobs = [roles.find((r) => r.now) ?? roles[0], roles.find((r) => !r.now)!];
   const href = (h: string) => localePath(lang, h);
 

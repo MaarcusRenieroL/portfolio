@@ -23,7 +23,7 @@ type Rows = Awaited<ReturnType<typeof readAll>>;
 
 const published = unstable_cache(async () => readAll("published"), ["site-content-published"], { tags: ["content"], revalidate: 3600 });
 
-async function rows(): Promise<Rows | null> {
+export async function contentRows(): Promise<Rows | null> {
   if (!hasDb()) return null;
   try {
     let draft = false;
@@ -58,7 +58,7 @@ function parse<S extends z.ZodType>(kind: string, schema: S, all: Rows) {
 const overlay = <T extends object>(data: T, de: Record<string, unknown> | null, lang: Lang): T => (lang === "de" && de ? ({ ...data, ...de } as T) : data);
 
 export async function getSiteContent(lang: Lang): Promise<SiteContent> {
-  const all = await rows();
+  const all = await contentRows();
   const fallback = (): SiteContent => ({ projects: projectsFor(lang), roles: rolesFor(lang), education: educationFor(lang), skills: skillsFor(lang), certificates: certificatesFor(lang) });
   if (!all) return fallback();
   const f = fallback();

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Heading } from "~/lib/data/blog";
 
 /** Sticky "On this page" list that highlights the heading being read. */
-export function Toc({ headings }: { headings: Heading[] }) {
+export function Toc({ headings, label = "On this page" }: { headings: Heading[]; label?: string }) {
   const [current, setCurrent] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export function Toc({ headings }: { headings: Heading[] }) {
   if (headings.length < 2) return null;
 
   return (
-    <nav className="toc" aria-label="On this page">
-      <span className="toc-h">On this page</span>
+    <nav className="toc" aria-label={label}>
+      <span className="toc-h">{label}</span>
       <ul>
         {headings.map((h) => (
           <li key={h.id} data-level={h.level}>
