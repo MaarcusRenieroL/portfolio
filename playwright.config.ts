@@ -25,6 +25,8 @@ export const LINK_FILE = path.join(os.tmpdir(), "portfolio-e2e-magic-link.txt");
 
 export default defineConfig({
   testDir: "tests/e2e",
+  // The CMS specs write to the shared test database and the server caches content, so files run one at a time.
+  workers: 1,
   use: { baseURL: `http://localhost:${PORT}` },
   webServer: {
     command: `node scripts/e2e-reset.mjs && rm -rf .next-e2e && pnpm dev --port ${PORT}`,

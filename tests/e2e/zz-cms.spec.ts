@@ -22,7 +22,10 @@ test.beforeAll(async () => {
   db = new pg.Pool({ connectionString: E2E_DB });
   await db.query("truncate content_item, admin_session restart identity");
 });
-test.afterAll(async () => db?.end());
+test.afterAll(async () => {
+  await db?.query("truncate content_item, admin_session restart identity");
+  await db?.end();
+});
 
 test("signed-out visitors cannot reach the CMS, its actions or the preview switch", async ({ page, request }) => {
   await page.goto("/admin/content/project");

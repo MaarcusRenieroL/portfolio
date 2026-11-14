@@ -118,10 +118,10 @@ test.describe("theme change animation", () => {
 });
 
 test.describe("layout and content decisions", () => {
-  test("only next-kit, nyx, dotfiles and portfolio are listed", async ({ page }) => {
-    expect(PROJECTS.map((p) => p.slug).sort()).toEqual(["dotfiles", "next-kit", "nyx", "portfolio"]);
+  test("only next-kit and nyx are listed", async ({ page }) => {
+    expect(PROJECTS.map((p) => p.slug).sort()).toEqual(["next-kit", "nyx"]);
     await page.goto("/projects");
-    await expect(page.locator(".rows > li")).toHaveCount(4);
+    await expect(page.locator(".rows > li")).toHaveCount(2);
     for (const gone of ["life os", "snap pass", "zentro"]) await expect(page.locator(".rows"), gone).not.toContainText(gone);
   });
 

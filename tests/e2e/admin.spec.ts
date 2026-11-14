@@ -189,6 +189,7 @@ test("a recovery code replaces the authenticator code, once", async ({ page, con
     if (attempt === 1) {
       await expect(page).toHaveURL(/\/admin$/);
       await page.getByRole("button", { name: "Sign out" }).click();
+      await expect(page).toHaveURL(/\/admin\/login/);
     } else {
       await expect(page.getByText("That code was not accepted.")).toBeVisible();
       await expect(page).not.toHaveURL(/\/admin$/);
