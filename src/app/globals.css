@@ -152,7 +152,11 @@ a {
   border-radius: 4px;
 }
 
+input,
+input:focus,
 input:focus-visible,
+textarea,
+textarea:focus,
 textarea:focus-visible,
 .no-focus-ring,
 .no-focus-ring:focus,

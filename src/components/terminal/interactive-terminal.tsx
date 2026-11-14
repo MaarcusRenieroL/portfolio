@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Terminal as TerminalIcon, X, Maximize2, Minimize2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "~/components/site/theme-toggle";
 
 interface TerminalLine {
   id: string;
@@ -118,6 +119,9 @@ const ZORO_QUOTES = [
 
 export function InteractiveTerminal() {
   const router = useRouter();
+  const theme = useTheme();
+  const isDark = theme === "dark";
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
@@ -261,13 +265,21 @@ export function InteractiveTerminal() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-40 group flex items-center gap-2 rounded-full border border-emerald-500/30 bg-[#060a08]/90 px-3.5 py-1.5 text-xs font-mono text-neutral-300 shadow-xl backdrop-blur-md transition-all duration-200 hover:border-emerald-400 hover:bg-neutral-900 hover:text-emerald-300 hover:shadow-[0_0_20px_rgba(74,222,128,0.2)] active:scale-95"
+        className={`fixed bottom-6 left-6 z-40 group flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-mono shadow-xl backdrop-blur-md transition-all duration-200 active:scale-95 ${
+          isDark
+            ? "border-emerald-500/30 bg-[#060a08]/90 text-neutral-300 hover:border-emerald-400 hover:bg-neutral-900 hover:text-emerald-300 hover:shadow-[0_0_20px_rgba(74,222,128,0.2)]"
+            : "border-emerald-600/40 bg-[#f0fdf4] text-neutral-800 hover:border-emerald-600 hover:bg-white hover:text-emerald-800 shadow-[0_4px_16px_rgba(0,0,0,0.08)]"
+        }`}
         title="Open Interactive Terminal (~)"
       >
-        <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-        <TerminalIcon className="h-3.5 w-3.5 text-emerald-400" />
+        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+        <TerminalIcon className={`h-3.5 w-3.5 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
         <span className="hidden sm:inline font-semibold">Ghostty Terminal</span>
-        <kbd className="rounded bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 text-[10px] text-neutral-400 font-mono">
+        <kbd
+          className={`rounded px-1.5 py-0.2 text-[10px] font-mono border ${
+            isDark ? "bg-neutral-900 border-neutral-800 text-neutral-400" : "bg-white border-neutral-300 text-neutral-600"
+          }`}
+        >
           ~
         </kbd>
       </button>
@@ -280,9 +292,11 @@ export function InteractiveTerminal() {
       onClick={() => setIsOpen(false)}
     >
       <div
-        className={`relative flex flex-col rounded-2xl border border-neutral-800 bg-[#040705]/98 font-mono text-xs text-neutral-200 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.12)] transition-all duration-200 overflow-hidden ${
-          isMaximized ? "w-full h-full rounded-none border-none" : "w-full max-w-3xl h-[540px] sm:h-[600px]"
-        }`}
+        className={`relative flex flex-col rounded-2xl border font-mono text-xs transition-all duration-200 overflow-hidden ${
+          isDark
+            ? "border-neutral-800 bg-[#040705]/98 text-neutral-200 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.12)]"
+            : "border-neutral-300 bg-[#f8faf8] text-neutral-900 shadow-[0_20px_60px_rgba(0,0,0,0.15),0_0_25px_rgba(16,185,129,0.1)]"
+        } ${isMaximized ? "w-full h-full rounded-none border-none" : "w-full max-w-3xl h-[540px] sm:h-[600px]"}`}
         onClick={(e) => {
           e.stopPropagation();
           inputRef.current?.focus();
@@ -292,7 +306,11 @@ export function InteractiveTerminal() {
         <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-80" />
 
         {/* Ghostty / termcn Authentic Title Bar */}
-        <div className="flex items-center justify-between border-b border-neutral-800/80 bg-[#060b08] px-4 py-2.5 select-none">
+        <div
+          className={`flex items-center justify-between border-b px-4 py-2.5 select-none ${
+            isDark ? "border-neutral-800/80 bg-[#060b08]" : "border-neutral-200 bg-[#eef4f0]"
+          }`}
+        >
           {/* macOS Traffic Light Dots */}
           <div className="flex items-center gap-2">
             <button
@@ -322,19 +340,25 @@ export function InteractiveTerminal() {
             </button>
 
             {/* termcn Active Tab Title */}
-            <div className="ml-3 inline-flex items-center gap-1.5 rounded-md border border-neutral-800/80 bg-[#0a120e] px-2.5 py-0.5 text-[11px] text-neutral-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div
+              className={`ml-3 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-[11px] ${
+                isDark
+                  ? "border-neutral-800/80 bg-[#0a120e] text-neutral-300"
+                  : "border-neutral-300 bg-white text-neutral-800 shadow-xs"
+              }`}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>zsh — zoro@maarcus.dev: ~</span>
             </div>
           </div>
 
           {/* Window Control Shortcuts */}
-          <div className="flex items-center gap-2 text-neutral-400 text-[11px]">
-            <span className="hidden sm:inline-block text-neutral-400">Press ~ or Esc</span>
+          <div className={`flex items-center gap-2 text-[11px] ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
+            <span className="hidden sm:inline-block">Press ~ or Esc</span>
             <button
               type="button"
               onClick={() => setIsMaximized(!isMaximized)}
-              className="p-1 hover:text-white transition-colors"
+              className={`p-1 transition-colors ${isDark ? "hover:text-white" : "hover:text-neutral-900"}`}
               title={isMaximized ? "Restore window" : "Maximize window"}
             >
               {isMaximized ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
@@ -342,7 +366,7 @@ export function InteractiveTerminal() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:text-white transition-colors"
+              className={`p-1 transition-colors ${isDark ? "hover:text-white" : "hover:text-neutral-900"}`}
               title="Close terminal"
             >
               <X className="h-3.5 w-3.5" />
@@ -369,51 +393,70 @@ export function InteractiveTerminal() {
           {lines.map((l) => (
             <div key={l.id} className="whitespace-pre font-mono">
               {l.type === "input" ? (
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold pt-1">
-                  <span className="text-neutral-400">zoro@maarcus</span>
-                  <span className="text-emerald-500">~</span>
-                  <span className="text-neutral-400 font-normal">git:(</span>
-                  <span className="text-emerald-300">main</span>
-                  <span className="text-neutral-400 font-normal">)</span>
-                  <span className="text-emerald-400 font-bold">❯</span>
-                  <span className="text-white">{l.text}</span>
+                <div
+                  className={`flex items-center gap-2 font-semibold pt-1 ${
+                    isDark ? "text-emerald-400" : "text-emerald-700"
+                  }`}
+                >
+                  <span className={isDark ? "text-neutral-400" : "text-neutral-500"}>zoro@maarcus</span>
+                  <span className={isDark ? "text-emerald-500" : "text-emerald-600"}>~</span>
+                  <span className={`font-normal ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>git:(</span>
+                  <span className={isDark ? "text-emerald-300" : "text-emerald-700"}>main</span>
+                  <span className={`font-normal ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>)</span>
+                  <span className={`font-bold ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>❯</span>
+                  <span className={isDark ? "text-white" : "text-neutral-900"}>{l.text}</span>
                 </div>
               ) : l.type === "error" ? (
-                <div className="text-red-400 pl-2 border-l-2 border-red-500/60 font-mono">{l.text}</div>
+                <div className="text-red-500 pl-2 border-l-2 border-red-500/60 font-mono">{l.text}</div>
               ) : l.type === "table" || l.type === "ascii" ? (
-                <div className="text-emerald-300/90 font-mono text-[11px] leading-tight select-text py-0.5 overflow-x-auto">
+                <div
+                  className={`font-mono text-[11px] leading-tight select-text py-0.5 overflow-x-auto ${
+                    isDark ? "text-emerald-300/90" : "text-emerald-800"
+                  }`}
+                >
                   {l.text}
                 </div>
               ) : (
-                <div className="text-neutral-300 font-mono text-[12px]">{l.text}</div>
+                <div className={`font-mono text-[12px] ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
+                  {l.text}
+                </div>
               )}
             </div>
           ))}
 
-          {/* Authentic termcn Prompt Line - NO ugly box borders, pure inline terminal caret! */}
+          {/* Authentic termcn Prompt Line - NO box borders, native stream caret */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleCommand(input);
             }}
-            className="flex items-center gap-2 pt-1 font-mono text-[12px] text-white"
+            className="flex items-center gap-2 pt-1 font-mono text-[12px]"
           >
-            <span className="text-neutral-400 select-none">zoro@maarcus</span>
-            <span className="text-emerald-500 select-none">~</span>
-            <span className="text-neutral-400 font-normal select-none hidden sm:inline">
-              git:(<span className="text-emerald-300">main</span>)
+            <span className={`select-none ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>zoro@maarcus</span>
+            <span className={`select-none ${isDark ? "text-emerald-500" : "text-emerald-600"}`}>~</span>
+            <span className={`select-none font-normal hidden sm:inline ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
+              git:(<span className={isDark ? "text-emerald-300" : "text-emerald-700"}>main</span>)
             </span>
-            <span className="text-emerald-400 font-bold select-none">❯</span>
+            <span className={`select-none font-bold ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>❯</span>
 
-            {/* Completely unbordered, clean input stream */}
-            <div className="flex-1 flex items-center">
+            {/* True terminal inline stream cursor with zero border overlay */}
+            <div className="relative flex-1 flex items-center min-h-[20px]">
+              <span className={`whitespace-pre select-text font-mono text-[12px] ${isDark ? "text-white" : "text-neutral-900"}`}>
+                {input}
+              </span>
+              <span
+                className={`inline-block w-2 h-4 animate-pulse ml-0.5 align-middle ${
+                  isDark ? "bg-emerald-400" : "bg-emerald-600"
+                }`}
+              />
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-transparent text-white border-0 outline-none ring-0 shadow-none p-0 m-0 focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0 font-mono text-[12px] caret-emerald-400"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-text no-focus-ring"
+                style={{ outline: "none", border: "none", boxShadow: "none" }}
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"
@@ -423,27 +466,49 @@ export function InteractiveTerminal() {
         </div>
 
         {/* termcn / tmux Style Statusline Footer */}
-        <div className="flex items-center justify-between border-t border-neutral-800/80 bg-[#060a08] px-3.5 py-1.5 select-none overflow-x-auto scrollbar-none gap-2 text-[10px] font-mono">
+        <div
+          className={`flex items-center justify-between border-t px-3.5 py-1.5 select-none overflow-x-auto scrollbar-none gap-2 text-[10px] font-mono ${
+            isDark ? "border-neutral-800/80 bg-[#060a08]" : "border-neutral-200 bg-[#eef4f0]"
+          }`}
+        >
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="rounded bg-emerald-500 px-1.5 py-0.2 text-[10px] font-bold text-black uppercase">
+            <span
+              className={`rounded px-1.5 py-0.2 text-[10px] font-bold uppercase ${
+                isDark ? "bg-emerald-500 text-black" : "bg-emerald-600 text-white"
+              }`}
+            >
               NORMAL
             </span>
-            <span className="text-neutral-400 hidden sm:inline mr-1">Quick:</span>
+            <span className={`hidden sm:inline mr-1 ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>Quick:</span>
             {["neofetch", "projects", "skills", "resume", "schedule", "quote", "clear"].map((cmd) => (
               <button
                 key={cmd}
                 type="button"
                 onClick={() => handleCommand(cmd)}
-                className="rounded border border-neutral-800 bg-neutral-900/90 px-1.5 py-0.5 text-[10px] text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-300 hover:bg-emerald-950/40 transition-colors"
+                className={`rounded border px-1.5 py-0.5 text-[10px] transition-colors ${
+                  isDark
+                    ? "border-neutral-800 bg-neutral-900/90 text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-300 hover:bg-emerald-950/40"
+                    : "border-neutral-300 bg-white text-neutral-700 hover:border-emerald-600 hover:text-emerald-800 hover:bg-emerald-50"
+                }`}
               >
                 {cmd}
               </button>
             ))}
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-[10px] text-neutral-400 shrink-0">
-            <span><kbd className="rounded border border-neutral-800 bg-neutral-900 px-1">Tab</kbd> complete</span>
-            <span><kbd className="rounded border border-neutral-800 bg-neutral-900 px-1">↑/↓</kbd> history</span>
+          <div className={`hidden sm:flex items-center gap-2 text-[10px] shrink-0 ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
+            <span>
+              <kbd className={`rounded border px-1 ${isDark ? "border-neutral-800 bg-neutral-900" : "border-neutral-300 bg-white"}`}>
+                Tab
+              </kbd>{" "}
+              complete
+            </span>
+            <span>
+              <kbd className={`rounded border px-1 ${isDark ? "border-neutral-800 bg-neutral-900" : "border-neutral-300 bg-white"}`}>
+                ↑/↓
+              </kbd>{" "}
+              history
+            </span>
           </div>
         </div>
       </div>
