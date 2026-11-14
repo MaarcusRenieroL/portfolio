@@ -22,17 +22,19 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
         <h1 className="title col">{t.title}</h1>
       </header>
 
-      <figure className="portrait">
-        <Portrait src={MEDIA.photo} alt={t.photoAlt} />
-      </figure>
+      <div className="about-hero">
+        <div className="prose about-prose">
+          <p>{t.p1}</p>
+          <p>{t.p2}</p>
+          <p>{t.p3}</p>
+          <p>
+            <Link href={href("/resume")}>{DICT[lang].nav.resume}</Link> · <Link href={href("/experience")}>{DICT[lang].nav.experience}</Link> · <Link href={href("/contact")}>{t.getInTouch}</Link>
+          </p>
+        </div>
 
-      <div className="prose">
-        <p>{t.p1}</p>
-        <p>{t.p2}</p>
-        <p>{t.p3}</p>
-        <p>
-          <Link href={href("/resume")}>{DICT[lang].nav.resume}</Link> · <Link href={href("/experience")}>{DICT[lang].nav.experience}</Link> · <Link href={href("/contact")}>{t.getInTouch}</Link>
-        </p>
+        <figure className="portrait about-portrait">
+          <Portrait src={MEDIA.photo} alt={t.photoAlt} />
+        </figure>
       </div>
 
       <section className="stack g24">
