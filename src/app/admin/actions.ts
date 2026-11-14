@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { deFields, SPECS } from "~/lib/cms-fields";
 import { certificateSchema, educationSchema, postSchema, projectSchema, roleSchema, skillGroupSchema } from "~/lib/schema";
+import { audit, revokeAllSessions } from "~/lib/server/auth";
 import { seedFromFiles } from "~/lib/server/seed";
 import { getRow, isKind, move, publishKind, publishRow, saveDraft, setDeleted, type Kind } from "~/lib/server/store";
 import { extractTranslatable, translateConfigured, translateToGerman, type Translatable } from "~/lib/server/translate";
@@ -126,4 +128,12 @@ export async function translateItem(kindIn: string, rawData: unknown): Promise<R
   const source = extractTranslatable(SPECS[kindIn].fields, clean(rawData));
   const r = await translateToGerman(source);
   return r.ok ? { ok: true, de: r.de } : bad(r.message);
+}
+
+/** Ends every admin session, including this one: the next request lands on the sign-in page. */
+export async function signOutEverywhere(): Promise<void> {
+  await requireAdmin();
+  await revokeAllSessions();
+  await audit("sessions_revoked", "admin");
+  redirect("/admin/login");
 }
