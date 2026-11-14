@@ -1,9 +1,6 @@
-Drop your real images here. Missing files fall back to a placeholder.
+Images live here. Anything missing falls back to a styled placeholder.
 
-  public/me.jpg                         profile photo (square, at least 400x400)
-  public/logos/healthedge.png           company logos (square or wide, transparent PNG ok)
-  public/logos/matlync.png
-  public/logos/steam-troops.png
-  public/logos/systech.png
-  public/projects/<slug>.png            project screenshots, 4:5 portrait works best
-      slugs: zentro, life-os, nyx, next-kit, dotfiles, portfolio
+  public/me.jpg                          profile photo, 4:5 portrait, at least 800x1000 (placeholder: placeholder-portrait.svg)
+  public/logos/<file>                    company logos; name the file in the role's `logo` field in src/lib/content.ts
+  public/projects/<slug>/<file>          project cover; name the file in the project's `cover` field
+  public/resume.pdf                      the resume shown at /resume and served at /api/resume
