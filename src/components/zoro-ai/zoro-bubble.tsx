@@ -388,7 +388,7 @@ export function ZoroAiBubble() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask Zoro anything about Maarcus..."
-                  className="w-full rounded-xl border border-neutral-800 bg-[#09100c] px-3.5 py-2 text-xs text-neutral-100 placeholder:text-neutral-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500/40 transition-all"
+                  className="w-full rounded-xl border border-neutral-800/80 bg-[#09100c] px-3.5 py-2 text-xs text-neutral-100 placeholder:text-neutral-500 outline-none focus:outline-none focus:ring-0 focus:border-neutral-800/80 transition-colors"
                 />
               </div>
               <button
