@@ -80,7 +80,7 @@ test.describe("assets and metadata", () => {
     expect(r.status()).toBe(200);
     expect(r.headers()["content-type"]).toBe("application/pdf");
     expect(r.headers()["content-disposition"]).toContain("attachment");
-    expect(r.headers()["cache-control"]).toContain("max-age=86400");
+    expect(r.headers()["cache-control"]).toContain("no-cache");
     expect((await r.body()).subarray(0, 4).toString()).toBe("%PDF");
   });
 

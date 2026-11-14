@@ -36,7 +36,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
         <div>
           <dt>{t.email}</dt>
           <dd>
-            <a className="link" href={`mailto:${SITE.email}`}>
+            <a className="link" href={`mailto:${SITE.email}`} data-track="email-click" data-track-label="contact">
               {SITE.email}
             </a>
           </dd>
@@ -44,7 +44,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
         <div>
           <dt>LinkedIn</dt>
           <dd>
-            <a className="link" href={SITE.linkedin} rel="noopener noreferrer">
+            <a className="link" href={SITE.linkedin} rel="noopener noreferrer" data-track="social-click" data-track-label="linkedin">
               maarcus-reniero-l
             </a>
           </dd>
@@ -52,7 +52,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
         <div>
           <dt>GitHub</dt>
           <dd>
-            <a className="link" href={SITE.github} rel="noopener noreferrer">
+            <a className="link" href={SITE.github} rel="noopener noreferrer" data-track="social-click" data-track-label="github">
               MaarcusRenieroL
             </a>
           </dd>

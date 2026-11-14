@@ -70,13 +70,13 @@ export function Footer() {
             © {new Date().getFullYear()} {SITE.name}. {t.nothing}
           </span>
           <nav className="footer-social" aria-label={t.social}>
-            <a href={SITE.github} rel="noopener noreferrer">
+            <a href={SITE.github} rel="noopener noreferrer" data-track="social-click" data-track-label="github">
               <GithubIcon /> GitHub
             </a>
-            <a href={SITE.linkedin} rel="noopener noreferrer">
+            <a href={SITE.linkedin} rel="noopener noreferrer" data-track="social-click" data-track-label="linkedin">
               <LinkedinIcon /> LinkedIn
             </a>
-            <a href={`mailto:${SITE.email}`}>
+            <a href={`mailto:${SITE.email}`} data-track="email-click" data-track-label="footer">
               <MailIcon /> {t.email}
             </a>
             <Link href={href("/resume")} data-track="resume-open">

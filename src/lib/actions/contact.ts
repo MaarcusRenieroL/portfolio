@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { Resend } from "resend";
+import { record } from "~/lib/server/analytics";
 import { allowContact, clientKeyFrom } from "~/lib/rate-limit";
 import { type ContactField, REASON_LABELS, contactSchema as schema } from "~/lib/contact-schema";
 
@@ -97,6 +98,7 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
         console.error("[contact] auto-reply failed:", err);
       }
     }
+    await record("contact-sent", "/contact");
     return { status: "success", message: "sent" };
   } catch (err) {
     console.error("[contact] unexpected error:", err);
