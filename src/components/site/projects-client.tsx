@@ -10,6 +10,7 @@ import { useDict, useLang } from "~/components/site/locale";
 import { categoriesFor } from "~/lib/localize";
 import type { Project } from "~/lib/schema";
 import { GitHubMetricsBar } from "./projects-github";
+import { RateLimiterDemo } from "~/components/lab/rate-limiter-demo";
 
 export function ProjectsClient({ projects: PROJECTS }: { projects: Project[] }) {
   const lang = useLang();
@@ -85,6 +86,9 @@ export function ProjectsClient({ projects: PROJECTS }: { projects: Project[] }) 
         </AnimatePresence>
       </ul>
       {rows.length === 0 && <p className="muted">{t.none}</p>}
+      <div style={{ marginTop: 32, marginBottom: 24 }}>
+        <RateLimiterDemo />
+      </div>
       <p className="help kbd-help">
         <kbd>j</kbd> <kbd>k</kbd> {t.keys[0]} · <kbd>gg</kbd> <kbd>G</kbd> {t.keys[1]} · <kbd>Enter</kbd> {t.keys[2]} · <kbd>/</kbd> {t.keys[3]}
       </p>
