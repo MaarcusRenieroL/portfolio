@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
 import { cn } from "~/lib/utils";
 import { formatLongDate, formatMonthYear, formatShortDate, getSafeTime } from "~/lib/utils/date";
 import { maintenanceHtml } from "~/lib/maintenance-html";
@@ -79,15 +80,48 @@ describe("proxy", () => {
     vi.resetModules();
     return await import("~/proxy");
   }
-  const req = (p: string) => ({ nextUrl: { pathname: p } }) as never;
+  const req = (p: string) => new NextRequest(`http://localhost:3000${p}`);
 
   it("passes through when MAINTENANCE unset", async () => {
     vi.stubEnv("MAINTENANCE", "");
     const { proxy } = await load();
-    const res = proxy(req("/"));
+    const res = proxy(req("/api/health"));
     expect(res.status).toBe(200);
     expect(res.headers.get("x-middleware-next")).toBe("1");
     vi.unstubAllEnvs();
+  });
+
+  describe("languages", () => {
+    const withLang = (p: string, lang?: string) =>
+      new NextRequest(`http://localhost:3000${p}`, lang ? { headers: { cookie: `lang=${lang}` } } : undefined);
+    it("rewrites to /en with no cookie, and ignores a junk cookie", async () => {
+      const { proxy } = await load();
+      expect(proxy(req("/about")).headers.get("x-middleware-rewrite")).toContain("/en/about");
+      expect(proxy(req("/")).headers.get("x-middleware-rewrite")).toMatch(/\/en$/);
+      expect(proxy(withLang("/about", "fr")).headers.get("x-middleware-rewrite")).toContain("/en/about");
+      expect(proxy(req("/projects?cat=backend")).headers.get("x-middleware-rewrite")).toContain("/en/projects?cat=backend");
+    });
+    it("rewrites to /de when the cookie says German, without changing the URL", async () => {
+      const { proxy } = await load();
+      expect(proxy(withLang("/about", "de")).headers.get("x-middleware-rewrite")).toContain("/de/about");
+      expect(proxy(withLang("/", "de")).headers.get("x-middleware-rewrite")).toMatch(/\/de$/);
+    });
+    it("redirects a direct /en or /de URL to the clean one and stores the choice", async () => {
+      const { proxy } = await load();
+      const res = proxy(req("/de/skills"));
+      expect(res.status).toBe(308);
+      expect(new URL(res.headers.get("location")!).pathname).toBe("/skills");
+      expect(res.headers.get("set-cookie")).toContain("lang=de");
+      const en = proxy(req("/en"));
+      expect(new URL(en.headers.get("location")!).pathname).toBe("/");
+      expect(en.headers.get("set-cookie")).toContain("lang=en");
+    });
+    it("never touches API routes, images, feeds or files", async () => {
+      const { proxy } = await load();
+      for (const p of ["/api/vcard", "/og", "/feed.xml", "/robots.txt", "/resume.pdf", "/.well-known/security.txt", "/placeholder-portrait.svg"]) {
+        expect(proxy(req(p)).headers.get("x-middleware-next"), p).toBe("1");
+      }
+    });
   });
   it.each(["0", "true", "yes", " 1", "1 "])("MAINTENANCE=%j does NOT enable maintenance (strict '1')", async (v) => {
     vi.stubEnv("MAINTENANCE", v);
@@ -123,5 +157,18 @@ describe("proxy", () => {
     expect(re.test("/projects")).toBe(true);
     expect(re.test("/projects/nyx/a.webp")).toBe(false);
     expect(re.test("/projects/next-kit/02-cli-demo.mp4")).toBe(false);
+  });
+});
+
+import { allowOg, resetOgLimits } from "~/lib/rate-limit";
+
+describe("og rate limit", () => {
+  it("allows a burst, then blocks that client but not another, and recovers after the window", () => {
+    resetOgLimits();
+    const t = 1_000_000;
+    for (let i = 0; i < 20; i++) expect(allowOg("a", t)).toBe(true);
+    expect(allowOg("a", t)).toBe(false);
+    expect(allowOg("b", t)).toBe(true);
+    expect(allowOg("a", t + 61_000)).toBe(true);
   });
 });

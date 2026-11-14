@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SITE } from "~/lib/content";
+import { useDict, useLocalePath } from "~/components/site/locale";
+import { NotFoundSearch } from "~/components/site/not-found-search";
 import type { Action, Status } from "~/lib/status";
 
 type Props = {
@@ -16,6 +18,8 @@ type Props = {
 /** A system page: animated code, a request trace that plays back, and a way out. */
 export function StatusView({ status, onRetry, digest }: Props) {
   const pathname = usePathname();
+  const t = useDict().status;
+  const href = useLocalePath();
   const retry = () => (onRetry ? onRetry() : window.location.reload());
   const lines = [{ text: `GET ${pathname}`, tone: "dim" as const }, ...status.trace];
 
@@ -24,25 +28,25 @@ export function StatusView({ status, onRetry, digest }: Props) {
       case "retry":
         return (
           <button key={a} type="button" className="action primary" onClick={retry}>
-            Try again
+            {t.retry}
           </button>
         );
       case "home":
         return (
-          <Link key={a} className="action" href="/">
-            Back home
+          <Link key={a} className="action" href={href("/")}>
+            {t.home}
           </Link>
         );
       case "projects":
         return (
-          <Link key={a} className="action" href="/projects">
-            Projects
+          <Link key={a} className="action" href={href("/projects")}>
+            {t.projects}
           </Link>
         );
       case "contact":
         return (
           <a key={a} className="action" href={`mailto:${SITE.email}`}>
-            Email me
+            {t.contact}
           </a>
         );
     }
@@ -54,7 +58,7 @@ export function StatusView({ status, onRetry, digest }: Props) {
     <section className="wrap page status-page" data-bad={bad ? "" : undefined}>
       <div className="status-grid">
         <div className="stack g24">
-          <p className="status-code" aria-label={`Error ${status.code}`}>
+          <p className="status-code" aria-label={t.errorAria(status.code)}>
             {status.code.split("").map((d, i) => (
               <span key={i} style={{ animationDelay: `${i * 90}ms` }} aria-hidden="true">
                 {d}
@@ -66,11 +70,12 @@ export function StatusView({ status, onRetry, digest }: Props) {
           <div className="row" style={{ gap: "8px 10px" }}>
             {status.actions.map(action)}
           </div>
-          {digest !== undefined && <p className="help">Error ID {digest || "n/a"}</p>}
+          {status.code === "404" && <NotFoundSearch />}
+          {digest !== undefined && <p className="help">{t.errorId} {digest || "n/a"}</p>}
         </div>
 
-        <figure className="trace" aria-label="Request trace">
-          <figcaption>request trace</figcaption>
+        <figure className="trace" aria-label={t.traceAria}>
+          <figcaption>{t.trace}</figcaption>
           <ol>
             {lines.map((l, i) => (
               <li key={i} data-tone={l.tone ?? "ok"} style={{ animationDelay: `${400 + i * 260}ms` }}>

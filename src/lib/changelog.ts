@@ -6,7 +6,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     title: "German version",
     points: [
-      "The whole site is available in German under /de, with a language switch in the header. English stays at the normal URLs.",
+      "The whole site is available in German. Use the EN/DE toggle in the header; the page stays where it is and your choice is remembered.",
       "The German text is AI-translated so German readers can follow what I do. I am learning German at A2, not C1.",
     ],
   },

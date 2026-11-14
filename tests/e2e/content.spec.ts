@@ -1,16 +1,17 @@
 import { expect, test } from "@playwright/test";
-import { CASE_STUDIES, EDUCATION, PROJECTS, ROLES } from "../../src/lib/content";
+import { EDUCATION, PROJECTS, ROLES, SKILLS } from "../../src/lib/content";
 
 /** The pages are built from the typed data, so the data is the spec: whatever is in it must be on screen. */
 test.describe("content renders from the data source", () => {
-  test("/projects lists every project, with links only where a case study exists", async ({ page }) => {
+  test("/projects lists every project with outward links only", async ({ page }) => {
     await page.goto("/projects");
     await page.waitForLoadState("networkidle");
     for (const p of PROJECTS) {
       const row = page.locator(".rows li", { hasText: p.desc });
       await expect(row, p.name).toHaveCount(1);
       await expect(row.locator(".pname")).toHaveText(p.name);
-      expect(await row.locator('a[href^="/projects/"]').count() > 0, `${p.name} case-study link`).toBe(p.slug in CASE_STUDIES);
+      if (p.github) await expect(row.locator(`a[href="${p.github}"]`)).toHaveCount(1);
+      if (p.site) await expect(row.locator(`a[href="${p.site}"]`)).toHaveCount(1);
     }
   });
 
@@ -32,13 +33,23 @@ test.describe("content renders from the data source", () => {
       await expect(page.locator(".skillrow", { hasText: e.school }), e.school).toBeVisible();
       await expect(page.locator(".skillrow", { hasText: e.degree })).toBeVisible();
     }
+    await expect(page.getByText("Skills I use")).toHaveCount(0); // skills live on /skills now
   });
 
-  test("every case study renders its title from the data", async ({ page }) => {
-    for (const c of Object.values(CASE_STUDIES)) {
-      const res = await page.goto(`/projects/${c.slug}`);
-      expect(res?.status(), c.slug).toBe(200);
-      await expect(page.locator("h1")).toContainText(c.title);
-    }
+  test("/skills shows every skill from the data as a pill", async ({ page }) => {
+    await page.goto("/skills");
+    await expect(page.locator(".skill-flat li")).toHaveText(SKILLS.used.flatMap((g) => g.items));
+  });
+
+  test("/stack redirects to /skills and Current edges is gone", async ({ page }) => {
+    await page.goto("/stack");
+    await expect(page).toHaveURL(/\/skills$/);
+    await expect(page.getByRole("heading", { name: "Current edges" })).toHaveCount(0);
+  });
+
+  test("/about has no Now or How I work sections", async ({ page }) => {
+    await page.goto("/about");
+    for (const name of ["Now", "How I work"]) await expect(page.getByRole("heading", { name, exact: true })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Languages" })).toBeVisible();
   });
 });

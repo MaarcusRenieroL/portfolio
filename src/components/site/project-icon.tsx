@@ -2,22 +2,6 @@ import type { ReactNode } from "react";
 
 /** One small line glyph per project, drawn to say what the project is. */
 const GLYPHS: Record<string, ReactNode> = {
-  // four modules in one workspace
-  zentro: (
-    <>
-      <rect x="4" y="4" width="7" height="7" rx="1.5" />
-      <rect x="13" y="4" width="7" height="7" rx="1.5" />
-      <rect x="4" y="13" width="7" height="7" rx="1.5" />
-      <rect x="13" y="13" width="7" height="7" rx="1.5" />
-    </>
-  ),
-  // a ring around a core: one process
-  "life-os": (
-    <>
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="3" />
-    </>
-  ),
   // crescent
   nyx: <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />,
   // a package with an arrow out
@@ -25,14 +9,6 @@ const GLYPHS: Record<string, ReactNode> = {
     <>
       <path d="M4 8l8-4 8 4v8l-8 4-8-4z" />
       <path d="M4 8l8 4 8-4M12 12v8" />
-    </>
-  ),
-  // a portrait frame
-  "snap-pass": (
-    <>
-      <rect x="5" y="3" width="14" height="18" rx="2" />
-      <circle cx="12" cy="10" r="2.5" />
-      <path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3" />
     </>
   ),
   // a prompt

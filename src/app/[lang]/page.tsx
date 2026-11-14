@@ -1,17 +1,14 @@
 import Link from "next/link";
 import { FileIcon, GithubIcon, LinkedinIcon, MailIcon } from "~/components/site/icons";
-import { Pic } from "~/components/site/media";
+import { Pic, Portrait } from "~/components/site/media";
 import { ProjectIcon } from "~/components/site/project-icon";
-import { MEDIA, PROJECTS, ROLES, SITE } from "~/lib/content";
+import { MEDIA, SITE } from "~/lib/content";
 import { getPosts } from "~/lib/data/blog";
+import { DICT } from "~/lib/dict";
+import { localePath } from "~/lib/i18n";
+import { langOf } from "~/lib/lang";
+import { projectsFor, rolesFor } from "~/lib/localize";
 import { formatShortDate } from "~/lib/utils/date";
-
-const SOCIALS = [
-  { href: SITE.github, label: "GitHub", Icon: GithubIcon, ext: true },
-  { href: SITE.linkedin, label: "LinkedIn", Icon: LinkedinIcon, ext: true },
-  { href: `mailto:${SITE.email}`, label: "Email", Icon: MailIcon, ext: false },
-  { href: "/resume", label: "Resume", Icon: FileIcon, ext: false },
-];
 
 const initials = (name: string) =>
   name
@@ -21,30 +18,45 @@ const initials = (name: string) =>
     .join("")
     .toUpperCase();
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const lang = await langOf(params);
+  const t = DICT[lang];
+  const projects = projectsFor(lang);
+  const roles = rolesFor(lang);
   const posts = getPosts().filter((p) => p.featured).slice(0, 3);
-  const jobs = [ROLES.find((r) => r.now) ?? ROLES[0], ROLES.find((r) => !r.now)!];
+  const jobs = [roles.find((r) => r.now) ?? roles[0], roles.find((r) => !r.now)!];
+  const href = (h: string) => localePath(lang, h);
+
+  const socials = [
+    { href: SITE.github, label: "GitHub", Icon: GithubIcon, ext: true },
+    { href: SITE.linkedin, label: "LinkedIn", Icon: LinkedinIcon, ext: true },
+    { href: `mailto:${SITE.email}`, label: t.chrome.email, Icon: MailIcon, ext: true },
+    { href: href("/resume"), label: t.chrome.resume, Icon: FileIcon, ext: false },
+  ];
 
   return (
     <div className="wrap page">
       <section className="hero">
         <div className="id">
-          <Pic className="avatar" src={MEDIA.photo} alt="Maarcus Reniero L" fallback="ML" />
+          <Portrait className="avatar" src={MEDIA.photo} alt="Maarcus Reniero L" />
           <span className="status">
             <span className="dot" aria-hidden="true" />
-            Open to work
+            {t.home.open}
           </span>
         </div>
-        <h1 className="hero-title">Full stack engineer, <span className="hl">backend-leaning.</span></h1>
-        <p className="lead">I build healthcare data services by day and my own tools by night. Based in {SITE.location}.</p>
+        <h1 className="hero-title">
+          {t.home.title}
+          <span className="hl">{t.home.hl}</span>
+        </h1>
+        <p className="lead">{t.home.lead(SITE.location)}</p>
         <div className="socials">
-          {SOCIALS.map(({ href, label, Icon, ext }) =>
+          {socials.map(({ href, label, Icon, ext }) =>
             ext ? (
               <a key={label} href={href} aria-label={label} rel="noopener noreferrer">
                 <Icon />
               </a>
             ) : (
-              <Link key={label} href={href} aria-label={label}>
+              <Link key={label} href={href} aria-label={label} data-track="resume-open">
                 <Icon />
               </Link>
             ),
@@ -53,19 +65,18 @@ export default function Home() {
       </section>
 
       <section className="section" aria-labelledby="about-h">
-        <h2 id="about-h" className="h2">About</h2>
+        <h2 id="about-h" className="h2">{t.home.aboutH}</h2>
         <p className="lead">
-          Right now I&apos;m a developer at HealthEdge in Chennai, building the Spring Boot and Spring Batch services that move healthcare transactions. After hours I build what I wish existed: Nyx, a launcher, Life OS, a personal OS, and Zentro, a workspace for small companies. I started in hardware and networking, which is why I like knowing how the whole thing connects. I&apos;m looking for a full-time remote or hybrid role in Germany, Bangalore or Chennai.{" "}
-          <Link className="link" href="/about">More about me</Link>.
+          {t.home.about}{" "}
+          <Link className="link" href={href("/about")}>{t.home.more}</Link>.
         </p>
       </section>
 
       <section className="section" aria-labelledby="proj-h">
-        <h2 id="proj-h" className="h2">Projects</h2>
-      <div className="strip" aria-label="Featured projects">
-        {PROJECTS.filter((p) => p.featured).map((p) => {
-          const inner = (
-            <>
+        <h2 id="proj-h" className="h2">{t.home.projectsH}</h2>
+        <div className="strip" aria-label={t.home.featured}>
+          {projects.filter((p) => p.featured).map((p) => (
+            <a key={p.slug} className="shot" href={p.site ?? p.github} target="_blank" rel="noopener noreferrer" aria-label={`${p.name}, ${p.kind}`} data-track="project-click" data-track-label={p.slug}>
               <span className="media">
                 <Pic src={MEDIA.shot(p.slug)} alt={`${p.name} screenshot`} fallback={<ProjectIcon slug={p.slug} />} />
               </span>
@@ -73,39 +84,29 @@ export default function Home() {
                 <strong>{p.name}</strong>
                 <span>{p.kind}</span>
               </span>
-            </>
-          );
-          return p.study ? (
-            <Link key={p.slug} className="shot" href={`/projects/${p.slug}`}>
-              {inner}
-            </Link>
-          ) : (
-            <div key={p.slug} className="shot">
-              {inner}
-            </div>
-          );
-        })}
-      </div>
-        <Link className="action" href="/projects">All projects</Link>
+            </a>
+          ))}
+        </div>
+        <Link className="action" href={href("/projects")}>{t.home.allProjects}</Link>
       </section>
 
       <section className="section" aria-labelledby="work-h">
-        <h2 id="work-h" className="h2">Experience</h2>
+        <h2 id="work-h" className="h2">{t.home.experienceH}</h2>
         <div className="leaders">
           {jobs.map((r, i) => (
             <div className="job" key={r.org}>
-              <Pic className="logo" src={MEDIA.logos[r.org] ?? ""} alt="" fallback={initials(r.org)} />
+              <Pic className={MEDIA.logoClass(r.org)} src={MEDIA.logos[r.org] ?? ""} alt="" fallback={initials(r.org)} />
               <div className="stack">
                 <span className="item-title">
                   {r.url ? <a className="orglink" href={r.url} target="_blank" rel="noopener noreferrer">{r.org} ↗</a> : r.org}
                 </span>
-                <span className="muted small">{i === 0 ? "Current" : "Previous"} · {r.title}</span>
+                <span className="muted small">{i === 0 ? t.home.current : t.home.previous} · {r.title}</span>
               </div>
               <span className="when">{r.date}</span>
             </div>
           ))}
         </div>
-        <Link className="action" href="/experience">All experience and skills</Link>
+        <Link className="action" href={href("/experience")}>{t.home.allExperience}</Link>
       </section>
 
       {posts.length > 0 && (
@@ -113,7 +114,7 @@ export default function Home() {
           <h2 id="blog-h" className="h2">Featured writing</h2>
           <div className="leaders">
             {posts.map((p) => (
-              <Link key={p.slug} className="leader" href={`/blog/${p.slug}`}>
+              <Link key={p.slug} className="leader" href={href(`/blog/${p.slug}`)}>
                 <span className="name">{p.title}</span>
                 <span className="fill" aria-hidden="true" />
                 <span className="when">{formatShortDate(p.date)}</span>
@@ -125,14 +126,14 @@ export default function Home() {
       )}
 
       <section className="section" aria-labelledby="cta-h">
-        <h2 id="cta-h" className="h2">Contact</h2>
+        <h2 id="cta-h" className="h2">{t.home.contactH}</h2>
         <div className="contact-block">
-          <p className="lead">{SITE.open}</p>
+          <p className="lead">{t.contact.open}</p>
           <a className="contact-mail" href={`mailto:${SITE.email}`}>{SITE.email}</a>
           <div className="contact-links">
             <a className="action" href={SITE.linkedin} rel="noopener noreferrer">LinkedIn</a>
             <a className="action" href={SITE.github} rel="noopener noreferrer">GitHub</a>
-            <Link className="action" href="/contact">Send a message</Link>
+            <Link className="action" href={href("/contact")}>{t.home.send}</Link>
           </div>
         </div>
       </section>

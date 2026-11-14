@@ -27,3 +27,9 @@ export function Pic({ src, alt, className, fallback }: { src: string; alt: strin
   // eslint-disable-next-line @next/next/no-img-element
   return <img ref={ref} className={className} src={src} alt={alt} loading="lazy" onError={() => setBad(true)} />;
 }
+
+/** Your photo (public/me.jpg) when it exists; a neutral placeholder until then. */
+export function Portrait({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <Pic className={className} src={src} alt={alt} fallback={<img src="/placeholder-portrait.svg" alt="" width={400} height={500} />} />;
+}

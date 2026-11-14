@@ -14,7 +14,7 @@ test.describe("motion", () => {
     const ctx = await browser.newContext({ javaScriptEnabled: false });
     const page = await ctx.newPage();
     await page.goto("/");
-    await page.waitForTimeout(1500); // longest entrance is ~0.9s
+    await page.waitForTimeout(2800); // intro delay (1s) plus the longest entrance (~0.9s)
     const opacity = await page.locator("h1").evaluate((el) => getComputedStyle(el).opacity);
     expect(opacity).toBe("1");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -65,16 +65,16 @@ test.describe("motion", () => {
     }
   });
 
-  test("mobile nav shows every tab without sideways scroll", async ({ page }) => {
+  test("mobile nav: the page never scrolls sideways and every tab can be reached", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
+    const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(over, "page overflows sideways").toBeLessThanOrEqual(0);
     const tabs = page.locator(".tabs");
-    const { sw, cw } = await tabs.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth }));
-    expect(sw, "tab bar scrolls sideways").toBeLessThanOrEqual(cw);
-    for (const name of ["Projects", "Experience", "Stack", "About", "Contact"]) {
-      const box = await tabs.getByRole("link", { name, exact: true }).boundingBox();
-      expect(box, name).not.toBeNull();
-      expect(box!.x + box!.width, `${name} is cut off`).toBeLessThanOrEqual(375);
+    for (const name of ["Projects", "Experience", "Certifications", "Skills", "About", "Resume", "Contact"]) {
+      const link = tabs.getByRole("link", { name, exact: true });
+      await link.scrollIntoViewIfNeeded();
+      await expect(link, name).toBeVisible();
     }
   });
 

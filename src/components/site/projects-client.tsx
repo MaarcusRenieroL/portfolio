@@ -1,28 +1,29 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { ArrowUpRightIcon, GithubIcon, GlobeIcon, SearchIcon } from "~/components/site/icons";
+import { useMemo } from "react";
+import { GithubIcon, GlobeIcon, SearchIcon } from "~/components/site/icons";
 import { ProjectIcon } from "~/components/site/project-icon";
+import { useQueryState } from "~/components/site/use-query-state";
 import { useListNav } from "~/components/site/use-list-nav";
-import { CATEGORIES, PROJECTS } from "~/lib/content";
+import { useDict, useLang } from "~/components/site/locale";
+import { categoriesFor, projectsFor } from "~/lib/localize";
 
 export function ProjectsClient() {
-  const router = useRouter();
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("all");
+  const lang = useLang();
+  const t = useDict().projects;
+  const PROJECTS = useMemo(() => projectsFor(lang), [lang]);
+  const [q, setQ] = useQueryState("q");
+  const [cat, setCat] = useQueryState("cat", "all");
 
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return PROJECTS.filter((p) => (cat === "all" || p.cats.includes(cat as never)) && (!needle || [p.name, p.kind, p.desc, ...p.skills].join(" ").toLowerCase().includes(needle)));
-  }, [q, cat]);
+  }, [q, cat, PROJECTS]);
 
   const { active, setActive, search } = useListNav(rows.length, (i) => {
     const p = rows[i];
-    if (p.study) router.push(`/projects/${p.slug}`);
-    else window.open(p.site ?? p.github, "_blank", "noopener");
+    window.open(p.site ?? p.github, "_blank", "noopener");
   });
 
   return (
@@ -30,11 +31,11 @@ export function ProjectsClient() {
       <div className="filters">
         <label className="search">
           <SearchIcon aria-hidden="true" />
-          <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search projects or skills" aria-label="Search projects" />
+          <input ref={search} type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.search} aria-label={t.searchAria} />
           <kbd aria-hidden="true">/</kbd>
         </label>
-        <div className="chips" role="group" aria-label="Filter by area">
-          {CATEGORIES.map(([id, label]) => (
+        <div className="chips" role="group" aria-label={t.filter}>
+          {categoriesFor(lang).map(([id, label]) => (
             <button key={id} type="button" className="chip" aria-pressed={cat === id} onClick={() => setCat(id)}>
               {label}
             </button>
@@ -49,13 +50,7 @@ export function ProjectsClient() {
             <ProjectIcon slug={p.slug} />
             <div className="pbody">
               <div className="phead">
-                {p.study ? (
-                  <Link className="pname" href={`/projects/${p.slug}`}>
-                    {p.name}
-                  </Link>
-                ) : (
-                  <span className="pname">{p.name}</span>
-                )}
+                <span className="pname">{p.name}</span>
                 <span className="pmeta">
                   {p.kind} · {p.status}
                 </span>
@@ -69,17 +64,14 @@ export function ProjectsClient() {
                 </span>
                 <span className="plinks">
                   {p.site && (
-                    <a href={p.site} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} live site`}>
-                      <GlobeIcon /> Live
+                    <a data-track="project-click" data-track-label={p.slug} href={p.site} target="_blank" rel="noopener noreferrer" aria-label={t.liveAria(p.name)}>
+                      <GlobeIcon /> {t.live}
                     </a>
                   )}
-                  <a href={p.github} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} on GitHub`}>
-                    <GithubIcon /> Code
-                  </a>
-                  {p.study && (
-                    <Link href={`/projects/${p.slug}`} aria-label={`${p.name} case study`}>
-                      Case study <ArrowUpRightIcon />
-                    </Link>
+                  {p.github && (
+                    <a data-track="project-click" data-track-label={p.slug} href={p.github} target="_blank" rel="noopener noreferrer" aria-label={t.codeAria(p.name)}>
+                      <GithubIcon /> {t.code}
+                    </a>
                   )}
                 </span>
               </div>
@@ -88,9 +80,9 @@ export function ProjectsClient() {
         ))}
         </AnimatePresence>
       </ul>
-      {rows.length === 0 && <p className="muted">Nothing matches. Try another word or clear the filter.</p>}
+      {rows.length === 0 && <p className="muted">{t.none}</p>}
       <p className="help kbd-help">
-        <kbd>j</kbd> <kbd>k</kbd> move · <kbd>gg</kbd> <kbd>G</kbd> jump · <kbd>Enter</kbd> open · <kbd>/</kbd> search
+        <kbd>j</kbd> <kbd>k</kbd> {t.keys[0]} · <kbd>gg</kbd> <kbd>G</kbd> {t.keys[1]} · <kbd>Enter</kbd> {t.keys[2]} · <kbd>/</kbd> {t.keys[3]}
       </p>
     </>
   );

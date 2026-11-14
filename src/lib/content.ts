@@ -11,44 +11,35 @@ export const SITE = {
   github: "https://github.com/MaarcusRenieroL",
   linkedin: "https://linkedin.com/in/maarcusrenierol",
   location: "Chennai, IN",
+  /** Optional booking link (Cal.com etc.), set NEXT_PUBLIC_CAL_URL to show it. */
+  call: process.env.NEXT_PUBLIC_CAL_URL || "",
   open: "Looking for a full-time remote or hybrid role in Germany, Bangalore or Chennai. Open to freelance work too.",
 };
 
 export const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/experience", label: "Experience" },
+  { href: "/certifications", label: "Certifications" },
   { href: "/blog", label: "Writing" },
-  { href: "/stack", label: "Stack" },
+  { href: "/skills", label: "Skills" },
   { href: "/about", label: "About" },
+  { href: "/resume", label: "Resume" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
-import { CASE_STUDIES, COVERS } from "./case-studies";
-import { assertContent, caseStudySchema, check, educationSchema, projectSchema, roleSchema, skillsSchema, stackGroupSchema } from "./schema";
-import type { Category, Education, Project, Role, Skills, StackGroup } from "./schema";
+import { assertContent, certificateSchema, check, educationSchema, projectSchema, roleSchema, skillsSchema } from "./schema";
+import type { Category, Certificate, Education, Project, Role, Skills } from "./schema";
 
-export { CASE_STUDIES, COVERS, shotUrl } from "./case-studies";
-export type { CaseStudy, Shot } from "./schema";
-export type { Category, Education, Project, Role };
+export type { Category, Certificate, Education, Project, Role };
 
 const GH = "https://github.com/MaarcusRenieroL";
 
 /** Listed in the order they appear; numbers ("01"…) are assigned from the order. */
 const PROJECT_DATA = [
   {
-    slug: "life-os",
-    name: "life os",
-    kind: "Self-hosted",
-    status: "In daily use",
-    featured: true,
-    cats: ["backend", "ai"],
-    desc: "My personal OS: passwords, finances, habits, workouts, mail and more. Twelve modules in one Spring Boot service, after eleven microservices proved overkill.",
-    skills: ["Java 21", "Spring Boot", "PostgreSQL", "Docker", "React Native"],
-    github: `${GH}/life-os`,
-    study: true,
-  },
-  {
     slug: "nyx",
+    cover: "03-launcher-search.webp",
     name: "nyx",
     kind: "macOS app",
     status: "v1.0 · open source",
@@ -58,10 +49,10 @@ const PROJECT_DATA = [
     skills: ["Rust", "Tauri", "React", "SQLite FTS5", "Ollama"],
     site: "https://nyx.maarcus.dev",
     github: `${GH}/nyx`,
-    study: true,
   },
   {
     slug: "next-kit",
+    cover: "01-cli-summary.webp",
     name: "next-kit",
     kind: "CLI · npm",
     status: "Published",
@@ -71,50 +62,45 @@ const PROJECT_DATA = [
     skills: ["TypeScript", "Node.js", "tsup", "Turborepo"],
     site: "https://www.npmjs.com/package/@mxrcxs17/next-kit",
     github: `${GH}/next-kit`,
-    study: true,
-  },
-  {
-    slug: "snap-pass",
-    name: "snap pass",
-    kind: "Web app",
-    status: "Runs locally",
-    featured: false,
-    cats: ["ai", "backend"],
-    desc: "Turns a selfie into a measured 35 × 45 mm Indian passport photo, then checks head size, centring and lighting with a fix for each problem. Photos live in memory for 15 minutes.",
-    skills: ["Python", "FastAPI", "OpenCV", "MediaPipe", "Next.js"],
-    study: true,
   },
   {
     slug: "dotfiles",
+    cover: "01-tmux-neovim.webp",
     name: "dotfiles",
     kind: "Config",
     status: "Public",
-    featured: false,
+    featured: true,
     cats: ["tooling"],
     desc: "My macOS setup in one command: zsh, Neovim, tmux, Ghostty and a yabai tiling desktop in one theme. Dry-run, backups and an uninstall make it safe to try.",
     skills: ["Shell", "Neovim", "Lua", "tmux"],
     github: `${GH}/dotfiles`,
-    study: true,
   },
   {
     slug: "portfolio",
     name: "portfolio",
     kind: "Web",
     status: "This site",
-    featured: false,
+    featured: true,
     cats: ["frontend"],
-    desc: "This site: a small design system, markdown writing with tags and a table of contents, and keyboard navigation on lists.",
+    desc: "This site: light and dark themes, CSS-first motion, a typed content source with schema checks, and keyboard navigation on lists.",
     skills: ["Next.js 16", "React 19", "Tailwind 4", "TypeScript"],
     site: "https://maarcus.dev",
     github: `${GH}/portfolio`,
-    study: false,
   },
 ];
+
+/** Plain <img> tags don't get Next's basePath, so prefix it here (empty in production). */
+export const shotUrl = (slug: string, file: string) => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/projects/${slug}/${file}`;
 
 export const PROJECTS: Project[] = PROJECT_DATA.map((p, i) => ({
   ...check("project", p.slug, projectSchema, p),
   num: String(i + 1).padStart(2, "0"),
 }));
+
+/** Card image per project: its `cover` file in /public/projects/<slug>/. Computed once at import. */
+export const COVERS: Record<string, string> = Object.fromEntries(
+  PROJECTS.filter((p) => p.cover).map((p) => [p.slug, shotUrl(p.slug, p.cover!)]),
+);
 
 export const CATEGORIES: [string, string][] = [
   ["all", "All"],
@@ -180,7 +166,7 @@ const ROLE_DATA = [
   {
     date: "Jan — Feb 2024",
     org: "Matlync",
-    logo: "matlync.png",
+    logo: "matlync.svg",
     url: "https://matlync.com",
     title: "Full Stack Next.js Developer",
     summary: "A CRM for a boutique: Next.js front end, Strapi back end.",
@@ -193,6 +179,7 @@ const ROLE_DATA = [
   {
     date: "Sep 2023 — Jan 2024",
     org: "STEAM Troops Innovation Labs",
+    logo: "steam-troops.png",
     url: "https://steamtroops.com",
     title: "Full Stack Next.js Developer",
     summary:
@@ -222,6 +209,120 @@ const ROLE_DATA = [
 ];
 
 export const ROLES: Role[] = ROLE_DATA.map((r) => check("role", r.org, roleSchema, r));
+
+const CERTIFICATE_DATA = [
+  {
+    slug: "aws-cloud-foundations",
+    title: "AWS Academy Cloud Foundations",
+    issuer: "AWS Academy",
+    date: "2022-09-24",
+    hours: 20,
+    about: "Core AWS services, cloud architecture and the shared responsibility model.",
+    preview: "aws-cloud-foundations.jpg",
+    file: "aws-cloud-foundations.pdf",
+    verify: "https://www.credly.com/go/dZXGDkY7",
+  },
+  {
+    slug: "oracle-plsql",
+    title: "Database Programming with PL/SQL",
+    issuer: "Oracle Academy",
+    date: "2022-06-02",
+    about: "Stored procedures, functions, packages and triggers in PL/SQL.",
+  },
+  {
+    slug: "oracle-sql",
+    title: "Database Programming with SQL",
+    issuer: "Oracle Academy",
+    date: "2022-05-15",
+    about: "Relational design and SQL queries, joins and data definition.",
+  },
+  {
+    slug: "cpp-beginner-to-beyond",
+    title: "Beginning C++ Programming: From Beginner to Beyond",
+    issuer: "Udemy",
+    date: "2020-11-14",
+    hours: 41.5,
+    instructors: "Tim Buchalka's Learn Programming Academy, Frank Mitropoulos",
+    about: "C++ fundamentals through object-oriented programming and the standard library.",
+    preview: "cpp-beginner-to-beyond.jpg",
+    file: "cpp-beginner-to-beyond.pdf",
+  },
+  {
+    slug: "web-dev-bootcamp-2020",
+    title: "The Complete 2020 Web Development Bootcamp",
+    issuer: "Udemy",
+    date: "2020-08-27",
+    hours: 54,
+    instructors: "Dr. Angela Yu",
+    about: "HTML, CSS, JavaScript, Node.js, Express and databases, end to end.",
+    preview: "web-dev-bootcamp-2020.jpg",
+    file: "web-dev-bootcamp-2020.pdf",
+  },
+  {
+    slug: "r-programming-az",
+    title: "R Programming A-Z: R For Data Science With Real Exercises",
+    issuer: "Udemy",
+    date: "2021-04-17",
+    hours: 10.5,
+    instructors: "Kirill Eremenko, Ligency Team",
+    about: "Data wrangling, visualisation and statistics in R.",
+    preview: "r-programming-az.jpg",
+    file: "r-programming-az.pdf",
+  },
+  {
+    slug: "dsa-cpp-2023",
+    title: "Data Structure & Algorithm using C++: Zero To Mastery 2023",
+    issuer: "Udemy",
+    date: "2023-02-24",
+    hours: 64.5,
+    instructors: "Ankit Thakran, Harsh Kajla",
+    about: "Arrays, linked lists, trees, graphs, sorting, recursion and dynamic programming in C++.",
+    preview: "dsa-cpp-2023.jpg",
+    file: "dsa-cpp-2023.pdf",
+  },
+  {
+    slug: "systech-internship",
+    title: "Internship: Hardware and Networking",
+    issuer: "Systech",
+    date: "2023-01-19",
+    about: "Two-week internship, 4 to 19 January 2023: hardware and network setup.",
+    preview: "systech-internship.jpg",
+    file: "systech-internship.jpg",
+  },
+  {
+    slug: "google-git-github",
+    title: "Introduction to Git and GitHub",
+    issuer: "Google (Coursera)",
+    date: "2023-06-05",
+    about: "Version control with Git and collaboration on GitHub.",
+    preview: "google-git-github.jpg",
+    file: "google-git-github.pdf",
+    verify: "https://coursera.org/verify/2LML5UAVYSE3",
+  },
+  {
+    slug: "modern-react-redux-2023",
+    title: "Modern React with Redux [2023 Update]",
+    issuer: "Udemy",
+    date: "2023-07-24",
+    hours: 37.5,
+    instructors: "Stephen Grider",
+    about: "React, hooks, Redux and Redux Toolkit with real projects.",
+    preview: "modern-react-redux-2023.jpg",
+    file: "modern-react-redux-2023.pdf",
+  },
+  {
+    slug: "nextjs-blog-project",
+    title: "Next.js Real World Blog Project with MongoDB, Prisma, NextAuth, Tailwind and shadcn/ui",
+    issuer: "Indian Coders",
+    date: "2023-08-21",
+    about: "A full Next.js blog: auth, database, UI components.",
+    preview: "nextjs-blog-project.jpg",
+    file: "nextjs-blog-project.jpg",
+  },
+];
+
+/** Newest first. */
+export const CERTIFICATES: Certificate[] = CERTIFICATE_DATA.map((c) => check("certificate", c.slug, certificateSchema, c)).sort((a, b) => b.date.localeCompare(a.date));
 
 export const EDUCATION: Education[] = [
   {
@@ -324,153 +425,13 @@ const SKILLS_DATA = {
       items: ["Neovim", "tmux", "Git", "lazygit", "Linux", "Ollama"],
     },
   ],
-  learning: [
-    "Core Java internals: concurrency, GC",
-    "System design",
-    "Spring Cloud",
-    "Security and cloud architecture",
-    "Production DevOps",
-    "Local LLMs and applied AI",
-    "Data structures and algorithms",
-    "German (A1)",
-  ],
 };
 
 export const SKILLS: Skills = check("skills", "skills", skillsSchema, SKILLS_DATA);
 
-export const BRIEF = [
-  {
-    label: "Now",
-    title: "Developer I, Software Engineering · HealthEdge",
-    body: "Since Jan 2025 · Spring Boot / Batch microservices for healthcare transaction ETL",
-  },
-  {
-    label: "Open to",
-    title: "Remote or hybrid: Germany, Bangalore, Chennai",
-    body: "Full-time, backend or full stack",
-    blade: true,
-  },
-  {
-    label: "Experience",
-    title: "~2.5 years",
-    body: "Java/Spring and TypeScript/Next.js, after three internships",
-  },
-  {
-    label: "Recognition",
-    title: "Shining Star Award ×2",
-    body: "For on-time delivery, production fixes and reliability across every module",
-  },
-  {
-    label: "Languages",
-    title: "English · Tamil · German A1",
-    body: "Native English and Tamil · learning German at the Goethe-Institut",
-  },
-  {
-    label: "Education",
-    title: "B.Tech, CS & Business Systems",
-    body: "Rajalakshmi Engineering College, 2020–24 · GPA 7.98 / 10",
-  },
-];
 
-const STACK_DATA = [
-  {
-    name: "Frontend",
-    why: "Type-safe end to end, server-first React.",
-    items: [
-      "*TypeScript",
-      "*React",
-      "*Next.js",
-      "*Tailwind CSS",
-      "*shadcn/ui",
-      "*tRPC",
-      "NextAuth · Better Auth",
-      "Zod",
-    ],
-  },
-  {
-    name: "Backend",
-    why: "Where I am most at home: JVM services and batch.",
-    items: [
-      "*Java 21",
-      "*Spring Boot",
-      "*Spring Batch",
-      "Spring Security",
-      "Spring MVC",
-      "Node.js",
-      "Strapi",
-      "JUnit · Mockito · Testcontainers",
-    ],
-  },
-  {
-    name: "Database and storage",
-    why: "Relational first.",
-    items: ["*PostgreSQL", "*Drizzle", "Flyway", "Redis", "MongoDB", "AWS S3"],
-  },
-  {
-    name: "Cloud, DevOps and tooling",
-    why: "Self-hostable by default; AWS at work.",
-    items: [
-      "*Docker",
-      "Docker Compose",
-      "*GitHub Actions",
-      "AWS",
-      "*Turborepo",
-      "*pnpm",
-      "Maven",
-    ],
-  },
-  {
-    name: "Daily workflow",
-    why: "A keyboard-only macOS setup, one command to install.",
-    items: [
-      "*Neovim",
-      "*tmux",
-      "*Ghostty",
-      "zsh · Starship",
-      "yabai · skhd · sketchybar",
-      "lazygit",
-      "nyx",
-    ],
-  },
-  {
-    name: "Systems and networking",
-    why: "Where I started: hardware and networks.",
-    items: ["*Routing and switching", "TCP/IP", "Linux", "Rust", "Tauri"],
-  },
-  {
-    name: "Current edges",
-    why: "What I am actively sharpening right now.",
-    items: [
-      "Core Java internals — concurrency, GC",
-      "System design",
-      "Spring Cloud",
-      "Production DevOps hardening",
-      "Local LLMs · Ollama",
-      "DSA",
-    ],
-  },
-];
 
-export const STACK_GROUPS: StackGroup[] = STACK_DATA.map((g) => check("stack group", g.name, stackGroupSchema, g));
 
-export const MARQUEE = [
-  "Java 21",
-  "Spring Boot",
-  "Spring Batch",
-  "TypeScript",
-  "Next.js 16",
-  "React 19",
-  "tRPC",
-  "Drizzle",
-  "PostgreSQL",
-  "Docker",
-  "AWS",
-  "Rust",
-  "Tauri",
-  "Ollama",
-  "Neovim",
-  "tmux",
-];
 
 export const REASONS: { id: string; label: string; placeholder: string }[] = [
   {
@@ -500,6 +461,8 @@ export const MEDIA = {
   /** Built from each role's `logo` field, so a new role needs no edit here. */
   logos: Object.fromEntries(ROLES.filter((r) => r.logo).map((r) => [r.org, `${BASE}/logos/${r.logo}`])) as Record<string, string>,
   shot: (slug: string) => COVERS[slug] ?? "",
+  /** Class for a role's logo tile, so light artwork gets a dark tile. */
+  logoClass: (org: string) => (ROLES.find((r) => r.org === org)?.logoOn === "dark" ? "logo logo-dark" : "logo"),
 };
 
-assertContent({ projects: PROJECTS, roles: ROLES, caseStudies: CASE_STUDIES });
+assertContent({ projects: PROJECTS, roles: ROLES });

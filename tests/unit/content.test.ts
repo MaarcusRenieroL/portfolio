@@ -1,8 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { CASE_STUDIES, NAV_LINKS, PROJECTS, ROLES, SITE, MEDIA, shotUrl } from "~/lib/content";
-import { COVERS } from "~/lib/case-studies";
+import { COVERS, NAV_LINKS, PROJECTS, ROLES, SITE, MEDIA, shotUrl } from "~/lib/content";
 
 const pub = path.join(process.cwd(), "public");
 const isUrl = (u: string) => {
@@ -12,13 +11,6 @@ const isUrl = (u: string) => {
     return false;
   }
 };
-const walk = (v: unknown, out: string[] = []): string[] => {
-  if (typeof v === "string") out.push(v);
-  else if (Array.isArray(v)) v.forEach((x) => walk(x, out));
-  else if (v && typeof v === "object") Object.values(v).forEach((x) => walk(x, out));
-  return out;
-};
-
 describe("SITE / NAV", () => {
   it("site urls valid", () => {
     expect(isUrl(SITE.url)).toBe(true);
@@ -45,48 +37,18 @@ describe("PROJECTS", () => {
       if (p.github) expect(isUrl(p.github), p.slug).toBe(true);
     }
   });
-  it("study flag matches CASE_STUDIES presence", () => {
-    for (const p of PROJECTS) expect(p.study, p.slug).toBe(p.slug in CASE_STUDIES);
+  it("cover files exist in public/projects/<slug>", () => {
+    for (const p of PROJECTS.filter((p) => p.cover)) expect(fs.existsSync(path.join(pub, "projects", p.slug, p.cover!)), `${p.slug}/${p.cover}`).toBe(true);
+  });
+  it("has no project pages: nothing links to /projects/<slug>", () => {
+    for (const p of PROJECTS) expect([p.site, p.github].filter(Boolean).every((u) => isUrl(u!))).toBe(true);
   });
 });
 
-describe("CASE_STUDIES", () => {
-  const entries = Object.entries(CASE_STUDIES);
-  it("key equals slug, slugs url-safe", () => {
-    for (const [k, v] of entries) {
-      expect(v.slug).toBe(k);
-      expect(k).toMatch(/^[a-z0-9-]+$/);
-    }
-  });
-  it("every case study has a project", () => {
-    for (const [k] of entries) expect(PROJECTS.some((p) => p.slug === k), k).toBe(true);
-  });
-  it("external hrefs are valid", () => {
-    for (const [k, v] of entries) {
-      if (v.site) expect(isUrl(v.site.href), k).toBe(true);
-      if (v.repo.href) expect(isUrl(v.repo.href), k).toBe(true);
-    }
-  });
-  it("shot / cover / video files exist in public/projects/<slug>", () => {
-    for (const [k, v] of entries) {
-      const files = [...v.shots.flatMap((s) => [s.file, s.mobile]), v.cover, v.video?.file].filter(Boolean) as string[];
-      for (const f of files) expect(fs.existsSync(path.join(pub, "projects", k, f)), `${k}/${f}`).toBe(true);
-    }
-  });
-  it("COVERS point at existing files", () => {
+describe("COVERS", () => {
+  it("point at existing files", () => {
     for (const [k, u] of Object.entries(COVERS)) {
       expect(fs.existsSync(path.join(pub, u.replace(/^\/+/, ""))), `${k}: ${u}`).toBe(true);
-    }
-  });
-  it("no leftover [bracket] placeholders in case study copy (currently TBD placeholders may exist)", () => {
-    const left = entries.flatMap(([k, v]) => walk(v).filter((s) => /^\[[^\]]+\]$/.test(s)).map((s) => `${k}: ${s}`));
-    expect(Array.isArray(left)).toBe(true);
-  });
-  it("each has a non-empty title, lead, tech", () => {
-    for (const [k, v] of entries) {
-      expect(v.title, k).toBeTruthy();
-      expect(v.lead, k).toBeTruthy();
-      expect(v.tech.length, k).toBeGreaterThan(0);
     }
   });
 });
@@ -106,7 +68,7 @@ describe("shotUrl / MEDIA", () => {
   });
   it("MEDIA.shot returns nothing for projects without a screenshot (no request for a missing file)", () => {
     expect(MEDIA.shot("nyx")).toBe(COVERS.nyx);
-    expect(MEDIA.shot("snap-pass")).toBe("");
+    expect(MEDIA.shot("portfolio")).toBe("");
   });
   it("MEDIA.photo (/me.jpg) is not shipped; Pic component supposedly falls back", () => {
     expect(fs.existsSync(path.join(pub, MEDIA.photo))).toBe(false);

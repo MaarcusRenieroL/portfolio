@@ -1,10 +1,8 @@
 import { expect, test, type ConsoleMessage } from "@playwright/test";
-import { CASE_STUDIES } from "../../src/lib/case-studies";
 import { getPosts } from "../../src/lib/data/blog";
 
-const KNOWN_MISSING = /^\/(me\.jpg|projects\/[a-z-]+\.png|logos\/steam-troops\.png)$/;
-const slugs = Object.keys(CASE_STUDIES);
-const routes = ["/", "/about", "/projects", ...slugs.map((s) => `/projects/${s}`), "/experience", "/stack", "/resume", "/contact", "/blog"];
+const KNOWN_MISSING = /^\/(me\.jpg|projects\/[a-z-]+\.png)$/;
+const routes = ["/", "/about", "/projects", "/experience", "/certifications", "/skills", "/resume", "/contact", "/blog"];
 
 test.describe("routes", () => {
   for (const route of routes) {
@@ -58,9 +56,11 @@ test.describe("nav", () => {
   const links: [string, RegExp][] = [
     ["Projects", /\/projects$/],
     ["Experience", /\/experience$/],
+    ["Certifications", /\/certifications$/],
+    ["Skills", /\/skills$/],
     ["Writing", /\/blog$/],
-    ["Stack", /\/stack$/],
     ["About", /\/about$/],
+    ["Resume", /\/resume$/],
     ["Contact", /\/contact$/],
   ];
   // "Writing" only appears once there is something to read (see chrome.tsx / motion.spec.ts).
@@ -105,13 +105,13 @@ test.describe("assets and metadata", () => {
     expect(t).toContain("Sitemap: https://maarcus.dev/sitemap.xml");
   });
 
-  test("sitemap.xml lists all routes and case studies, no blog posts today", async ({ request }) => {
+  test("sitemap.xml lists all routes, no case studies and no blog posts today", async ({ request }) => {
     const r = await request.get("/sitemap.xml");
     expect(r.status()).toBe(200);
     expect(r.headers()["content-type"]).toContain("xml");
     const t = await r.text();
-    for (const p of ["", "/projects", "/experience", "/stack", "/about", "/contact", "/resume"]) expect(t).toContain(`<loc>https://maarcus.dev${p}</loc>`);
-    for (const s of slugs) expect(t).toContain(`https://maarcus.dev/projects/${s}</loc>`);
+    for (const p of ["", "/projects", "/experience", "/certifications", "/skills", "/about", "/contact", "/resume"]) expect(t).toContain(`<loc>https://maarcus.dev${p}</loc>`);
+    expect(t).not.toContain("/projects/"); // case studies are gone
     expect(t).not.toContain("/blog"); // the empty blog is neither linked nor in the sitemap until it has posts
   });
 
@@ -122,11 +122,10 @@ test.describe("assets and metadata", () => {
     await expect(page.locator('meta[name="description"]')).toHaveCount(1);
   });
 
-  test("project links to /projects/<slug> for case-study slugs resolve (no dead links from list)", async ({ page, request }) => {
+  test("project pages are gone: no links to /projects/<slug> and the old URLs are 404", async ({ page, request }) => {
     await page.goto("/projects");
-    const hrefs = await page.$$eval('a[href^="/projects/"]', (as) => [...new Set(as.map((a) => a.getAttribute("href")!))]);
-    expect(hrefs.length).toBeGreaterThan(0);
-    for (const h of hrefs) expect((await request.get(h)).status(), h).toBe(200);
+    expect(await page.$$eval('a[href^="/projects/"]', (as) => as.length)).toBe(0);
+    for (const slug of ["nyx", "life-os", "snap-pass", "zentro"]) expect((await request.get(`/projects/${slug}`)).status(), slug).toBe(404);
   });
 
   test("only /me.jpg (profile photo, not supplied yet) is still requested while missing", async ({ page }) => {
@@ -135,13 +134,13 @@ test.describe("assets and metadata", () => {
       const p = new URL(r.url()).pathname;
       if (r.status() === 404 && /\.(png|jpe?g|webp|svg)$/.test(p)) missing.add(p);
     });
-    for (const route of ["/", "/about", "/experience", "/projects", "/projects/snap-pass"]) await page.goto(route, { waitUntil: "load" });
+    for (const route of ["/", "/about", "/experience", "/projects", "/skills"]) await page.goto(route, { waitUntil: "load" });
     expect([...missing].sort()).toEqual(["/me.jpg"]);
   });
 
   test("no broken internal links or images on key pages", async ({ page, request }) => {
     const bad: string[] = [];
-    for (const route of ["/", "/projects", "/experience", "/about", "/stack", "/contact"]) {
+    for (const route of ["/", "/projects", "/experience", "/certifications", "/skills", "/about", "/contact"]) {
       await page.goto(route);
       const hrefs = await page.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")!).filter((h) => h.startsWith("/") && !h.startsWith("//")));
       for (const h of new Set(hrefs)) {

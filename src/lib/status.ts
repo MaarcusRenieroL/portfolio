@@ -46,6 +46,34 @@ export const SERVER_ERROR: Status = {
   actions: ["retry", "home", "contact"],
 };
 
+export const NOT_FOUND_DE: Status = {
+  code: "404",
+  name: "Nicht gefunden",
+  title: "Schon wieder verlaufen?",
+  body: "Diese Seite gibt es nicht oder sie ist umgezogen. Nutzen Sie die Tabs oben oder gehen Sie zurück zur Startseite.",
+  trace: [
+    { text: "Anfrage erhalten", tone: "ok" },
+    { text: "Routen werden abgeglichen", tone: "dim" },
+    { text: "keine Route passt", tone: "warn" },
+    { text: "mit 404 geantwortet", tone: "bad" },
+  ],
+  actions: ["home", "projects"],
+};
+
+export const SERVER_ERROR_DE: Status = {
+  code: "500",
+  name: "Serverfehler",
+  title: "Auf meiner Seite ist etwas kaputtgegangen.",
+  body: "Beim Rendern der Seite ist ein Fehler aufgetreten. Er ist protokolliert. Ein erneuter Versuch hilft meist.",
+  trace: [
+    { text: "Anfrage erhalten", tone: "ok" },
+    { text: "Seite wird gerendert", tone: "dim" },
+    { text: "nicht behandelte Ausnahme", tone: "bad" },
+    { text: "mit 500 geantwortet", tone: "bad" },
+  ],
+  actions: ["retry", "home", "contact"],
+};
+
 export const MAINTENANCE: Status = {
   code: "503",
   name: "Maintenance",

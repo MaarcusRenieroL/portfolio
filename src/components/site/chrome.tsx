@@ -2,42 +2,55 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SITE } from "~/lib/content";
+import { LANG_COOKIE, stripLang } from "~/lib/i18n";
+import { NAV_LINKS, SITE } from "~/lib/content";
+import { FileIcon, GithubIcon, LinkedinIcon, MailIcon } from "~/components/site/icons";
+import { useDict, useLang, useLocalePath } from "~/components/site/locale";
+import { PaletteButton } from "~/components/site/command-palette";
+import { FooterShortcutsButton } from "~/components/site/shortcuts";
 import { ThemeToggle } from "~/components/site/theme-toggle";
 
-const TABS = [
-  { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/experience", label: "Experience" },
-  { href: "/blog", label: "Writing" },
-  { href: "/stack", label: "Stack" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
-
-/** Header: name left, resume right, underlined tabs below. */
+/** Header: name left, tools right, underlined tabs below. */
 export function Nav({ showWriting = true }: { showWriting?: boolean }) {
-  const pathname = usePathname();
-  const cur = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/"));
+  const rawPath = usePathname();
+  const lang = useLang();
+  const t = useDict();
+  const href = useLocalePath();
+  const { path: pathname } = stripLang(rawPath);
+  const cur = (h: string) => (h === "/" ? pathname === "/" : pathname === h || pathname.startsWith(h + "/"));
+  const other = lang === "en" ? "de" : "en";
+  const label = (h: string) => t.nav[(h === "/" ? "home" : h === "/blog" ? "writing" : h.slice(1)) as keyof typeof t.nav];
 
   return (
     <header className="header">
       <div className="wrap">
         <div className="header-in">
-          <Link className="brand" href="/">
+          <Link className="brand" href={href("/")}>
             {SITE.name}
           </Link>
           <div className="header-actions">
+            <button
+              type="button"
+              className="lang-switch"
+              lang={other}
+              aria-label={t.chrome.otherLangAria}
+              onClick={() => {
+                try {
+                  document.cookie = `${LANG_COOKIE}=${other}; path=/; max-age=31536000; samesite=lax`;
+                } catch {}
+                window.location.reload();
+              }}
+            >
+              {other.toUpperCase()}
+            </button>
+            <PaletteButton />
             <ThemeToggle />
-            <Link className="action" href="/resume">
-              Resume
-            </Link>
           </div>
         </div>
-        <nav className="tabs" aria-label="Primary">
-          {TABS.filter((t) => showWriting || t.href !== "/blog").map(({ href, label }) => (
-            <Link key={href} href={href} data-tab={label.toLowerCase()} aria-current={cur(href) ? "page" : undefined}>
-              {label}
+        <nav className="tabs" aria-label={t.chrome.primary}>
+          {NAV_LINKS.filter((l) => showWriting || l.href !== "/blog").map(({ href: h, label: en }) => (
+            <Link key={h} href={href(h)} data-tab={en.toLowerCase()} aria-current={cur(h) ? "page" : undefined}>
+              {label(h)}
             </Link>
           ))}
         </nav>
@@ -47,19 +60,35 @@ export function Nav({ showWriting = true }: { showWriting?: boolean }) {
 }
 
 export function Footer() {
+  const t = useDict().chrome;
+  const href = useLocalePath();
   return (
     <footer className="footer">
       <div className="wrap">
         <div className="footer-in">
           <span>
-            © {new Date().getFullYear()} {SITE.name}. Nothing happened.
+            © {new Date().getFullYear()} {SITE.name}. {t.nothing}
           </span>
-          <span>
-            <a className="link" href={`mailto:${SITE.email}`}>
-              Email
-            </a>{" "}
-           
-          </span>
+          <nav className="footer-social" aria-label={t.social}>
+            <a href={SITE.github} rel="noopener noreferrer">
+              <GithubIcon /> GitHub
+            </a>
+            <a href={SITE.linkedin} rel="noopener noreferrer">
+              <LinkedinIcon /> LinkedIn
+            </a>
+            <a href={`mailto:${SITE.email}`}>
+              <MailIcon /> {t.email}
+            </a>
+            <Link href={href("/resume")} data-track="resume-open">
+              <FileIcon /> {t.resume}
+            </Link>
+          </nav>
+          <nav className="footer-meta" aria-label={t.site}>
+            <Link href={href("/changelog")}>{t.changelog}</Link>
+            <a href="/feed.xml">RSS</a>
+            <FooterShortcutsButton />
+          </nav>
+          {t.aiNote && <p className="footer-note">{t.aiNote}</p>}
         </div>
       </div>
     </footer>
