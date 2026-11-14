@@ -35,7 +35,7 @@ export function formatMonthYear(date: string) {
     return "";
   }
 
-  return `${shortMonths[d.getMonth()]} ${d.getFullYear()}`;
+  return `${shortMonths[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 export function formatShortDate(date: string) {
@@ -45,7 +45,7 @@ export function formatShortDate(date: string) {
     return "";
   }
 
-  return `${shortMonths[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return `${shortMonths[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
 export function formatLongDate(date: string) {
@@ -55,7 +55,7 @@ export function formatLongDate(date: string) {
     return "";
   }
 
-  return `${longMonths[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return `${longMonths[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
 export function getSafeTime(date: string | null) {

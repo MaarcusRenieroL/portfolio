@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Pic } from "~/components/site/media";
-import { MEDIA, ROLES, SKILLS } from "~/lib/content";
+import { EDUCATION, MEDIA, ROLES, SKILLS } from "~/lib/content";
 
 export const metadata: Metadata = { title: "Experience", description: "From networking to full stack Next.js to production healthcare backends in Java. Here is the work, and every skill it took." };
 
@@ -69,6 +69,24 @@ export default function ExperiencePage() {
           </li>
         ))}
       </ol>
+
+      <section className="section" aria-labelledby="edu-h">
+        <h2 id="edu-h" className="h2">Education</h2>
+        <div>
+          {EDUCATION.map((e) => (
+            <div className="skillrow" key={e.school}>
+              <span>{e.date}</span>
+              <span className="stack" style={{ gap: 2 }}>
+                <span>{e.url ? <a className="orglink" href={e.url} target="_blank" rel="noopener noreferrer">{e.school} ↗</a> : e.school}</span>
+                <span className="muted small">
+                  {e.degree}
+                  {e.note ? ` · ${e.note}` : ""}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="section" aria-labelledby="used-h">
         <h2 id="used-h" className="h2">Skills I use</h2>

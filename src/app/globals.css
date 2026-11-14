@@ -1,9 +1,14 @@
 @import "tailwindcss";
 
 /*
-  maarcus.dev: Gateway.
+  maarcus.dev.
   Flat near-black, hairline dividers, small quiet type, ghost buttons.
   Green is the one accent: status dots, active tab, primary action, links on hover.
+*/
+/*
+  Tokens. Dark is the default; light applies when the system prefers it or the
+  visitor picks it (data-theme on <html>, set before first paint by an inline
+  script in layout.tsx). Every colour in this file reads from these tokens.
 */
 :root {
   --bg: #0b0b0b;
@@ -19,6 +24,9 @@
   --green-ink: #052e16;
   --green-wash: rgb(74 222 128 / 0.1);
   --danger: #f87171;
+  --warn: #fbbf24;
+  --shadow-img: 0 32px 64px -40px rgb(0 0 0 / 0.9), 0 0 0 1px rgb(255 255 255 / 0.02) inset;
+  --logo-bg: #fff;
 
   --sans: var(--font-sans), -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
   --mono: var(--font-code), ui-monospace, "SF Mono", Menlo, monospace;
@@ -29,6 +37,51 @@
   --wide: 55rem;
 
   color-scheme: dark;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Light tokens, written once as a mixin-like list and applied in two places. */
+:root[data-theme="light"] {
+  --bg: #fafafa;
+  --fg: #171717;
+  --fg-2: #525252;
+  --fg-3: #636363;
+  --line: #e5e5e5;
+  --line-2: #d4d4d4;
+  --hover: #f0f0f0;
+  --green: #15803d;
+  --green-deep: #166534;
+  --green-ink: #ffffff;
+  --green-wash: rgb(21 128 61 / 0.08);
+  --danger: #b91c1c;
+  --warn: #92400e;
+  --shadow-img: 0 24px 48px -32px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(0 0 0 / 0.04) inset;
+  --logo-bg: #fff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #fafafa;
+    --fg: #171717;
+    --fg-2: #525252;
+    --fg-3: #636363;
+    --line: #e5e5e5;
+    --line-2: #d4d4d4;
+    --hover: #f0f0f0;
+    --green: #15803d;
+    --green-deep: #166534;
+    --green-ink: #ffffff;
+    --green-wash: rgb(21 128 61 / 0.08);
+    --danger: #b91c1c;
+    --warn: #92400e;
+    --shadow-img: 0 24px 48px -32px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(0 0 0 / 0.04) inset;
+    --logo-bg: #fff;
+    color-scheme: light;
+  }
 }
 
 *,
@@ -704,7 +757,7 @@ button {
   height: 32px;
   border-radius: 6px;
   object-fit: contain;
-  background: #fff;
+  background: var(--logo-bg);
   padding: 4px;
 }
 
@@ -1061,8 +1114,8 @@ textarea.input {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(520px circle at var(--mx) var(--my), rgb(74 222 128 / 0.07), transparent 70%),
-    radial-gradient(60% 45% at 25% 0%, rgb(74 222 128 / 0.1), transparent 70%);
+    radial-gradient(520px circle at var(--mx) var(--my), color-mix(in srgb, var(--green) 7%, transparent), transparent 70%),
+    radial-gradient(60% 45% at 25% 0%, color-mix(in srgb, var(--green) 10%, transparent), transparent 70%);
 }
 
 /* Reading progress: a thin green line along the top edge. */
@@ -1207,7 +1260,7 @@ textarea.input {
 }
 
 .shot:hover .media {
-  box-shadow: 0 16px 30px -14px rgb(74 222 128 / 0.3);
+  box-shadow: 0 16px 30px -14px color-mix(in srgb, var(--green) 30%, transparent);
 }
 
 .shot img {
@@ -1260,7 +1313,7 @@ textarea.input {
 
 .cta .action:hover,
 .send:hover:not(:disabled) {
-  box-shadow: 0 8px 20px -8px rgb(74 222 128 / 0.55);
+  box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--green) 55%, transparent);
 }
 
 /* ---------- System pages: only ever shown for a real 404 or 500 ---------- */
@@ -1372,7 +1425,7 @@ textarea.input {
 }
 
 .trace li[data-tone="ok"] .mark { color: var(--green); }
-.trace li[data-tone="warn"] { color: #fbbf24; }
+.trace li[data-tone="warn"] { color: var(--warn); }
 .trace li[data-tone="bad"] { color: var(--danger); }
 .trace li[data-tone="dim"] { color: var(--fg-3); }
 
@@ -1445,7 +1498,7 @@ textarea.input {
 .hljs-string,
 .hljs-attr,
 .hljs-number,
-.hljs-literal { color: #fbbf24; }
+.hljs-literal { color: var(--warn); }
 
 .hljs-title,
 .hljs-function { color: var(--fg); }
@@ -1543,7 +1596,7 @@ body { font-size: 15px; line-height: 1.55; }
 .hero-shot,
 .shot-img {
   border-radius: 12px;
-  box-shadow: 0 32px 64px -40px rgb(0 0 0 / 0.9), 0 0 0 1px rgb(255 255 255 / 0.02) inset;
+  box-shadow: var(--shadow-img);
 }
 
 .hero-shot { max-height: 78vh; object-position: top left; }
@@ -1641,7 +1694,7 @@ body { font-size: 15px; line-height: 1.55; }
 
 /* Print: the resume and case studies print on white, no chrome. */
 @media print {
-  :root { --bg: #fff; --fg: #111; --fg-2: #333; --fg-3: #555; --line: #ccc; --line-2: #bbb; --hover: #f4f4f4; --green: #15803d; }
+  :root, :root[data-theme], :root:not([data-theme]) { --bg: #fff; --fg: #111; --fg-2: #333; --fg-3: #555; --line: #ccc; --line-2: #bbb; --hover: #f4f4f4; --green: #15803d; }
   html, body { background: #fff; color: #111; }
   .header, .footer, .skip-link, .action, .back, .pager { display: none !important; }
   .page { padding-block: 0; gap: 24px; }
@@ -1800,4 +1853,108 @@ html.lenis, html.lenis body { height: auto; }
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--hover);
+}
+
+/* ---------- Theme toggle ---------- */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  color: var(--fg-2);
+  transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease);
+}
+
+.theme-toggle:hover {
+  background: var(--hover);
+  color: var(--fg);
+  border-color: var(--line-2);
+}
+
+@media (pointer: coarse) {
+  .theme-toggle,
+  .header .action {
+    height: 40px;
+  }
+  .theme-toggle {
+    width: 40px;
+  }
+}
+
+@media print {
+  .theme-toggle { display: none !important; }
+}
+
+/* ---------- Entrances and scroll reveals (CSS only) ---------- */
+
+/*
+  Content is never hidden before JavaScript runs: these are animations with a
+  from-keyframe, so the server HTML paints normally and each element eases in.
+  Only opacity and transform move, so nothing shifts layout. Off entirely for
+  reduced motion.
+*/
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* First screen: rises in order. */
+  .hero > *,
+  .page > header > *,
+  .page > .hero + * {
+    animation: rise var(--t-slow) var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  .hero > :nth-child(2), .page > header > :nth-child(2) { --i: 1; }
+  .hero > :nth-child(3), .page > header > :nth-child(3) { --i: 2; }
+  .hero > :nth-child(4), .page > header > :nth-child(4) { --i: 3; }
+  .hero > :nth-child(5), .page > header > :nth-child(5) { --i: 4; }
+  .page > .hero + * { --i: 5; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Everything below the first screen arrives as it scrolls into view. */
+    :is(.h2, .leader, .job, .item, .facts > div, .stats > div, .shot-fig, .pager a, .tl > li, .skillrow, .contact-block, .related):not(:where(.rows, .hero, .page > header) *) {
+      animation: rise linear both;
+      animation-delay: 0s;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/* ---------- Mobile nav: every tab visible, no sideways scroll ---------- */
+
+@media (max-width: 480px) {
+  .tabs {
+    gap: 14px;
+  }
+  /* The brand already links home. */
+  .tabs a[data-tab="home"] {
+    display: none;
+  }
+}
+
+/* Visible to screen readers only. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

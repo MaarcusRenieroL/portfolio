@@ -73,7 +73,7 @@ export const FileIcon = (p: P) => (
   </svg>
 );
 
-/** The status mark: a green dot in a hairline ring, like Gateway's online indicator. */
+/** The status mark: a green dot in a hairline ring, as an online indicator. */
 export function Swords({ className = "swords" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 28 28" aria-hidden="true">

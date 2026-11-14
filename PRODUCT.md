@@ -26,3 +26,6 @@ User wants a very minimal looking website. Name, domain (maarcus.dev) and existi
 - Content over chrome: every element must earn its place.
 - Fast to scan, easy to contact.
 - Restraint is the identity; no decorative effects.
+
+## Design
+Tokens, type, components and motion are documented in `DESIGN.md`.

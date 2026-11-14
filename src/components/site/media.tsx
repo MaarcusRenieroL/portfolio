@@ -16,7 +16,7 @@ export function Pic({ src, alt, className, fallback }: { src: string; alt: strin
     if (el && el.complete && el.naturalWidth === 0) setBad(true);
   }, []);
 
-  if (bad) {
+  if (bad || !src) {
     return (
       <span className={`${className ?? ""} pic-fallback`} role={alt ? "img" : undefined} aria-label={alt || undefined}>
         {fallback}

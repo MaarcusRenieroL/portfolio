@@ -5,8 +5,9 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { SITE } from "~/lib/content";
+import { jsonLdString } from "~/lib/utils";
 import { Toc } from "~/components/site/toc";
-import { getHeadings, getPost, getPosts, getRelated, slugify } from "~/lib/data/blog";
+import { getHeadings, getPost, getPosts, getRelated, makeIdGenerator } from "~/lib/data/blog";
 import { formatLongDate, formatShortDate } from "~/lib/utils/date";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
-  const og = `/og?title=${encodeURIComponent(post.title)}&subtitle=${encodeURIComponent(post.description)}`;
+  const og = `/og?post=${encodeURIComponent(post.slug)}`;
   return { title: post.title, description: post.description, openGraph: { title: post.title, description: post.description, type: "article", images: [og] } };
 }
 
@@ -32,10 +33,11 @@ export default async function PostPage({ params }: Props) {
   const headings = getHeadings(body);
   const related = getRelated(slug);
 
+  const nextId = makeIdGenerator();
   const heading = (Tag: "h2" | "h3") =>
     function H({ children }: { children?: React.ReactNode }) {
       const text = String(Array.isArray(children) ? children.join("") : children ?? "");
-      return <Tag id={slugify(text)}>{children}</Tag>;
+      return <Tag id={nextId(text)}>{children}</Tag>;
     };
 
   const jsonLd = {
@@ -50,7 +52,7 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <article className="wrap page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }} />
       <header className="stack g24">
         <Link className="back" href="/blog">
           ← Writing

@@ -6,6 +6,8 @@ import { Footer, Nav } from "~/components/site/chrome";
 import { Life } from "~/components/site/life";
 import { Motion } from "~/components/site/motion";
 import { SITE } from "~/lib/content";
+import { getPosts } from "~/lib/data/blog";
+import { jsonLdString } from "~/lib/utils";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const code = JetBrains_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-code", display: "swap" });
@@ -31,9 +33,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0b0b",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
+  colorScheme: "dark light",
 };
+
+const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -47,14 +54,18 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${code.variable}`}>
+    <html lang="en" className={`${sans.variable} ${code.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Runs before first paint so a stored theme never flashes the wrong one. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(personJsonLd) }} />
         <div className="site">
           <a className="skip-link" href="#main">
             Skip to content
           </a>
-          <Nav />
+          <Nav showWriting={getPosts().length > 0} />
           <main id="main">{children}</main>
           <Footer />
         </div>

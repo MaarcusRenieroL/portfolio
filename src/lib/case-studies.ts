@@ -4,37 +4,16 @@
  * Screenshots live in /public/projects/<slug>/ (WebP, desktop plus mobile).
  */
 
-export type Shot = { file: string; mobile?: string; alt: string; caption: string };
+import { type CaseStudy, caseStudySchema, check } from "./schema";
 
-export type CaseStudy = {
-  slug: string;
-  title: string;
-  lead: string;
-  site?: { label: string; href: string };
-  repo: { label: string; href?: string };
-  meta: { label: string; value: string; learning?: boolean }[];
-  hero: string;
-  /** File in /public/projects/<slug>/ used as the card and hero image. */
-  cover?: string;
-  shots: Shot[];
-  video?: { file: string; caption: string };
-  challenge: { title: string; body: string };
-  approach: { title: string; body: string; code?: { file: string; lines: string[]; hl?: number } };
-  decisions: { title: string; body: string }[];
-  /** Extra prose sections between decisions and outcome. */
-  sections?: { title: string; body: string }[];
-  outcome: { title: string; stats?: { value: string; unit?: string; label: string }[]; note: string };
-  lessons: { hardest: string; quote?: string; body: string };
-  next: string;
-  tech: string[];
-};
+export type { CaseStudy, Shot } from "./schema";
 
 const TBD = (what: string) => `[${what}]`;
 
 /** Plain <img> tags don't get Next's basePath, so prefix it here (empty in production). */
 export const shotUrl = (slug: string, file: string) => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/projects/${slug}/${file}`;
 
-export const CASE_STUDIES: Record<string, CaseStudy> = {
+const CASE_STUDY_DATA: Record<string, unknown> = {
   nyx: {
     slug: "nyx",
     title: "nyx",
@@ -217,35 +196,6 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
     tech: ["Python", "FastAPI", "OpenCV", "MediaPipe", "rembg", "Diffusers", "Next.js 16"],
   },
 
-  gateway: {
-    slug: "gateway",
-    title: "gateway",
-    lead: "One nginx in front of every project on my Mac, and one Cloudflare tunnel to put chosen ones on the internet.",
-    repo: { label: "Private repo" },
-    meta: [
-      { label: "Role", value: "Solo: design, build" },
-      { label: "Platform", value: "macOS · Docker" },
-      { label: "Stack", value: "nginx · Docker · Cloudflare Tunnel · Python · Shell" },
-      { label: "Status", value: "In daily use", learning: true },
-    ],
-    hero: "[gateway control center]",
-    shots: [],
-    challenge: { title: "Too many projects, too many ports", body: "Running several apps locally meant remembering ports, hand-writing nginx config and re-doing the tunnel setup for each one. Deploying meant a different dance every time." },
-    approach: {
-      title: "One JSON file drives everything",
-      body: "`projects.json` is the only file I edit. `./gw gen` turns it into the nginx config, compose files and tunnel config. Apps are reached at `localhost/<name>/` and, if public, at `<name>.maarcus.dev` through Cloudflare. A local portal shows every project, whether it is up, and buttons to start, stop, deploy and read logs.",
-    },
-    decisions: [
-      { title: "Three kinds of project", body: "Tunnel projects run on this Mac, Vercel projects are only linked, and a local copy of a Vercel project can run next to production on the same machine." },
-      { title: "A deploy that stays safe", body: "`gw deploy` builds, restarts, reloads and waits until the app answers. Tunnel projects show an upgrading page meanwhile and stay on it if the build fails." },
-      { title: "A control API that only I can reach", body: "It listens on loopback, answers only for this machine's host, requires a custom header on every POST and sends no CORS headers, so another device or website cannot start or stop anything." },
-    ],
-    outcome: { title: "Every project, one command", note: "`gw doctor` checks Docker, network, nginx, tunnel credentials and generated config and prints a fix for each failure. The CLI is about 1,100 lines of shell, with a small Python control API and a Cloudflare Worker for the branded offline page." },
-    lessons: { hardest: "Making generated config reliable, so apps that ignore their base path or send huge headers do not break the whole gateway.", body: "Generating config from one file removed a whole class of drift bugs." },
-    next: "Make it generic enough for other people to use.",
-    tech: ["nginx", "Docker Compose", "Cloudflare Tunnel", "Cloudflare Workers", "Python", "Shell"],
-  },
-
   dotfiles: {
     slug: "dotfiles",
     title: "dotfiles",
@@ -280,10 +230,13 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
   },
 };
 
-/** Card and hero image per project; dotfiles has shots but no case study page. */
-export const COVERS: Record<string, string> = {
-  nyx: shotUrl("nyx", "03-launcher-search.webp"),
-  "life-os": shotUrl("life-os", "01-dashboard.webp"),
-  "next-kit": shotUrl("next-kit", "01-cli-summary.webp"),
-  dotfiles: shotUrl("dotfiles", "01-tmux-neovim.webp"),
-};
+export const CASE_STUDIES: Record<string, CaseStudy> = Object.fromEntries(
+  Object.entries(CASE_STUDY_DATA).map(([key, value]) => [key, check("case study", key, caseStudySchema, value)]),
+);
+
+/** Card and hero image per project: each case study's `cover` file. Computed once at import. */
+export const COVERS: Record<string, string> = Object.fromEntries(
+  Object.values(CASE_STUDIES)
+    .filter((c) => c.cover)
+    .map((c) => [c.slug, shotUrl(c.slug, c.cover!)]),
+);

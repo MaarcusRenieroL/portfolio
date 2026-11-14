@@ -83,7 +83,10 @@ function estimateReadingTime(content: string) {
   return `${minutes} min read`;
 }
 
+const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
+
 function readPost(slug: string): (Post & { published: boolean }) | null {
+  if (!SLUG_RE.test(slug)) return null;
   const fullPath = path.join(BLOG_DIR, `${slug}.md`);
 
   if (!fs.existsSync(fullPath)) {
@@ -154,17 +157,28 @@ export function getPost(slug: string): Post | null {
 
 export type Heading = { id: string; text: string; level: 2 | 3 };
 
-export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "section";
+
+export function makeIdGenerator() {
+  const seen = new Map<string, number>();
+  return (text: string) => {
+    const base = slugify(text);
+    const n = (seen.get(base) ?? 0) + 1;
+    seen.set(base, n);
+    return n === 1 ? base : `${base}-${n}`;
+  };
+}
 
 /** h2/h3 headings of a markdown body, skipping fenced code. */
 export function getHeadings(content: string): Heading[] {
   const out: Heading[] = [];
+  const nextId = makeIdGenerator();
   let fence = false;
   for (const line of content.split("\n")) {
     if (line.startsWith("```")) fence = !fence;
     if (fence) continue;
     const m = /^(#{2,3})\s+(.+?)\s*$/.exec(line);
-    if (m) out.push({ id: slugify(m[2]), text: m[2], level: m[1].length as 2 | 3 });
+    if (m) out.push({ id: nextId(m[2]), text: m[2], level: m[1].length as 2 | 3 });
   }
   return out;
 }

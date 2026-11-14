@@ -16,6 +16,7 @@
 
 # next.js
 /.next/
+/.next-e2e/
 /out/
 
 # production
@@ -33,6 +34,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,3 +48,6 @@ next-env.d.ts
 
 # claude code (keep launch.json, ignore local settings)
 .claude/settings.local.json
+
+/test-results/
+/playwright-report/

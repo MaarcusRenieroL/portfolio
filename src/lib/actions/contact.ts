@@ -1,25 +1,29 @@
 "use server";
 
+import { headers } from "next/headers";
 import { Resend } from "resend";
-import { z } from "zod";
+import { allowContact } from "~/lib/rate-limit";
+import { type ContactField, REASON_LABELS, contactSchema as schema } from "~/lib/contact-schema";
 
-const REASONS = { role: "A full-time role", freelance: "A freelance project", hi: "Just saying hi" } as const;
+const REASONS = REASON_LABELS;
 
-const schema = z.object({
-  name: z.string().trim().min(2, "Please enter your name").max(100),
-  email: z.email("Please enter a valid email").max(200),
-  org: z.string().trim().max(150).optional(),
-  reason: z.enum(["role", "freelance", "hi"]),
-  message: z.string().trim().min(10, "Message should be at least 10 characters").max(5000, "Message is too long"),
-});
-
-type Field = "name" | "email" | "message";
+type Field = ContactField;
 
 export type ContactState = {
   status: "idle" | "success" | "error";
   message: string;
   fieldErrors?: Partial<Record<Field, string>>;
 };
+
+async function clientKey() {
+  try {
+    const h = await headers();
+    // Vercel sets x-vercel-forwarded-for itself; a client-sent cf-connecting-ip would be spoofable here.
+    return h.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  } catch {
+    return "unknown";
+  }
+}
 
 export async function sendContactMessage(_prev: ContactState, formData: FormData): Promise<ContactState> {
   // honeypot: real users never fill a hidden field
@@ -40,6 +44,10 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
       if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
     }
     return { status: "error", message: "Please fix the highlighted fields.", fieldErrors };
+  }
+
+  if (!allowContact(await clientKey())) {
+    return { status: "error", message: "Too many messages from this connection. Please try again later or email me directly." };
   }
 
   const { name, email, org, reason, message } = parsed.data;

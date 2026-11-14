@@ -35,13 +35,6 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M7.5 17c.8-2 2.4-3 4.5-3s3.7 1 4.5 3" />
     </>
   ),
-  // a gate: one way in
-  gateway: (
-    <>
-      <path d="M5 21V10a7 7 0 0114 0v11" />
-      <path d="M3 21h18M12 21v-6M9.5 17.5L12 15l2.5 2.5" />
-    </>
-  ),
   // a prompt
   dotfiles: (
     <>

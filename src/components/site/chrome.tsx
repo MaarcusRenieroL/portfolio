@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SITE } from "~/lib/content";
+import { ThemeToggle } from "~/components/site/theme-toggle";
 
 const TABS = [
   { href: "/", label: "Home" },
@@ -14,8 +15,8 @@ const TABS = [
   { href: "/contact", label: "Contact" },
 ];
 
-/** Gateway-style header: name left, resume right, underlined tabs below. */
-export function Nav() {
+/** Header: name left, resume right, underlined tabs below. */
+export function Nav({ showWriting = true }: { showWriting?: boolean }) {
   const pathname = usePathname();
   const cur = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/"));
 
@@ -26,13 +27,16 @@ export function Nav() {
           <Link className="brand" href="/">
             {SITE.name}
           </Link>
-          <Link className="action" href="/resume">
-            Resume
-          </Link>
+          <div className="header-actions">
+            <ThemeToggle />
+            <Link className="action" href="/resume">
+              Resume
+            </Link>
+          </div>
         </div>
         <nav className="tabs" aria-label="Primary">
-          {TABS.map(({ href, label }) => (
-            <Link key={href} href={href} aria-current={cur(href) ? "page" : undefined}>
+          {TABS.filter((t) => showWriting || t.href !== "/blog").map(({ href, label }) => (
+            <Link key={href} href={href} data-tab={label.toLowerCase()} aria-current={cur(href) ? "page" : undefined}>
               {label}
             </Link>
           ))}

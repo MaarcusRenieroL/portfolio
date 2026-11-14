@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pic } from "~/components/site/media";
 import { CASE_STUDIES, MEDIA, SITE, shotUrl } from "~/lib/content";
+import { jsonLdString } from "~/lib/utils";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${cs.title} — case study`,
     description: cs.lead,
-    openGraph: { images: [`/og?title=${encodeURIComponent(cs.title)}&subtitle=${encodeURIComponent(cs.lead.slice(0, 120))}`] },
+    openGraph: { images: [`/og?project=${encodeURIComponent(cs.slug)}`] },
   };
 }
 
@@ -70,7 +71,7 @@ export default async function CaseStudyPage({ params }: Props) {
 
   return (
     <article className="wrap page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }} />
       <header className="stack g24">
         <Link className="back" href="/projects">
           ← Projects

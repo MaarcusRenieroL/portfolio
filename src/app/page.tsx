@@ -63,17 +63,28 @@ export default function Home() {
       <section className="section" aria-labelledby="proj-h">
         <h2 id="proj-h" className="h2">Projects</h2>
       <div className="strip" aria-label="Featured projects">
-        {PROJECTS.filter((p) => p.featured).map((p) => (
-          <Link key={p.slug} className="shot" href={`/projects/${p.slug}`}>
-            <span className="media">
-              <Pic src={MEDIA.shot(p.slug)} alt={`${p.name} screenshot`} fallback={<ProjectIcon slug={p.slug} />} />
-            </span>
-            <span className="cap">
-              <strong>{p.name}</strong>
-              <span>{p.kind}</span>
-            </span>
-          </Link>
-        ))}
+        {PROJECTS.filter((p) => p.featured).map((p) => {
+          const inner = (
+            <>
+              <span className="media">
+                <Pic src={MEDIA.shot(p.slug)} alt={`${p.name} screenshot`} fallback={<ProjectIcon slug={p.slug} />} />
+              </span>
+              <span className="cap">
+                <strong>{p.name}</strong>
+                <span>{p.kind}</span>
+              </span>
+            </>
+          );
+          return p.study ? (
+            <Link key={p.slug} className="shot" href={`/projects/${p.slug}`}>
+              {inner}
+            </Link>
+          ) : (
+            <div key={p.slug} className="shot">
+              {inner}
+            </div>
+          );
+        })}
       </div>
         <Link className="action" href="/projects">All projects</Link>
       </section>
