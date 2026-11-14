@@ -1,14 +1,25 @@
 import { ImageResponse } from "next/og";
-import { CASE_STUDIES, PROJECTS, SITE } from "~/lib/content";
+import { PROJECTS, SITE } from "~/lib/content";
 import { getPost } from "~/lib/data/blog";
+import { DICT } from "~/lib/dict";
+import { OG_PAGES, type OgPage } from "~/lib/seo";
+import { allowOg, clientKeyFrom } from "~/lib/rate-limit";
 
 const DEFAULT_SUBTITLE = "Full stack engineer · Java/Spring Boot · TypeScript/Next.js";
 
 function resolve(params: URLSearchParams): { title: string; subtitle: string } {
+  const page = params.get("page");
+  if (page && Object.hasOwn(OG_PAGES, page)) {
+    if (params.get("lang") === "de" && Object.hasOwn(DICT.de.meta.pages, page)) {
+      const [title, subtitle] = (DICT.de.meta.pages as Record<string, string[]>)[page];
+      return { title, subtitle };
+    }
+    return OG_PAGES[page as OgPage];
+  }
   const project = params.get("project");
   if (project) {
     const p = PROJECTS.find((x) => x.slug === project);
-    if (p) return { title: p.name, subtitle: CASE_STUDIES[p.slug]?.lead ?? p.desc };
+    if (p) return { title: p.name, subtitle: p.desc };
   }
   const post = params.get("post");
   if (post) {
@@ -19,6 +30,9 @@ function resolve(params: URLSearchParams): { title: string; subtitle: string } {
 }
 
 export async function GET(request: Request) {
+  if (!allowOg(clientKeyFrom(request.headers))) {
+    return new Response("Too many requests", { status: 429, headers: { "Retry-After": "60", "Cache-Control": "no-store" } });
+  }
   const { searchParams } = new URL(request.url);
   const { title, subtitle } = resolve(searchParams);
 
