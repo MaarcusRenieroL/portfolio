@@ -40,10 +40,10 @@ const STARTER_PROMPTS = [
 ];
 
 const COMPACT_PROMPTS = [
-  { label: "⚡ 30s Pitch", prompt: "Give me a 30-second summary pitch of Maarcus." },
-  { label: "⚔️ Projects", prompt: "Tell me about his flagship systems like Nyx and next-kit." },
-  { label: "🛠 Tech Stack", prompt: "What is Maarcus's primary tech stack and backend engineering experience?" },
-  { label: "📅 Book Call", isLink: true, href: "/schedule" },
+  { icon: Sparkles, label: "30s Pitch", prompt: "Give me a 30-second summary pitch of Maarcus." },
+  { icon: Swords, label: "Projects", prompt: "Tell me about his flagship systems like Nyx and next-kit." },
+  { icon: Cpu, label: "Tech Stack", prompt: "What is Maarcus's primary tech stack and backend engineering experience?" },
+  { icon: Calendar, label: "Book Call", isLink: true, href: "/schedule" },
 ];
 
 /**
@@ -344,62 +344,65 @@ export function ZoroAiBubble() {
               )}
             </div>
 
-            {/* Compact Quick Prompts Bar (When chatting) */}
-            {hasMessages && (
-              <div className="flex items-center gap-1.5 overflow-x-auto px-3.5 py-2 border-t border-neutral-800/80 bg-[#050907] scrollbar-none">
-                {COMPACT_PROMPTS.map((qp) =>
-                  qp.isLink ? (
-                    <Link
-                      key={qp.label}
-                      href={href(qp.href!)}
-                      onClick={() => setIsOpen(false)}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-950/60 px-2.5 py-1 text-[11px] font-medium text-emerald-300 hover:bg-emerald-900/80 transition-colors"
-                    >
-                      <Calendar className="h-3 w-3" />
-                      <span>{qp.label}</span>
-                      <ArrowRight className="h-2.5 w-2.5" />
-                    </Link>
-                  ) : (
-                    <button
-                      key={qp.label}
-                      type="button"
-                      onClick={() => handleSend(qp.prompt)}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-full border border-neutral-800 bg-neutral-900/90 px-2.5 py-1 text-[11px] text-neutral-300 hover:border-emerald-500/40 hover:text-white transition-colors"
-                    >
-                      {qp.label}
-                    </button>
-                  )
-                )}
-              </div>
-            )}
+            {/* Command Input Area */}
+            <div className="border-t border-neutral-800/80 bg-[#050806] p-3 space-y-2">
+              {/* Quick Suggestion Pills */}
+              {hasMessages && (
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5">
+                  {COMPACT_PROMPTS.map((qp) => {
+                    const Icon = qp.icon;
+                    return qp.isLink ? (
+                      <Link
+                        key={qp.label}
+                        href={href(qp.href!)}
+                        onClick={() => setIsOpen(false)}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-2.5 py-1 text-[11px] font-medium text-emerald-300 hover:bg-emerald-900/60 hover:border-emerald-400 transition-colors"
+                      >
+                        <Icon className="h-3 w-3 text-emerald-400" />
+                        <span>{qp.label}</span>
+                        <ArrowRight className="h-2.5 w-2.5 opacity-70" />
+                      </Link>
+                    ) : (
+                      <button
+                        key={qp.label}
+                        type="button"
+                        onClick={() => handleSend(qp.prompt)}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-neutral-800 bg-[#0b120e] px-2.5 py-1 text-[11px] text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-300 hover:bg-neutral-900 transition-all"
+                      >
+                        <Icon className="h-3 w-3 text-emerald-400/80" />
+                        <span>{qp.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
-            {/* Command Input Bar */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                void handleSend();
-              }}
-              className="flex items-center gap-2 border-t border-neutral-800/80 bg-[#050806] p-3"
-            >
-              <div className="relative flex-1 flex items-center">
+              {/* Integrated Capsule Input */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void handleSend();
+                }}
+                className="group relative flex items-center rounded-xl border border-neutral-800 bg-[#09110d] px-3 py-1 transition-all focus-within:border-neutral-700 shadow-inner"
+              >
                 <input
                   ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask Zoro anything about Maarcus..."
-                  className="w-full rounded-xl border border-neutral-800/80 bg-[#09100c] px-3.5 py-2 text-xs text-neutral-100 placeholder:text-neutral-500 outline-none focus:outline-none focus:ring-0 focus:border-neutral-800/80 transition-colors"
+                  className="w-full bg-transparent py-1 text-xs text-neutral-100 placeholder:text-neutral-500 outline-none border-none focus:outline-none focus:ring-0"
                 />
-              </div>
-              <button
-                type="submit"
-                disabled={!input.trim() || isTyping}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-all shadow-md shadow-emerald-500/20 active:scale-95"
-                aria-label="Send message"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={!input.trim() || isTyping}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-black hover:bg-emerald-400 disabled:opacity-20 disabled:hover:bg-emerald-500 disabled:pointer-events-none transition-all active:scale-95 shadow-sm"
+                  aria-label="Send message"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                </button>
+              </form>
+            </div>
           </div>
         )}
       </div>
