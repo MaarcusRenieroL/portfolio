@@ -71,8 +71,13 @@ export function switchTheme() {
   choose(current() === "dark" ? "light" : "dark", from);
 }
 
+/** Hook to subscribe to live theme changes across components. */
+export function useTheme(): Theme {
+  return useSyncExternalStore(subscribe, current, () => "dark" as Theme);
+}
+
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, current, () => "dark" as Theme);
+  const theme = useTheme();
   const next: Theme = theme === "dark" ? "light" : "dark";
   const label = useDict().chrome.themeTo(next);
 

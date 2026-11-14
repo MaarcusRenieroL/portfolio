@@ -152,6 +152,16 @@ a {
   border-radius: 4px;
 }
 
+input:focus-visible,
+textarea:focus-visible,
+.no-focus-ring,
+.no-focus-ring:focus,
+.no-focus-ring:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
 img,
 svg {
   display: block;
