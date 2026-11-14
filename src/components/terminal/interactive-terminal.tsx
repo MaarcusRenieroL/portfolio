@@ -6,42 +6,103 @@ import { useRouter } from "next/navigation";
 
 interface TerminalLine {
   id: string;
-  type: "input" | "output" | "error" | "ascii";
+  type: "input" | "output" | "error" | "table" | "ascii";
   text: string;
 }
 
-const ZORO_ASCII_BANNER = `
-      /| ________________
-O|===|* >________________>  [ENMA BLADE]
+const ZORO_ASCII_BLADE = `
+      /| __________________________________________
+0|===|* >__________________________________________>  [WADO ICHIMONJI · ENMA]
       \\|
-  ___                 _                 
- |_  /___  _ _ ___   /_\\  _ _ _ __ _  _ 
-  / // _ \\| '_/ _ \\ / _ \\| '_| '_ \\ || |
- /___\\___/|_| \\___//_/ \\_\\_| | .__/\\_, |
-                             |_|   |__/ 
+  ______                   ____   _____
+ |___  /                  / __ \\ / ____|
+    / / ___  _ __ ___    | |  | | (___  
+   / / / _ \\| '__/ _ \\   | |  | |\\___ \\ 
+  / /_| (_) | | | (_) |  | |__| |____) |
+ /_____\\___/|_|  \\___/    \\____/|_____/  x86_64
 `;
 
-const INITIAL_WELCOME = `${ZORO_ASCII_BANNER}
-  Host:        Next.js 16.4.2 · React 19.3 (Streaming App Router)
-  Kernel:      Zoro OS x86_64 (Dark Emerald Noir)
-  Engineer:    Maarcus Reniero L · Full Stack & Systems
-  Location:    Chennai, IN (IST UTC+5:30)
-  Core Stack:  Go, TypeScript, Next.js 16, PostgreSQL, Docker, AWS, Redis
-  Shell:       zsh 5.9 (Zoro Three-Sword Prompt)
+const TERMCAN_NEOFETCH = `
+${ZORO_ASCII_BLADE}
+┌───────────────────────────┬────────────────────────────────────────────────────────┐
+│ SYSTEM METRICS            │ KERNEL SPECIFICATIONS                                  │
+├───────────────────────────┼────────────────────────────────────────────────────────┤
+│ OS                        │ Zoro OS 6.12.0-zoro-zen (Emerald Obsidian Dark)        │
+│ Host                      │ Next.js 16.4.2 · React 19.3 (Streaming App Router)     │
+│ Architecture              │ x86_64-pc-linux-gnu (Clang/LLVM 18.1)                  │
+│ Engineer                  │ Maarcus Reniero L · Full Stack & Backend Specialist    │
+│ Location                  │ Chennai, IN (IST UTC+5:30)                             │
+│ Primary Swords            │ Go, TypeScript, Java (Spring), Next.js, PostgreSQL     │
+│ Shell                     │ zsh 5.9 (termcn / Ghostty emulation)                   │
+│ Terminal                  │ xterm-256color · 80x24 truecolor                       │
+│ Uptime                    │ 99.98% (High Availability Distributed Cluster)         │
+│ Memory                    │ 1.24 GiB / 16.00 GiB (7.7% Optimized Footprint)       │
+├───────────────────────────┴────────────────────────────────────────────────────────┤
+│ ANSI COLORS:  ███  ███  ███  ███  ███  ███  ███  ███                               │
+└────────────────────────────────────────────────────────────────────────────────────┘
+`;
 
-  Type 'help' for command list, or click any quick command below.
+const TERMCAN_HELP = `
+┌─────────────┬──────────────────────────────────────────────────────────────────────┐
+│ COMMAND     │ FUNCTION & USAGE                                                     │
+├─────────────┼──────────────────────────────────────────────────────────────────────┤
+│ neofetch    │ Print system architecture, kernel specs & ANSI color palette         │
+│ projects    │ Display production systems, GitHub repositories and architectures    │
+│ skills      │ Inspect backend languages, frameworks, databases & cloud tools       │
+│ resume      │ Output career milestones, achievements and ATS PDF download link     │
+│ schedule    │ Launch the native Cal.com booking engine (/schedule)                 │
+│ quote       │ Receive an iconic blade philosophy quote from Roronoa Zoro           │
+│ matrix      │ Stream emerald digital rain protocol                                 │
+│ whoami      │ Display active session identity & clearance level                    │
+│ clear       │ Flush the screen buffer                                              │
+│ exit        │ Close the interactive terminal window                                │
+└─────────────┴──────────────────────────────────────────────────────────────────────┘
+`;
+
+const TERMCAN_PROJECTS = `
+┌───────────┬──────────────────────────────────────────┬─────────────────────────────┐
+│ PROJECT   │ SYSTEM DESCRIPTION                       │ TECH STACK                  │
+├───────────┼──────────────────────────────────────────┼─────────────────────────────┤
+│ nyx       │ High-throughput modular backend & CLI    │ Go · SQLite FTS5 · Redis    │
+│ next-kit  │ Next.js 16 production starter framework  │ React 19 · Tailwind v4 · TS │
+│ portfolio │ Zoro obsidian developer OS & booking CMS │ Next.js · PostgreSQL · Neon │
+└───────────┴──────────────────────────────────────────┴─────────────────────────────┘
+Run 'schedule' or open /projects to review live code and metrics.
+`;
+
+const TERMCAN_SKILLS = `
+┌─────────────┬──────────────────────────────────────────────────────────────────────┐
+│ CATEGORY    │ TECHNOLOGIES & TOOLS                                                 │
+├─────────────┼──────────────────────────────────────────────────────────────────────┤
+│ Languages   │ Go, TypeScript, Java, SQL, C++, Python, Bash                         │
+│ Frameworks  │ Next.js 16 (App Router), React 19, Spring Boot, Spring Batch, Node   │
+│ Databases   │ PostgreSQL, Redis (Sliding-window rate limiter), Neon, SQLite        │
+│ Cloud & CI  │ Docker containerization, AWS (ECS, S3, CloudFront), Linux, Git       │
+└─────────────┴──────────────────────────────────────────────────────────────────────┘
+`;
+
+const TERMCAN_RESUME = `
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ RESUME · MAARCUS RENIERO L                                                         │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│ Role:     Full Stack Software Engineer (Leaning Backend & Distributed Systems)     │
+│ Current:  Software Developer at HealthEdge (Spring Boot, Spring Batch, Healthcare) │
+│ Scope:    High-throughput transaction pipelines, low-latency APIs, database tuning│
+│ Target:   Full-time remote engineering roles (EU / APAC / Global) or onsite BLR/MAA│
+│ Download: Open /resume to generate an ATS-optimized 1-page PDF                     │
+└────────────────────────────────────────────────────────────────────────────────────┘
 `;
 
 const COMMAND_LIST = [
   "help",
   "neofetch",
   "projects",
-  "resume",
   "skills",
+  "resume",
+  "schedule",
   "quote",
   "matrix",
   "whoami",
-  "schedule",
   "clear",
   "exit",
 ];
@@ -61,11 +122,12 @@ export function InteractiveTerminal() {
   const [isMaximized, setIsMaximized] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const [matrixActive, setMatrixActive] = useState(false);
   const [lines, setLines] = useState<TerminalLine[]>([
     {
       id: "welcome",
       type: "ascii",
-      text: INITIAL_WELCOME,
+      text: `${TERMCAN_NEOFETCH}\nType 'help' for command manual, or click any quick badge below.`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -105,7 +167,7 @@ export function InteractiveTerminal() {
     const raw = rawCommand.trim();
     if (!raw) return;
 
-    // Add to command history
+    // Add to history
     setHistory((prev) => [...prev, raw]);
     setHistoryIndex(-1);
 
@@ -130,49 +192,33 @@ export function InteractiveTerminal() {
     let output = "";
     let type: TerminalLine["type"] = "output";
 
-    if (cmd === "help") {
-      output = `Available Shell Commands:
-  neofetch     Print Zoro OS architecture and engineer specs
-  projects     List flagship projects and production systems
-  skills       Display primary languages, databases and tools
-  resume       View formatted career achievements & ATS link
-  quote        Receive an iconic blade quote from Zoro
-  matrix       Activate falling green digital rain
-  schedule     Open the native Mini Cal.com scheduler
-  whoami       Identity & security clearance
-  clear        Clear screen buffer
-  exit         Close the terminal window`;
+    if (cmd === "help" || cmd === "man") {
+      output = TERMCAN_HELP;
+      type = "table";
     } else if (cmd === "neofetch" || cmd === "fastfetch") {
-      output = INITIAL_WELCOME;
+      output = TERMCAN_NEOFETCH;
       type = "ascii";
-    } else if (cmd === "projects" || cmd === "ls" || cmd === "ls projects") {
-      output = `Flagship Production Systems:
-  • nyx         High-throughput modular backend framework in Go & TypeScript. Zero-trust auth & Redis caching.
-  • next-kit    Production starter for Next.js 16 App Router, Tailwind v4, server components & security headers.
-  • portfolio   This site: PostgreSQL CMS, Passkey/WebAuthn auth, cookieless telemetry, Zoro dark-green craft.
-  
-  Run 'schedule' or visit /projects to view live repositories.`;
+    } else if (cmd === "projects" || cmd === "ls" || cmd === "ls -la") {
+      output = TERMCAN_PROJECTS;
+      type = "table";
     } else if (cmd === "skills" || cmd === "stack") {
-      output = `Primary Engineering Swords:
-  • Languages:  Go, TypeScript, Node.js, SQL, C++, Python
-  • Frameworks: Next.js 16 (App Router), React 19, Express, Tailwind CSS v4
-  • Databases:  PostgreSQL, Redis (Sliding-window rate limiting), Prisma
-  • DevOps:     Docker containerization, AWS (S3, CloudFront, ECS), Linux, Git, CI/CD`;
+      output = TERMCAN_SKILLS;
+      type = "table";
     } else if (cmd === "resume" || cmd === "cat resume" || cmd === "cat resume.md") {
-      output = `Maarcus Reniero L · Full Stack & Backend Engineer (Chennai, IN)
-  Experience in distributed backends, low-latency microservices and database migrations.
-  Available for full-time remote opportunities worldwide and on-site in Bangalore / Chennai.
-  ATS single-page PDF generator available at /resume.`;
+      output = TERMCAN_RESUME;
+      type = "table";
     } else if (cmd === "quote" || cmd === "zoro") {
       const q = ZORO_QUOTES[Math.floor(Math.random() * ZORO_QUOTES.length)];
-      output = `\n  "${q}"\n  — Roronoa Zoro\n`;
+      output = `\n  "${q}"\n  — Roronoa Zoro (Straw Hat Pirates First Mate)\n`;
     } else if (cmd === "whoami") {
-      output = "guest@maarcus.dev [Role: Authorized Visitor · Permissions: Read-Only]";
+      output = `┌────────────────────────────────────────────────────────┐\n│ USER: guest@maarcus.dev [Role: Authorized Visitor]      │\n│ PERMS: r-x (Public Read & Execution Clearance)          │\n└────────────────────────────────────────────────────────┘`;
     } else if (cmd === "schedule" || cmd === "call" || cmd === "book") {
-      output = "Opening native Mini Cal.com scheduling engine... Navigate to /schedule or click '📅 Book Call'.";
+      output = `[✔] Cal.com engine engaged. Launching /schedule...`;
       router.push("/schedule");
     } else if (cmd === "matrix") {
-      output = "[*] Emerald Matrix protocol active: 01001101 01100001 01100001 01110010 01100011 01110101 01110011\nSystem running in optimal overclocked state.";
+      setMatrixActive(true);
+      setTimeout(() => setMatrixActive(false), 5000);
+      output = `[*] INITIALIZING EMERALD DIGITAL STREAM PROTOCOL... (Running 5s Matrix Rain)`;
     } else {
       output = `zsh: command not found: ${raw}. Type 'help' for available commands.`;
       type = "error";
@@ -234,26 +280,26 @@ export function InteractiveTerminal() {
       onClick={() => setIsOpen(false)}
     >
       <div
-        className={`relative flex flex-col rounded-2xl border border-emerald-500/40 bg-[#050806]/98 font-mono text-xs text-neutral-200 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.15)] transition-all duration-200 overflow-hidden ${
-          isMaximized ? "w-full h-full rounded-none border-none" : "w-full max-w-3xl h-[520px] sm:h-[580px]"
+        className={`relative flex flex-col rounded-2xl border border-neutral-800 bg-[#040705]/98 font-mono text-xs text-neutral-200 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.12)] transition-all duration-200 overflow-hidden ${
+          isMaximized ? "w-full h-full rounded-none border-none" : "w-full max-w-3xl h-[540px] sm:h-[600px]"
         }`}
         onClick={(e) => {
           e.stopPropagation();
           inputRef.current?.focus();
         }}
       >
-        {/* Katana Glow Top Edge */}
+        {/* Neon Emerald Katana Top Highlight */}
         <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-400 to-transparent opacity-80" />
 
-        {/* Ghostty / macOS Authentic Title Bar */}
-        <div className="flex items-center justify-between border-b border-neutral-800/80 bg-[#070d0a] px-4 py-2.5 select-none">
-          {/* Traffic Lights */}
+        {/* Ghostty / termcn Authentic Title Bar */}
+        <div className="flex items-center justify-between border-b border-neutral-800/80 bg-[#060b08] px-4 py-2.5 select-none">
+          {/* macOS Traffic Light Dots */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="h-3 w-3 rounded-full bg-[#ff5f56] hover:brightness-110 transition-all shadow-sm flex items-center justify-center group"
-              aria-label="Close"
+              aria-label="Close terminal"
             >
               <X className="h-2 w-2 text-black/60 opacity-0 group-hover:opacity-100" />
             </button>
@@ -262,7 +308,7 @@ export function InteractiveTerminal() {
               onClick={() => setLines([])}
               className="h-3 w-3 rounded-full bg-[#ffbd2e] hover:brightness-110 transition-all shadow-sm flex items-center justify-center group"
               aria-label="Clear screen"
-              title="Clear screen buffer"
+              title="Clear buffer"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-black/40 opacity-0 group-hover:opacity-100" />
             </button>
@@ -270,21 +316,21 @@ export function InteractiveTerminal() {
               type="button"
               onClick={() => setIsMaximized(!isMaximized)}
               className="h-3 w-3 rounded-full bg-[#27c93f] hover:brightness-110 transition-all shadow-sm flex items-center justify-center group"
-              aria-label="Maximize"
+              aria-label="Maximize window"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-black/40 opacity-0 group-hover:opacity-100" />
             </button>
 
-            {/* Active Tab Badge */}
+            {/* termcn Active Tab Title */}
             <div className="ml-3 inline-flex items-center gap-1.5 rounded-md border border-neutral-800/80 bg-[#0a120e] px-2.5 py-0.5 text-[11px] text-neutral-300">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>zsh — zoro@maarcus.dev</span>
+              <span>zsh — zoro@maarcus.dev: ~</span>
             </div>
           </div>
 
-          {/* Right Status */}
+          {/* Window Control Shortcuts */}
           <div className="flex items-center gap-2 text-neutral-400 text-[11px]">
-            <span className="hidden sm:inline-block text-neutral-400">Press ~ to close</span>
+            <span className="hidden sm:inline-block text-neutral-400">Press ~ or Esc</span>
             <button
               type="button"
               onClick={() => setIsMaximized(!isMaximized)}
@@ -304,53 +350,70 @@ export function InteractiveTerminal() {
           </div>
         </div>
 
+        {/* Matrix Rain Banner Overlay (if active) */}
+        {matrixActive && (
+          <div className="absolute inset-0 z-20 pointer-events-none bg-black/70 flex items-center justify-center text-emerald-400 font-mono text-sm leading-none animate-pulse">
+            <div className="text-center space-y-1">
+              <div>01001101 01100001 01100001 01110010 01100011 01110101 01110011</div>
+              <div className="text-emerald-300 font-bold">⚡ OVERCLOCKED KERNEL ACTIVATED ⚡</div>
+              <div>01011010 01001111 01010010 01001111 00100000 01001111 01010011</div>
+            </div>
+          </div>
+        )}
+
         {/* Scrollable Terminal Screen Buffer */}
         <div
           ref={terminalBodyRef}
-          className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-2.5 scrollbar-thin select-text text-[12px] leading-relaxed cursor-text"
+          className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-2 scrollbar-thin select-text text-[12px] leading-relaxed cursor-text"
         >
           {lines.map((l) => (
-            <div key={l.id} className="whitespace-pre-wrap">
+            <div key={l.id} className="whitespace-pre font-mono">
               {l.type === "input" ? (
                 <div className="flex items-center gap-2 text-emerald-400 font-semibold pt-1">
                   <span className="text-neutral-400">zoro@maarcus</span>
                   <span className="text-emerald-500">~</span>
-                  <span className="text-neutral-400 font-normal">git:(main)</span>
-                  <span className="text-emerald-400">❯</span>
+                  <span className="text-neutral-400 font-normal">git:(</span>
+                  <span className="text-emerald-300">main</span>
+                  <span className="text-neutral-400 font-normal">)</span>
+                  <span className="text-emerald-400 font-bold">❯</span>
                   <span className="text-white">{l.text}</span>
                 </div>
               ) : l.type === "error" ? (
-                <div className="text-red-400 pl-2 border-l border-red-500/40">{l.text}</div>
-              ) : l.type === "ascii" ? (
-                <div className="text-emerald-300/90 font-mono text-[11px] leading-tight select-text py-1">
+                <div className="text-red-400 pl-2 border-l-2 border-red-500/60 font-mono">{l.text}</div>
+              ) : l.type === "table" || l.type === "ascii" ? (
+                <div className="text-emerald-300/90 font-mono text-[11px] leading-tight select-text py-0.5 overflow-x-auto">
                   {l.text}
                 </div>
               ) : (
-                <div className="text-neutral-300 pl-2 border-l border-neutral-800">{l.text}</div>
+                <div className="text-neutral-300 font-mono text-[12px]">{l.text}</div>
               )}
             </div>
           ))}
 
-          {/* True Inline Active Prompt Line (Directly in stream, NO awkward isolated box!) */}
+          {/* Authentic termcn Prompt Line - NO ugly box borders, pure inline terminal caret! */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleCommand(input);
             }}
-            className="flex items-center gap-2 pt-1"
+            className="flex items-center gap-2 pt-1 font-mono text-[12px] text-white"
           >
-            <span className="text-neutral-400">zoro@maarcus</span>
-            <span className="text-emerald-500">~</span>
-            <span className="text-neutral-400 font-normal hidden sm:inline">git:(main)</span>
-            <span className="text-emerald-400 font-bold">❯</span>
-            <div className="relative flex-1 flex items-center">
+            <span className="text-neutral-400 select-none">zoro@maarcus</span>
+            <span className="text-emerald-500 select-none">~</span>
+            <span className="text-neutral-400 font-normal select-none hidden sm:inline">
+              git:(<span className="text-emerald-300">main</span>)
+            </span>
+            <span className="text-emerald-400 font-bold select-none">❯</span>
+
+            {/* Completely unbordered, clean input stream */}
+            <div className="flex-1 flex items-center">
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="w-full bg-transparent text-white outline-none caret-emerald-400 font-mono text-[12px]"
+                className="w-full bg-transparent text-white border-0 outline-none ring-0 shadow-none p-0 m-0 focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0 font-mono text-[12px] caret-emerald-400"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"
@@ -359,27 +422,28 @@ export function InteractiveTerminal() {
           </form>
         </div>
 
-        {/* Quick Clickable Suggestions Bar (At footer of terminal) */}
-        <div className="flex items-center justify-between border-t border-neutral-800/80 bg-[#070c09] px-3.5 py-2 select-none overflow-x-auto scrollbar-none gap-2">
+        {/* termcn / tmux Style Statusline Footer */}
+        <div className="flex items-center justify-between border-t border-neutral-800/80 bg-[#060a08] px-3.5 py-1.5 select-none overflow-x-auto scrollbar-none gap-2 text-[10px] font-mono">
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-[10px] uppercase font-mono text-neutral-400 hidden sm:inline mr-1">
-              Quick:
+            <span className="rounded bg-emerald-500 px-1.5 py-0.2 text-[10px] font-bold text-black uppercase">
+              NORMAL
             </span>
-            {["neofetch", "projects", "skills", "resume", "quote", "matrix", "clear"].map((cmd) => (
+            <span className="text-neutral-400 hidden sm:inline mr-1">Quick:</span>
+            {["neofetch", "projects", "skills", "resume", "schedule", "quote", "clear"].map((cmd) => (
               <button
                 key={cmd}
                 type="button"
                 onClick={() => handleCommand(cmd)}
-                className="rounded-md border border-neutral-800 bg-neutral-900/80 px-2 py-0.5 text-[10px] text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-300 hover:bg-emerald-950/40 transition-colors"
+                className="rounded border border-neutral-800 bg-neutral-900/90 px-1.5 py-0.5 text-[10px] text-neutral-300 hover:border-emerald-500/40 hover:text-emerald-300 hover:bg-emerald-950/40 transition-colors"
               >
                 {cmd}
               </button>
             ))}
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-neutral-400 shrink-0">
-            <kbd className="rounded border border-neutral-800 bg-neutral-900 px-1">Tab</kbd> complete
-            <kbd className="rounded border border-neutral-800 bg-neutral-900 px-1 ml-1">↑/↓</kbd> history
+          <div className="hidden sm:flex items-center gap-2 text-[10px] text-neutral-400 shrink-0">
+            <span><kbd className="rounded border border-neutral-800 bg-neutral-900 px-1">Tab</kbd> complete</span>
+            <span><kbd className="rounded border border-neutral-800 bg-neutral-900 px-1">↑/↓</kbd> history</span>
           </div>
         </div>
       </div>
