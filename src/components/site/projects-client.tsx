@@ -9,6 +9,7 @@ import { useListNav } from "~/components/site/use-list-nav";
 import { useDict, useLang } from "~/components/site/locale";
 import { categoriesFor } from "~/lib/localize";
 import type { Project } from "~/lib/schema";
+import { GitHubMetricsBar } from "./projects-github";
 
 export function ProjectsClient({ projects: PROJECTS }: { projects: Project[] }) {
   const lang = useLang();
@@ -28,6 +29,9 @@ export function ProjectsClient({ projects: PROJECTS }: { projects: Project[] }) 
 
   return (
     <>
+      <div style={{ marginBottom: 16 }}>
+        <GitHubMetricsBar />
+      </div>
       <div className="filters">
         <label className="search">
           <SearchIcon aria-hidden="true" />
