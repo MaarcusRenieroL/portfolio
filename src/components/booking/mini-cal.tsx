@@ -20,6 +20,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { useTheme } from "~/components/site/theme-toggle";
 
 const DURATIONS = [
   {
@@ -84,6 +85,9 @@ function toDateString(d: Date) {
 }
 
 export function MiniCal({ onClose }: { onClose?: () => void }) {
+  const theme = useTheme();
+  const isDark = theme === "dark";
+
   const [step, setStep] = useState<"slot" | "form" | "confirmed">("slot");
   const [duration, setDuration] = useState<15 | 30 | 45>(30);
 
@@ -101,7 +105,6 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     const next = new Date();
     next.setDate(next.getDate() + 1);
-    // If weekend, skip to Monday
     if (next.getDay() === 0) next.setDate(next.getDate() + 1);
     if (next.getDay() === 6) next.setDate(next.getDate() + 2);
     return toDateString(next);
@@ -249,31 +252,69 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="w-full max-w-4xl rounded-2xl border border-neutral-800 bg-[#060a08]/98 shadow-2xl backdrop-blur-xl text-neutral-100 overflow-hidden font-sans">
-      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-neutral-800/80">
+    <div
+      className={`w-full max-w-4xl rounded-2xl border font-sans overflow-hidden transition-colors duration-200 ${
+        isDark
+          ? "border-neutral-800 bg-[#060a08]/98 text-neutral-100 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_35px_rgba(16,185,129,0.12)]"
+          : "border-neutral-200/90 bg-white text-neutral-900 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.05)]"
+      }`}
+    >
+      <div
+        className={`flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x ${
+          isDark ? "divide-neutral-800/80" : "divide-neutral-200"
+        }`}
+      >
         {/* ================= LEFT SIDEBAR (Host Info & Details) ================= */}
-        <aside className="md:w-80 lg:w-84 shrink-0 p-6 bg-[#040806]/80 flex flex-col justify-between space-y-6">
+        <aside
+          className={`md:w-80 lg:w-84 shrink-0 p-6 flex flex-col justify-between space-y-6 ${
+            isDark ? "bg-[#040806]/80 text-neutral-100" : "bg-[#fbfdfc] text-neutral-900"
+          }`}
+        >
           <div className="space-y-5">
             {/* Host Profile Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-500/40 bg-[#08120d] shadow-sm">
-                  <span className="text-emerald-400 font-bold text-xs tracking-wider font-mono">MR</span>
+                <div
+                  className={`relative flex h-10 w-10 items-center justify-center rounded-xl border shadow-sm ${
+                    isDark
+                      ? "border-emerald-500/40 bg-[#08120d]"
+                      : "border-emerald-500/30 bg-[#ecfdf5]"
+                  }`}
+                >
+                  <span
+                    className={`font-bold text-xs tracking-wider font-mono ${
+                      isDark ? "text-emerald-400" : "text-emerald-700"
+                    }`}
+                  >
+                    MR
+                  </span>
                   <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-[#060a08]" />
+                    <span
+                      className={`relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border ${
+                        isDark ? "border-[#060a08]" : "border-white"
+                      }`}
+                    />
                   </span>
                 </div>
                 <div>
-                  <div className="text-xs font-medium text-neutral-400">Maarcus Reniero L</div>
-                  <div className="text-[13px] font-semibold text-white">Technical Scheduling</div>
+                  <div className={`text-xs font-medium ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
+                    Maarcus Reniero L
+                  </div>
+                  <div className={`text-[13px] font-semibold ${isDark ? "text-white" : "text-neutral-900"}`}>
+                    Technical Scheduling
+                  </div>
                 </div>
               </div>
               {onClose && (
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-lg p-1 text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
+                  className={`rounded-lg p-1 transition-colors ${
+                    isDark
+                      ? "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                      : "text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900"
+                  }`}
                 >
                   ✕
                 </button>
@@ -282,20 +323,38 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
 
             {/* Event Title & Description */}
             <div>
-              <h2 className="text-base font-bold text-white tracking-tight leading-snug">
+              <h2
+                className={`text-base font-bold tracking-tight leading-snug ${
+                  isDark ? "text-white" : "text-neutral-900"
+                }`}
+              >
                 {currentDurationObj.title}
               </h2>
-              <p className="mt-1 text-xs text-neutral-400 leading-relaxed">
+              <p
+                className={`mt-1 text-xs leading-relaxed ${
+                  isDark ? "text-neutral-400" : "text-neutral-600"
+                }`}
+              >
                 {currentDurationObj.desc}
               </p>
             </div>
 
             {/* Duration Selector Segmented Bar */}
             <div>
-              <label className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 mb-1.5 block font-mono">
+              <label
+                className={`text-[10px] font-semibold uppercase tracking-wider mb-1.5 block font-mono ${
+                  isDark ? "text-neutral-400" : "text-neutral-500"
+                }`}
+              >
                 Duration
               </label>
-              <div className="grid grid-cols-3 gap-1.5 rounded-xl border border-neutral-800/80 bg-[#08100c] p-1">
+              <div
+                className={`grid grid-cols-3 gap-1.5 rounded-xl border p-1 ${
+                  isDark
+                    ? "border-neutral-800/80 bg-[#08100c]"
+                    : "border-neutral-200 bg-neutral-100/80"
+                }`}
+              >
                 {DURATIONS.map((d) => {
                   const Icon = d.icon;
                   const isActive = duration === d.id;
@@ -306,11 +365,15 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                       onClick={() => setDuration(d.id)}
                       className={`flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition-all ${
                         isActive
-                          ? "bg-emerald-500 text-black font-semibold shadow-sm shadow-emerald-500/20"
-                          : "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/50"
+                          ? isDark
+                            ? "bg-emerald-500 text-black font-semibold shadow-sm"
+                            : "bg-emerald-600 text-white font-semibold shadow-xs"
+                          : isDark
+                          ? "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/50"
+                          : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60"
                       }`}
                     >
-                      <Icon className={`h-3 w-3 ${isActive ? "text-black" : "text-neutral-400"}`} />
+                      <Icon className="h-3 w-3" />
                       <span>{d.label}</span>
                     </button>
                   );
@@ -319,52 +382,82 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
             </div>
 
             {/* Quick Metadata Spec list */}
-            <div className="space-y-2 text-xs text-neutral-300 pt-1">
+            <div
+              className={`space-y-2 text-xs pt-1 ${
+                isDark ? "text-neutral-300" : "text-neutral-700"
+              }`}
+            >
               <div className="flex items-center gap-2">
-                <Clock className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <Clock className={`h-3.5 w-3.5 shrink-0 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                 <span>{duration} minutes</span>
               </div>
               <div className="flex items-center gap-2">
-                <Video className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <Video className={`h-3.5 w-3.5 shrink-0 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                 <span>Google Meet video call</span>
               </div>
               <div className="flex items-center gap-2">
-                <Globe className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                <Globe className={`h-3.5 w-3.5 shrink-0 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                 <span className="truncate">{userTimezone}</span>
               </div>
             </div>
 
             {/* Selected Slot Recap Badge */}
             {selectedDate && selectedTime && (
-              <div className="rounded-xl border border-emerald-500/25 bg-emerald-950/20 p-2.5 text-xs text-emerald-300 space-y-1">
+              <div
+                className={`rounded-xl border p-2.5 text-xs space-y-1 ${
+                  isDark
+                    ? "border-emerald-500/25 bg-emerald-950/20 text-emerald-300"
+                    : "border-emerald-300 bg-emerald-50/80 text-emerald-900"
+                }`}
+              >
                 <div className="flex items-center gap-1.5 font-medium">
-                  <CalendarIcon className="h-3.5 w-3.5 text-emerald-400" />
+                  <CalendarIcon className={`h-3.5 w-3.5 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                   <span>{formatDateLong(selectedDate)}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400/80 pl-5 font-mono">
+                <div
+                  className={`flex items-center gap-1.5 text-[11px] pl-5 font-mono ${
+                    isDark ? "text-emerald-400/80" : "text-emerald-700"
+                  }`}
+                >
                   <span>{format12h(selectedTime)} ({duration}m)</span>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="pt-4 border-t border-neutral-800/60 text-[10px] text-neutral-500 flex items-center gap-1 font-mono">
-            <Sparkles className="h-3 w-3 text-emerald-500/80" />
+          <div
+            className={`pt-4 border-t text-[10px] flex items-center gap-1 font-mono ${
+              isDark ? "border-neutral-800/60 text-neutral-500" : "border-neutral-200 text-neutral-500"
+            }`}
+          >
+            <Sparkles className={`h-3 w-3 ${isDark ? "text-emerald-500/80" : "text-emerald-600"}`} />
             <span>Instant Google Meet &amp; ICS invite</span>
           </div>
         </aside>
 
         {/* ================= RIGHT PANEL (Interactive Calendar / Details) ================= */}
-        <main className="flex-1 p-6 flex flex-col justify-between">
+        <main className={`flex-1 p-6 flex flex-col justify-between ${isDark ? "bg-[#060a08]/95" : "bg-white"}`}>
           {/* STEP 1: Interactive Monthly Calendar & Time Slots */}
           {step === "slot" && (
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800/80 pb-3">
-                <h3 className="text-sm font-semibold tracking-tight text-white flex items-center gap-2">
+              <div
+                className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3 ${
+                  isDark ? "border-neutral-800/80" : "border-neutral-200"
+                }`}
+              >
+                <h3
+                  className={`text-sm font-semibold tracking-tight flex items-center gap-2 ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}
+                >
                   <span>Select a Date &amp; Time</span>
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-neutral-400 font-mono">
-                  <Globe className="h-3 w-3 text-emerald-400" />
+                <div
+                  className={`flex items-center gap-2 text-xs font-mono ${
+                    isDark ? "text-neutral-400" : "text-neutral-600"
+                  }`}
+                >
+                  <Globe className={`h-3 w-3 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                   <span>{userTimezone}</span>
                 </div>
               </div>
@@ -374,7 +467,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                 <div className="lg:col-span-7 space-y-3">
                   {/* Month header & navigation */}
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-xs font-semibold text-neutral-200 tracking-wide">
+                    <span
+                      className={`text-xs font-semibold tracking-wide ${
+                        isDark ? "text-neutral-200" : "text-neutral-800"
+                      }`}
+                    >
                       {monthLabel}
                     </span>
                     <div className="flex items-center gap-1">
@@ -382,7 +479,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                         type="button"
                         onClick={handlePrevMonth}
                         disabled={!canGoPrev}
-                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent transition-colors"
+                        className={`rounded-lg p-1.5 transition-colors disabled:opacity-20 disabled:hover:bg-transparent ${
+                          isDark
+                            ? "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                            : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                        }`}
                         aria-label="Previous month"
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -390,7 +491,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                       <button
                         type="button"
                         onClick={handleNextMonth}
-                        className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
+                        className={`rounded-lg p-1.5 transition-colors ${
+                          isDark
+                            ? "text-neutral-400 hover:bg-neutral-800 hover:text-white"
+                            : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                        }`}
                         aria-label="Next month"
                       >
                         <ChevronRight className="h-4 w-4" />
@@ -399,7 +504,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                   </div>
 
                   {/* Weekday headers */}
-                  <div className="grid grid-cols-7 gap-1 text-center font-mono text-[10px] font-semibold text-neutral-500">
+                  <div
+                    className={`grid grid-cols-7 gap-1 text-center font-mono text-[10px] font-semibold ${
+                      isDark ? "text-neutral-500" : "text-neutral-400"
+                    }`}
+                  >
                     {WEEKDAY_NAMES.map((w) => (
                       <div key={w} className="py-1">
                         {w}
@@ -411,7 +520,7 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                   <div className="grid grid-cols-7 gap-1 text-center">
                     {calendarDays.map((cell, idx) => {
                       if (!cell.dayNum) {
-                        return <div key={`empty-${idx}`} className="h-9 w-full" />;
+                        return <div key={`empty-${idx}`} className="h-9.5 w-full" />;
                       }
 
                       const isSelected = selectedDate === cell.dateStr;
@@ -423,18 +532,30 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                           type="button"
                           disabled={isDisabled}
                           onClick={() => setSelectedDate(cell.dateStr)}
-                          className={`group relative flex h-9 w-full items-center justify-center rounded-xl text-xs transition-all ${
+                          className={`group relative flex h-9.5 w-full items-center justify-center rounded-xl text-xs transition-all ${
                             isSelected
-                              ? "bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/30 scale-105 z-10"
+                              ? isDark
+                                ? "bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/30 scale-105 z-10"
+                                : "bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/25 scale-105 z-10"
                               : isDisabled
-                              ? "text-neutral-600 opacity-30 cursor-not-allowed"
-                              : "text-neutral-200 hover:bg-[#0f1d16] hover:text-emerald-300 hover:border hover:border-emerald-500/40"
+                              ? isDark
+                                ? "text-neutral-700 opacity-25 cursor-not-allowed"
+                                : "text-neutral-300 opacity-40 cursor-not-allowed"
+                              : isDark
+                              ? "text-neutral-200 hover:bg-[#0f1d16] hover:text-emerald-300 hover:border hover:border-emerald-500/40"
+                              : "text-neutral-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border hover:border-emerald-300"
                           }`}
                         >
                           <span>{cell.dayNum}</span>
                           {/* Dot indicator for available days */}
                           {!isSelected && cell.isAvailable && (
-                            <span className="absolute bottom-1 h-1 w-1 rounded-full bg-emerald-500/70 group-hover:bg-emerald-400" />
+                            <span
+                              className={`absolute bottom-1 h-1 w-1 rounded-full ${
+                                isDark
+                                  ? "bg-emerald-500/70 group-hover:bg-emerald-400"
+                                  : "bg-emerald-600/70 group-hover:bg-emerald-600"
+                              }`}
+                            />
                           )}
                         </button>
                       );
@@ -443,41 +564,42 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                 </div>
 
                 {/* Time Slots Rail */}
-                <div className="lg:col-span-5 space-y-2 border-t lg:border-t-0 lg:border-l border-neutral-800/80 pt-4 lg:pt-0 lg:pl-6">
-                  <div className="flex items-center justify-between text-xs font-semibold text-neutral-300 mb-2">
-                    <span>Available Times</span>
-                    <span className="text-[10px] text-emerald-400 font-mono">
+                <div
+                  className={`lg:col-span-5 space-y-3 border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6 ${
+                    isDark ? "border-neutral-800/80" : "border-neutral-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-xs font-semibold mb-2">
+                    <span className={isDark ? "text-neutral-300" : "text-neutral-800"}>Available Times</span>
+                    <span
+                      className={`text-[10px] font-mono ${
+                        isDark ? "text-emerald-400" : "text-emerald-700"
+                      }`}
+                    >
                       {selectedDate ? formatDateLong(selectedDate) : "Pick date"}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-64 overflow-y-auto pr-1 scrollbar-thin">
+                  <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 max-h-64 overflow-y-auto pr-1 scrollbar-thin">
                     {AVAILABLE_SLOTS.map((slot) => {
                       const isSelected = selectedTime === slot;
                       return (
-                        <div key={slot} className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedTime(slot)}
-                            className={`flex-1 rounded-xl py-2 px-3 text-xs font-mono transition-all text-center ${
-                              isSelected
-                                ? "bg-emerald-500 text-black font-bold shadow-sm shadow-emerald-500/20"
-                                : "border border-neutral-800 bg-[#09110d] text-neutral-300 hover:border-emerald-500/50 hover:bg-[#0e1a14] hover:text-emerald-300"
-                            }`}
-                          >
-                            {format12h(slot)}
-                          </button>
-                          {isSelected && (
-                            <button
-                              type="button"
-                              onClick={() => setStep("form")}
-                              className="rounded-xl bg-emerald-400 px-3 py-2 text-xs font-semibold text-black hover:bg-emerald-300 transition-all flex items-center gap-1 shrink-0 animate-in fade-in"
-                            >
-                              <span>Next</span>
-                              <ArrowRight className="h-3 w-3" />
-                            </button>
-                          )}
-                        </div>
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setSelectedTime(slot)}
+                          className={`w-full rounded-xl py-2.5 px-3 text-xs font-mono transition-all text-center border ${
+                            isSelected
+                              ? isDark
+                                ? "bg-emerald-500 border-emerald-500 text-black font-bold shadow-sm shadow-emerald-500/20"
+                                : "bg-emerald-600 border-emerald-600 text-white font-bold shadow-xs"
+                              : isDark
+                              ? "border-neutral-800 bg-[#09110d] text-neutral-300 hover:border-emerald-500/50 hover:bg-[#0e1a14] hover:text-emerald-300"
+                              : "border-neutral-200 bg-white text-neutral-800 hover:border-emerald-500 hover:bg-emerald-50/60"
+                          }`}
+                        >
+                          {format12h(slot)}
+                        </button>
                       );
                     })}
                   </div>
@@ -485,14 +607,32 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
               </div>
 
               {/* Bottom Continue bar */}
-              <div className="pt-3 border-t border-neutral-800/80 flex items-center justify-between">
-                <div className="text-xs text-neutral-400 hidden sm:block">
-                  Meeting date: <strong className="text-white">{formatDateLong(selectedDate)}</strong> at{" "}
-                  <strong className="text-emerald-400">{format12h(selectedTime)}</strong>
+              <div
+                className={`pt-3 border-t flex items-center justify-between ${
+                  isDark ? "border-neutral-800/80" : "border-neutral-200"
+                }`}
+              >
+                <div
+                  className={`text-xs hidden sm:block ${
+                    isDark ? "text-neutral-400" : "text-neutral-600"
+                  }`}
+                >
+                  Selected:{" "}
+                  <strong className={isDark ? "text-white" : "text-neutral-900"}>
+                    {formatDateLong(selectedDate)}
+                  </strong>{" "}
+                  at{" "}
+                  <strong className={isDark ? "text-emerald-400" : "text-emerald-700"}>
+                    {format12h(selectedTime)}
+                  </strong>
                 </div>
                 <Button
                   variant="default"
-                  className="gap-2 ml-auto"
+                  className={`gap-2 ml-auto ${
+                    isDark
+                      ? "bg-emerald-500 text-black hover:bg-emerald-400"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700"
+                  }`}
                   onClick={() => setStep("form")}
                 >
                   <span>Continue</span>
@@ -505,25 +645,45 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
           {/* STEP 2: Attendee Details Form */}
           {step === "form" && (
             <form onSubmit={handleBooking} className="space-y-4">
-              <div className="flex items-center justify-between border-b border-neutral-800/80 pb-3">
-                <h3 className="text-sm font-semibold tracking-tight text-white">Enter Your Details</h3>
+              <div
+                className={`flex items-center justify-between border-b pb-3 ${
+                  isDark ? "border-neutral-800/80" : "border-neutral-200"
+                }`}
+              >
+                <h3
+                  className={`text-sm font-semibold tracking-tight ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}
+                >
+                  Enter Your Details
+                </h3>
                 <button
                   type="button"
                   onClick={() => setStep("slot")}
-                  className="text-xs text-emerald-400 hover:underline"
+                  className={`text-xs hover:underline ${
+                    isDark ? "text-emerald-400" : "text-emerald-700"
+                  }`}
                 >
                   Change Date &amp; Time
                 </button>
               </div>
 
-              <div className="rounded-xl border border-neutral-800 bg-[#09110d] p-3 text-xs text-neutral-300 flex items-center justify-between">
+              <div
+                className={`rounded-xl border p-3 text-xs flex items-center justify-between ${
+                  isDark
+                    ? "border-neutral-800 bg-[#09110d] text-neutral-300"
+                    : "border-emerald-200 bg-[#f0fdf4] text-emerald-950"
+                }`}
+              >
                 <div className="flex items-center gap-2">
-                  <CalendarIcon className="h-4 w-4 text-emerald-400" />
+                  <CalendarIcon className={`h-4 w-4 ${isDark ? "text-emerald-400" : "text-emerald-700"}`} />
                   <span>{formatDateLong(selectedDate)}</span>
-                  <Clock className="h-4 w-4 ml-2 text-emerald-400" />
+                  <Clock className={`h-4 w-4 ml-2 ${isDark ? "text-emerald-400" : "text-emerald-700"}`} />
                   <span className="font-mono">{format12h(selectedTime)}</span>
                 </div>
-                <span className="text-emerald-400 font-medium">({duration} mins)</span>
+                <span className={`font-medium ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
+                  ({duration} mins)
+                </span>
               </div>
 
               {error && (
@@ -534,54 +694,103 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-neutral-400 mb-1 block">Your Name *</label>
+                  <label
+                    className={`text-xs mb-1 block ${
+                      isDark ? "text-neutral-400" : "text-neutral-700 font-medium"
+                    }`}
+                  >
+                    Your Name *
+                  </label>
                   <Input
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Jane Doe"
-                    className="bg-[#09110d] border-neutral-800 focus:border-neutral-700 text-xs"
+                    className={`text-xs no-focus-ring ${
+                      isDark
+                        ? "bg-[#09110d] border-neutral-800 text-white placeholder:text-neutral-500 focus:border-neutral-700"
+                        : "bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 focus:border-emerald-600"
+                    }`}
+                    style={{ outline: "none", boxShadow: "none" }}
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-neutral-400 mb-1 block">Email Address *</label>
+                  <label
+                    className={`text-xs mb-1 block ${
+                      isDark ? "text-neutral-400" : "text-neutral-700 font-medium"
+                    }`}
+                  >
+                    Email Address *
+                  </label>
                   <Input
                     required
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="jane@company.com"
-                    className="bg-[#09110d] border-neutral-800 focus:border-neutral-700 text-xs"
+                    className={`text-xs no-focus-ring ${
+                      isDark
+                        ? "bg-[#09110d] border-neutral-800 text-white placeholder:text-neutral-500 focus:border-neutral-700"
+                        : "bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 focus:border-emerald-600"
+                    }`}
+                    style={{ outline: "none", boxShadow: "none" }}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-neutral-400 mb-1 block">Company / Organization</label>
+                <label
+                  className={`text-xs mb-1 block ${
+                    isDark ? "text-neutral-400" : "text-neutral-700 font-medium"
+                  }`}
+                >
+                  Company / Organization
+                </label>
                 <Input
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="e.g. Acme Corp or Freelance"
-                  className="bg-[#09110d] border-neutral-800 focus:border-neutral-700 text-xs"
+                  className={`text-xs no-focus-ring ${
+                    isDark
+                      ? "bg-[#09110d] border-neutral-800 text-white placeholder:text-neutral-500 focus:border-neutral-700"
+                      : "bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 focus:border-emerald-600"
+                  }`}
+                  style={{ outline: "none", boxShadow: "none" }}
                 />
               </div>
 
               <div>
-                <label className="text-xs text-neutral-400 mb-1 block">Meeting Agenda / Topic</label>
+                <label
+                  className={`text-xs mb-1 block ${
+                    isDark ? "text-neutral-400" : "text-neutral-700 font-medium"
+                  }`}
+                >
+                  Meeting Agenda / Topic
+                </label>
                 <Textarea
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="What would you like to discuss? (e.g. Full-time backend role, Go / TypeScript architecture, contract scope)"
-                  className="bg-[#09110d] border-neutral-800 focus:border-neutral-700 text-xs"
+                  className={`text-xs no-focus-ring ${
+                    isDark
+                      ? "bg-[#09110d] border-neutral-800 text-white placeholder:text-neutral-500 focus:border-neutral-700"
+                      : "bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 focus:border-emerald-600"
+                  }`}
+                  style={{ outline: "none", boxShadow: "none" }}
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-neutral-800/80">
+              <div
+                className={`flex items-center justify-between pt-3 border-t ${
+                  isDark ? "border-neutral-800/80" : "border-neutral-200"
+                }`}
+              >
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => setStep("slot")}
+                  className={isDark ? "text-neutral-400 hover:text-white" : "text-neutral-600 hover:text-neutral-900"}
                 >
                   Back
                 </Button>
@@ -589,7 +798,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                   type="submit"
                   variant="default"
                   disabled={isSubmitting || !name || !email}
-                  className="gap-2"
+                  className={`gap-2 ${
+                    isDark
+                      ? "bg-emerald-500 text-black hover:bg-emerald-400"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700"
+                  }`}
                 >
                   <span>{isSubmitting ? "Scheduling..." : "Confirm & Schedule Call"}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -601,31 +814,70 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
           {/* STEP 3: Confirmed Screen */}
           {step === "confirmed" && confirmation && (
             <div className="py-6 text-center space-y-5 animate-in fade-in">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 ring-4 ring-emerald-500/10 shadow-lg shadow-emerald-500/20">
+              <div
+                className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ring-4 shadow-lg ${
+                  isDark
+                    ? "bg-emerald-500/20 text-emerald-400 ring-emerald-500/10 shadow-emerald-500/20"
+                    : "bg-emerald-100 text-emerald-700 ring-emerald-300 shadow-emerald-600/10"
+                }`}
+              >
                 <CheckCircle2 className="h-8 w-8" />
               </div>
 
               <div>
-                <h3 className="text-xl font-bold text-white tracking-tight">Call Confirmed!</h3>
-                <p className="mt-1 text-xs text-neutral-300 max-w-sm mx-auto leading-relaxed">
+                <h3
+                  className={`text-xl font-bold tracking-tight ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}
+                >
+                  Call Confirmed!
+                </h3>
+                <p
+                  className={`mt-1 text-xs max-w-sm mx-auto leading-relaxed ${
+                    isDark ? "text-neutral-300" : "text-neutral-600"
+                  }`}
+                >
                   Your meeting with Maarcus Reniero L has been scheduled for{" "}
-                  <strong className="text-white">{formatDateLong(selectedDate)}</strong> at{" "}
-                  <strong className="text-emerald-400 font-mono">{format12h(selectedTime)}</strong>.
+                  <strong className={isDark ? "text-white" : "text-neutral-900"}>
+                    {formatDateLong(selectedDate)}
+                  </strong>{" "}
+                  at{" "}
+                  <strong className={`font-mono ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
+                    {format12h(selectedTime)}
+                  </strong>.
                 </p>
               </div>
 
-              <div className="rounded-xl border border-neutral-800 bg-[#09110d] p-4 max-w-md mx-auto text-left text-xs space-y-2 text-neutral-300">
-                <div className="flex justify-between border-b border-neutral-800/60 pb-2">
-                  <span className="text-neutral-500">Event</span>
-                  <span className="font-semibold text-white">{currentDurationObj.title}</span>
+              <div
+                className={`rounded-xl border p-4 max-w-md mx-auto text-left text-xs space-y-2 ${
+                  isDark
+                    ? "border-neutral-800 bg-[#09110d] text-neutral-300"
+                    : "border-neutral-200 bg-[#fbfdfc] text-neutral-800 shadow-xs"
+                }`}
+              >
+                <div
+                  className={`flex justify-between border-b pb-2 ${
+                    isDark ? "border-neutral-800/60" : "border-neutral-200"
+                  }`}
+                >
+                  <span className={isDark ? "text-neutral-500" : "text-neutral-500"}>Event</span>
+                  <span className={`font-semibold ${isDark ? "text-white" : "text-neutral-900"}`}>
+                    {currentDurationObj.title}
+                  </span>
                 </div>
-                <div className="flex justify-between border-b border-neutral-800/60 pb-2">
-                  <span className="text-neutral-500">Duration</span>
-                  <span className="text-neutral-200">{duration} minutes</span>
+                <div
+                  className={`flex justify-between border-b pb-2 ${
+                    isDark ? "border-neutral-800/60" : "border-neutral-200"
+                  }`}
+                >
+                  <span className={isDark ? "text-neutral-500" : "text-neutral-500"}>Duration</span>
+                  <span className={isDark ? "text-neutral-200" : "text-neutral-700"}>{duration} minutes</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-neutral-500">Location</span>
-                  <span className="text-emerald-400 font-medium">Google Meet (Link generated in invite)</span>
+                  <span className={isDark ? "text-neutral-500" : "text-neutral-500"}>Location</span>
+                  <span className={`font-medium ${isDark ? "text-emerald-400" : "text-emerald-700"}`}>
+                    Google Meet (Link generated in invite)
+                  </span>
                 </div>
               </div>
 
@@ -634,7 +886,11 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                   href={confirmation.gcalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs font-semibold text-black hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20 active:scale-95"
+                  className={`inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-semibold transition-all shadow-md active:scale-95 ${
+                    isDark
+                      ? "bg-emerald-500 text-black hover:bg-emerald-400 shadow-emerald-500/20"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
+                  }`}
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   <span>Add to Google Calendar</span>
@@ -642,7 +898,9 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full sm:w-auto gap-2"
+                  className={`w-full sm:w-auto gap-2 ${
+                    isDark ? "" : "border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-100"
+                  }`}
                   onClick={downloadIcs}
                 >
                   <Download className="h-3.5 w-3.5" />
@@ -657,7 +915,9 @@ export function MiniCal({ onClose }: { onClose?: () => void }) {
                     setStep("slot");
                     setConfirmation(null);
                   }}
-                  className="text-xs text-neutral-400 hover:text-neutral-200 hover:underline"
+                  className={`text-xs hover:underline ${
+                    isDark ? "text-neutral-400 hover:text-neutral-200" : "text-neutral-500 hover:text-neutral-800"
+                  }`}
                 >
                   Schedule another discussion
                 </button>
