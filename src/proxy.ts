@@ -3,7 +3,7 @@ import { LANGS, LANG_COOKIE, isLang, type Lang } from "~/lib/i18n";
 import { maintenanceHtml } from "~/lib/maintenance-html";
 
 /** Anything that isn't a localized page: API routes, feeds, generated images, and files with an extension. */
-const NOT_A_PAGE = /^\/(api|og|_next|\.well-known)(\/|$)|\.[a-z0-9]+$/i;
+const NOT_A_PAGE = /^\/(api|og|_next|\.well-known|admin)(\/|$)|\.[a-z0-9]+$/i;
 
 /**
  * 1. Maintenance mode: set MAINTENANCE=1 and every page answers a real 503 with
@@ -23,6 +23,14 @@ export function proxy(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   const { pathname } = url;
+  if (/^\/(admin|api\/admin)(\/|$)/.test(pathname)) {
+    // The admin is never cached or indexed. Sessions are checked on the server in the layout, not here.
+    const res = NextResponse.next();
+    res.headers.set("cache-control", "no-store");
+    res.headers.set("x-robots-tag", "noindex, nofollow, noarchive");
+    res.headers.set("referrer-policy", "no-referrer");
+    return res;
+  }
   if (NOT_A_PAGE.test(pathname)) return NextResponse.next();
 
   const direct = LANGS.find((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
