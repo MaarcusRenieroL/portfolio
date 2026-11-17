@@ -20,8 +20,8 @@ const csp = [
   `img-src 'self' data: blob: ${assets.origin}`,
   "font-src 'self' data:",
   `media-src 'self' ${assets.origin}`,
-  // Uploads go browser → the private R2 bucket (signed URL) or Vercel Blob; drafts' files are served from /media on this site.
-  `connect-src 'self'${process.env.R2_ACCOUNT_ID ? ` https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : ""} https://vercel.com https://*.blob.vercel-storage.com https://vitals.vercel-insights.com https://va.vercel-scripts.com${isDev ? " ws: wss:" : ""}`,
+  // Uploads go browser → the private R2 bucket (signed URL); drafts' files are served from /media on this site.
+  `connect-src 'self'${process.env.R2_ACCOUNT_ID ? ` https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com` : ""} https://vitals.vercel-insights.com https://va.vercel-scripts.com${isDev ? " ws: wss:" : ""}`,
   `object-src 'self' ${assets.origin}`,
   `frame-src 'self' ${assets.origin}${turnstile}`,
   "frame-ancestors 'self'",

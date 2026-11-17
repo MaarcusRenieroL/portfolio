@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_PROJECT_DATA, certAsset, logoUrl, shotUrl } from "~/lib/content";
-import { formatBytes, isBlobUrl, isLibraryRef, mediaSrc, slugFileName } from "~/lib/media";
+import { formatBytes, isLibraryRef, mediaSrc, slugFileName } from "~/lib/media";
 import { projectSchema } from "~/lib/schema";
 
 const BLOB = "https://abc123.public.blob.vercel-storage.com/media/nyx-search-Xy12.webp";
@@ -12,15 +12,6 @@ describe("media helpers", () => {
     expect(slugFileName("???.png")).toBe("file.png");
     expect(slugFileName("noext")).toBe("noext");
     expect(slugFileName(`${"a".repeat(100)}.webp`)).toBe(`${"a".repeat(60)}.webp`);
-  });
-
-  it("only accepts Vercel Blob public URLs as uploaded media", () => {
-    expect(isBlobUrl(BLOB)).toBe(true);
-    expect(isBlobUrl("https://abc.private.blob.vercel-storage.com/media/x.png")).toBe(true);
-    expect(isBlobUrl("http://abc.public.blob.vercel-storage.com/x.png")).toBe(false);
-    expect(isBlobUrl("https://evil.com/?h=.public.blob.vercel-storage.com")).toBe(false);
-    expect(isBlobUrl("https://public.blob.vercel-storage.com.evil.com/x.png")).toBe(false);
-    expect(isBlobUrl("not a url")).toBe(false);
   });
 
   it("formats sizes", () => {

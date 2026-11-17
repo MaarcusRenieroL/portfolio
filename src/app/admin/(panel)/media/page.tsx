@@ -1,5 +1,5 @@
 import { requireAdmin } from "~/lib/server/session";
-import { blobConfigured, listMedia } from "~/lib/server/media";
+import { storageConfigured, listMedia } from "~/lib/server/media";
 import { PageHeader } from "../../_components/admin-ui";
 import { MediaLibrary } from "../../_components/media-library";
 
@@ -8,7 +8,7 @@ export const metadata = { title: "Media" };
 export default async function MediaPage() {
   // Each page checks on its own: a layout check alone does not stop this segment from rendering.
   await requireAdmin();
-  const configured = blobConfigured();
+  const configured = storageConfigured();
   let items: Awaited<ReturnType<typeof listMedia>> = [];
   let tableMissing = false;
   try {

@@ -1,6 +1,5 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
 import { Check, Copy, FileText, ImageIcon, Loader2, Search, Trash2, UploadCloud, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button, buttonVariants } from "~/components/ui/button";
@@ -26,22 +25,13 @@ async function dimensions(file: File): Promise<[number | null, number | null]> {
   }
 }
 
-/**
- * The media library: drop or pick files to upload them to Vercel Blob, browse what's there,
- * edit alt text, copy a URL, delete. In picker mode (inside a content form) it also offers
- * "Use this file" and limits what can be picked to `accept`.
- */
-/**
- * Upload straight to the private R2 bucket with a signed URL. Returns the `r2:` reference, or null when the
- * site uses Vercel Blob instead (the server answers 409).
- */
-async function uploadToR2(file: File, onProgress: (pct: number) => void): Promise<string | null> {
+/** Upload straight to the private R2 bucket with a signed URL. Returns the `r2:` reference to register. */
+async function uploadToR2(file: File, onProgress: (pct: number) => void): Promise<string> {
   const r = await fetch("/api/admin/media/upload", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "r2.sign", name: file.name, contentType: file.type, size: file.size }),
+    body: JSON.stringify({ name: file.name, contentType: file.type, size: file.size }),
   });
-  if (r.status === 409) return null;
   const json = (await r.json().catch(() => ({}))) as { putUrl?: string; ref?: string; error?: string };
   if (!r.ok || !json.putUrl || !json.ref) throw new Error(json.error ?? "Upload failed.");
   await new Promise<void>((resolve, reject) => {
@@ -56,6 +46,11 @@ async function uploadToR2(file: File, onProgress: (pct: number) => void): Promis
   return json.ref;
 }
 
+/**
+ * The media library: drop or pick files to upload them to the private R2 bucket, browse what's there,
+ * edit alt text, copy a URL, delete. In picker mode (inside a content form) it also offers
+ * "Use this file" and limits what can be picked to `accept`.
+ */
 export function MediaLibrary({
   initial,
   configured,
@@ -106,14 +101,7 @@ export function MediaLibrary({
         try {
           const [w, h] = await dimensions(file);
           const progress = (pct: number) => setPending((p) => p.map((x) => (x.id === id ? { ...x, pct } : x)));
-          const url = (await uploadToR2(file, progress)) ?? (
-            await upload(`media/${slugFileName(file.name, file.type)}`, file, {
-              access: "private",
-              handleUploadUrl: "/api/admin/media/upload",
-              contentType: file.type,
-              onUploadProgress: ({ percentage }) => progress(percentage),
-            })
-          ).url;
+          const url = await uploadToR2(file, progress);
           const res = await registerMedia(url, w, h);
           if (!res.ok) {
             fail(res.errors.join(" "));
@@ -153,7 +141,7 @@ export function MediaLibrary({
         <p className="text-sm text-[var(--fg)]">Uploads aren&apos;t set up yet</p>
         <p className="mx-auto max-w-md text-xs leading-relaxed text-[var(--fg-3)]">
           Set the R2 variables (<code>R2_ACCOUNT_ID</code>, <code>R2_ACCESS_KEY_ID</code>, <code>R2_SECRET_ACCESS_KEY</code>, <code>R2_BUCKET_PUBLIC</code>,{" "}
-          <code>R2_BUCKET_PRIVATE</code>, <code>NEXT_PUBLIC_ASSETS_URL</code>) or a Vercel Blob <code>BLOB_READ_WRITE_TOKEN</code> in <code>.env.local</code>, then restart the dev server.
+          <code>R2_BUCKET_PRIVATE</code>, <code>NEXT_PUBLIC_ASSETS_URL</code>) in <code>.env.local</code>, then restart the dev server. See <code>.env.example</code>.
         </p>
       </div>
     );

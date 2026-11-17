@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-/** Failure branches of the inbox and media server actions. DB, Blob, Resend and audit are all stubbed. */
+/** Failure branches of the inbox and media server actions. DB, storage, Resend and audit are all stubbed. */
 const m = vi.hoisted(() => ({
   q: vi.fn(),
   send: vi.fn(),
   audit: vi.fn(async () => {}),
   reval: vi.fn(),
   admin: { on: true },
-  media: { addMedia: vi.fn(), listMedia: vi.fn(), mediaUsage: vi.fn(), removeMedia: vi.fn(), setMediaAlt: vi.fn(), blobConfigured: vi.fn(() => true) },
+  media: { addMedia: vi.fn(), listMedia: vi.fn(), mediaUsage: vi.fn(), removeMedia: vi.fn(), setMediaAlt: vi.fn(), storageConfigured: vi.fn(() => true) },
 }));
 vi.mock("next/cache", () => ({ revalidatePath: m.reval, revalidateTag: vi.fn(), unstable_cache: (f: unknown) => f }));
 vi.mock("resend", () => ({ Resend: class { emails = { send: m.send }; } }));
@@ -27,7 +27,7 @@ beforeEach(() => {
   m.reval.mockReset();
   m.audit.mockReset().mockResolvedValue(undefined);
   Object.values(m.media).forEach((f) => f.mockReset());
-  m.media.blobConfigured.mockReturnValue(true);
+  m.media.storageConfigured.mockReturnValue(true);
   m.admin.on = true;
   vi.stubEnv("RESEND_API_KEY", "");
   vi.stubEnv("RESEND_EMAIL", "");
@@ -112,17 +112,17 @@ describe("inbox actions: success and failure", () => {
 
 describe("media actions: failure branches", () => {
   it("every action turns a thrown error into an error result", async () => {
-    const e = new Error("blob down");
+    const e = new Error("storage down");
     m.media.listMedia.mockRejectedValue(e);
-    expect(await getMedia()).toEqual({ ok: false, errors: ["blob down"] });
+    expect(await getMedia()).toEqual({ ok: false, errors: ["storage down"] });
     m.media.addMedia.mockRejectedValue("str");
     expect(await registerMedia("https://x", 1, 1)).toEqual(GENERIC);
     m.media.setMediaAlt.mockRejectedValue(e);
-    expect(await updateMediaAlt(1, "a")).toEqual({ ok: false, errors: ["blob down"] });
+    expect(await updateMediaAlt(1, "a")).toEqual({ ok: false, errors: ["storage down"] });
     m.media.mediaUsage.mockRejectedValue(e);
-    expect(await getMediaUsage(1)).toEqual({ ok: false, errors: ["blob down"] });
+    expect(await getMediaUsage(1)).toEqual({ ok: false, errors: ["storage down"] });
     m.media.removeMedia.mockRejectedValue(e);
-    expect(await deleteMedia(1)).toEqual({ ok: false, errors: ["blob down"] });
+    expect(await deleteMedia(1)).toEqual({ ok: false, errors: ["storage down"] });
     m.media.removeMedia.mockRejectedValue(undefined);
     expect(await deleteMedia(1)).toEqual(GENERIC);
     expect(m.audit).not.toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe("media actions: failure branches", () => {
     await updateMediaAlt(4, "  hi  ");
     expect(m.media.setMediaAlt).toHaveBeenCalledWith(4, "hi");
     m.media.listMedia.mockResolvedValue([]);
-    m.media.blobConfigured.mockReturnValue(false);
+    m.media.storageConfigured.mockReturnValue(false);
     expect(await getMedia()).toEqual({ ok: true, items: [], configured: false });
     m.media.mediaUsage.mockResolvedValue([{ kind: "post", key: "a" }]);
     expect(await getMediaUsage(1)).toEqual({ ok: true, usedBy: [{ kind: "post", key: "a" }] });

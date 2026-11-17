@@ -1,5 +1,4 @@
 import { query } from "./db";
-import { blobConfigured } from "./media";
 import { headPrivate, listPublic, r2Env } from "./r2";
 
 /**
@@ -69,10 +68,7 @@ export async function checkDatabase(): Promise<Check> {
 export async function checkStorage(): Promise<Check> {
   const base = { id: "storage", label: "File storage" };
   const r2 = r2Env();
-  if (!r2) {
-    if (blobConfigured()) return { ...base, state: "ok", detail: "Vercel Blob (private). Files are served from /media on this site." };
-    return { ...base, state: "off", detail: "No R2 or Blob credentials, so uploads are off. Site files come from /public." };
-  }
+  if (!r2) return { ...base, state: "off", detail: "R2 isn't set up, so uploads are off. Site files come from /public." };
   try {
     // Both buckets answer with these credentials (a missing key is fine; a 403 or a wrong bucket throws).
     await withLimit(Promise.all([listPublic("__health/"), headPrivate("__health")]));

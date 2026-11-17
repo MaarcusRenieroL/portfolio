@@ -3,17 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 /** media.ts R2 paths against an in-memory fake of R2 behind a stubbed fetch. The DB is a mock: no real queries. */
 const m = vi.hoisted(() => ({
   query: vi.fn(),
-  head: vi.fn(),
-  del: vi.fn(),
   audit: vi.fn(async () => {}),
   client: { query: vi.fn(), release: vi.fn() },
   connect: vi.fn(),
 }));
 vi.mock("~/lib/server/db", () => ({ query: m.query, hasDb: () => true, pool: () => ({ connect: m.connect }) }));
-vi.mock("@vercel/blob", () => ({ head: m.head, del: m.del }));
 vi.mock("~/lib/server/auth", () => ({ audit: m.audit }));
 
-import { addMedia, afterPublish, blobConfigured, mediaKeysIn, publishedMediaKeys, removeMedia, syncPublicMedia } from "~/lib/server/media";
+import { addMedia, afterPublish, storageConfigured, mediaKeysIn, publishedMediaKeys, removeMedia, syncPublicMedia } from "~/lib/server/media";
 
 type Obj = { type: string; size: number };
 const store = { pub: new Map<string, Obj>(), priv: new Map<string, Obj>() };
@@ -74,8 +71,6 @@ beforeEach(() => {
   mediaRows = [];
   types = {};
   m.query.mockReset();
-  m.head.mockReset();
-  m.del.mockReset();
   m.audit.mockReset();
   m.audit.mockResolvedValue(undefined);
   m.query.mockImplementation(async (sql: string) => {
@@ -95,7 +90,6 @@ beforeEach(() => {
   });
   vi.stubGlobal("fetch", vi.fn(fakeR2));
   Object.entries(ENV).forEach(([k, v]) => vi.stubEnv(k, v));
-  vi.stubEnv("BLOB_READ_WRITE_TOKEN", "");
 });
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -105,13 +99,11 @@ afterEach(() => {
 
 const png = { type: "image/png", size: 100 };
 
-describe("blobConfigured", () => {
-  it("true with R2 alone, false with neither, false with partial R2", () => {
-    expect(blobConfigured()).toBe(true);
+describe("storageConfigured", () => {
+  it("true with R2 set, false with partial R2", () => {
+    expect(storageConfigured()).toBe(true);
     vi.stubEnv("R2_BUCKET_PUBLIC", "");
-    expect(blobConfigured()).toBe(false);
-    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "t");
-    expect(blobConfigured()).toBe(true);
+    expect(storageConfigured()).toBe(false);
   });
 });
 
@@ -121,12 +113,10 @@ describe("addMedia (r2 ref)", () => {
     await addMedia("r2:media/a-0123456789ab.png", 10, 20);
     const ins = m.query.mock.calls.find((c) => String(c[0]).startsWith("insert into media"))!;
     expect(ins[1]).toEqual(["r2:media/a-0123456789ab.png", "media/a-0123456789ab.png", "image/png", 100, 10, 20]);
-    expect(m.head).not.toHaveBeenCalled();
   });
-  it("rejects R2 refs when R2 is off (never falls through to Blob)", async () => {
+  it("rejects R2 refs when R2 is off ", async () => {
     vi.stubEnv("R2_ACCOUNT_ID", "");
     await expect(addMedia("r2:media/a.png", null, null)).rejects.toThrow("R2 isn't configured");
-    expect(m.head).not.toHaveBeenCalled();
   });
   it.each([
     "r2:media/../etc.png",
@@ -196,9 +186,10 @@ describe("addMedia (r2 ref)", () => {
     await expect(addMedia("r2:media/a-0123456789ab.png", null, null)).rejects.toThrow("HEAD failed");
     expect(store.priv.size).toBe(1);
   });
-  it("a hostile non-r2 URL still goes the Blob route and is rejected there", async () => {
-    await expect(addMedia("https://evil.com/media/a.png", null, null)).rejects.toThrow("Not a Vercel Blob URL");
-    await expect(addMedia("R2:media/a.png", null, null)).rejects.toThrow("Not a Vercel Blob URL");
+  it("a hostile non-r2 URL is rejected before any network call", async () => {
+    await expect(addMedia("https://evil.com/media/a.png", null, null)).rejects.toThrow("Not an upload reference");
+    await expect(addMedia("R2:media/a.png", null, null)).rejects.toThrow("Not an upload reference");
+    expect(calls).toEqual([]);
   });
 });
 
@@ -210,7 +201,6 @@ describe("removeMedia (r2 row)", () => {
     await removeMedia(5);
     expect(calls).toEqual(["DELETE pubb/media/a-0123456789ab.png", "DELETE privb/media/a-0123456789ab.png"]);
     expect(m.query).toHaveBeenLastCalledWith("delete from media where id = $1", [5]);
-    expect(m.del).not.toHaveBeenCalled();
   });
   it("keeps the row when R2 delete fails, so it can be retried", async () => {
     m.query.mockImplementation(async (sql: string) => (sql.startsWith("select url") ? { rows: [{ url: "r2:media/a-0123456789ab.png" }] } : { rows: [] }));

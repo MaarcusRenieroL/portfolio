@@ -17,7 +17,7 @@ vi.mock("resend", () => ({ Resend: class { emails = { send }; } }));
 vi.mock("~/lib/server/db", () => ({ hasDb: () => true, query: (...a: unknown[]) => dbq(...a) }));
 vi.mock("~/lib/server/session", () => ({ isAdmin: async () => admin.on, requireAdmin: async () => { if (!admin.on) throw new Error("REDIRECT"); } }));
 vi.mock("~/lib/server/auth", () => ({ audit: (...a: unknown[]) => (audit as (...x: unknown[]) => unknown)(...a) }));
-vi.mock("~/lib/server/media", () => ({ blobConfigured: () => true, afterPublish: async () => {}, ...media }));
+vi.mock("~/lib/server/media", () => ({ storageConfigured: () => true, afterPublish: async () => {}, ...media }));
 vi.mock("~/lib/server/settings", () => ({ writeSettings: (...a: unknown[]) => writeSettings(...a), readSavedSettings: () => readSavedSettings() }));
 
 import { deleteMedia, getMedia, getMediaUsage, registerMedia, updateMediaAlt } from "../../src/app/admin/media-actions";
@@ -39,7 +39,7 @@ describe("requireAdmin is enforced everywhere", () => {
   it("every action rejects when not signed in and touches nothing", async () => {
     admin.on = false;
     const calls: Array<() => Promise<unknown>> = [
-      () => getMedia(), () => registerMedia("https://a.blob.vercel-storage.com/x", 1, 1), () => updateMediaAlt(1, "a"), () => getMediaUsage(1), () => deleteMedia(1),
+      () => getMedia(), () => registerMedia("r2:media/x-0123456789ab.png", 1, 1), () => updateMediaAlt(1, "a"), () => getMediaUsage(1), () => deleteMedia(1),
       () => saveSettings(defaultSettings()), () => setMessageRead(1, true), () => setMessageArchived(1, true), () => deleteMessage(1), () => cancelBooking("x", ""),
     ];
     for (const c of calls) await expect(c()).rejects.toThrow("REDIRECT");
@@ -61,11 +61,11 @@ describe("media actions", () => {
     expect(audit).toHaveBeenCalledWith("media_upload", "admin", { pathname: "media/a.png", size: 5 });
   });
   it("returns errors instead of throwing", async () => {
-    media.addMedia.mockRejectedValue(new Error("Not a Vercel Blob URL."));
-    expect(await registerMedia("https://evil", null, null)).toEqual({ ok: false, errors: ["Not a Vercel Blob URL."] });
+    media.addMedia.mockRejectedValue(new Error("Not an upload reference."));
+    expect(await registerMedia("https://evil", null, null)).toEqual({ ok: false, errors: ["Not an upload reference."] });
     media.listMedia.mockRejectedValue("str");
     expect(await getMedia()).toEqual({ ok: false, errors: ["Something went wrong."] });
-    media.removeMedia.mockRejectedValue(new Error("blob down"));
+    media.removeMedia.mockRejectedValue(new Error("storage down"));
     expect(await deleteMedia(1)).toMatchObject({ ok: false });
     expect(audit).not.toHaveBeenCalledWith("media_delete", expect.anything(), expect.anything());
   });

@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 /**
  * Branch coverage for server helpers and API routes: presence, schedule, upload, settings, seed, store,
  * system, translate, analytics limiter, backup, db, r2, blog parser, contact validation.
- * The database, Resend, Gemini, R2 and Vercel Blob are all stubbed. No test here opens a real connection.
+ * The database, Resend, Gemini and R2 are all stubbed. No test here opens a real connection.
  */
 const m = vi.hoisted(() => ({
   q: vi.fn(),
@@ -15,7 +15,7 @@ const m = vi.hoisted(() => ({
   after: vi.fn(),
   prune: vi.fn(async () => undefined),
   send: vi.fn(),
-  handleUpload: vi.fn(),
+  presign: vi.fn(),
   admin: true,
   audit: vi.fn(async () => {}),
   slots: null as Date[] | null,
@@ -39,8 +39,8 @@ vi.mock("~/lib/server/session", () => ({ isAdmin: async () => m.admin, requireAd
 vi.mock("~/lib/server/retention", () => ({ pruneOldData: m.prune }));
 vi.mock("~/lib/server/crypto", async (orig) => ({ ...(await orig<typeof import("~/lib/server/crypto")>()), dailyHash: (ip: string, ua: string) => `h(${ip}|${ua})` }));
 vi.mock("resend", () => ({ Resend: class { emails = { send: m.send }; } }));
-vi.mock("@vercel/blob/client", () => ({ handleUpload: (...a: unknown[]) => m.handleUpload(...a) }));
-vi.mock("~/lib/server/media", () => ({ blobConfigured: () => true, afterPublish: async () => {} }));
+vi.mock("~/lib/server/r2", async (orig) => ({ ...(await orig<typeof import("~/lib/server/r2")>()), presignUpload: (...a: unknown[]) => m.presign(...a) }));
+vi.mock("~/lib/server/media", () => ({ storageConfigured: () => true, afterPublish: async () => {} }));
 vi.mock("~/lib/server/auth", () => ({ audit: (...a: unknown[]) => (m.audit as (...x: unknown[]) => unknown)(...a) }));
 vi.mock("~/lib/server/human", () => ({ humanCheckEnabled: () => false, humanOk: async () => true }));
 vi.mock("~/lib/booking", async (orig) => {
@@ -76,7 +76,7 @@ beforeEach(() => {
   m.after.mockReset();
   m.prune.mockClear();
   m.send.mockReset();
-  m.handleUpload.mockReset();
+  m.presign.mockReset();
   m.admin = true;
   m.audit.mockClear();
   m.slots = null;
@@ -175,21 +175,24 @@ describe("/api/schedule edge paths", () => {
 
 describe("/api/admin/media/upload error mapping", () => {
   const req = (b: unknown) => new Request("http://localhost/api/admin/media/upload", { method: "POST", body: JSON.stringify(b) });
+  const ENV = { R2_ACCOUNT_ID: "acct", R2_ACCESS_KEY_ID: "AKID", R2_SECRET_ACCESS_KEY: "secret", R2_BUCKET_PUBLIC: "pubb", R2_BUCKET_PRIVATE: "privb", NEXT_PUBLIC_ASSETS_URL: "https://assets.test" };
+  afterEach(() => vi.unstubAllEnvs());
 
-  it("a non-Error throw becomes a generic 400", async () => {
-    m.handleUpload.mockRejectedValue("boom");
-    const r = await uploadPOST(req({ type: "blob.generate-client-token" }));
-    expect(r.status).toBe(400);
-    expect(await r.json()).toEqual({ error: "Upload failed." });
+  it("a signing failure (Error or not) becomes a 502 without leaking the message", async () => {
+    m.admin = true;
+    Object.entries(ENV).forEach(([k, v]) => vi.stubEnv(k, v));
+    for (const err of [new Error("secret detail"), "boom"]) {
+      m.presign.mockRejectedValueOnce(err);
+      const r = await uploadPOST(req({ name: "a.png", contentType: "image/png", size: 5 }));
+      expect(r.status).toBe(502);
+      expect(await r.json()).toEqual({ error: "Couldn't start the upload." });
+    }
   });
 
-  it("'Not signed in.' maps to 401, any other Error to 400 with its message", async () => {
-    m.handleUpload.mockRejectedValueOnce(new Error("Not signed in."));
-    expect((await uploadPOST(req({ type: "x" }))).status).toBe(401);
-    m.handleUpload.mockRejectedValueOnce(new Error("Bad file name."));
-    const r = await uploadPOST(req({ type: "x" }));
-    expect(r.status).toBe(400);
-    expect((await r.json()).error).toBe("Bad file name.");
+  it("a signed-out request is 401 before R2 or the body are looked at", async () => {
+    m.admin = false;
+    expect((await uploadPOST(req({}))).status).toBe(401);
+    expect(m.presign).not.toHaveBeenCalled();
   });
 });
 

@@ -1,27 +1,31 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const m = vi.hoisted(() => ({ query: vi.fn(), head: vi.fn(), del: vi.fn() }));
+const m = vi.hoisted(() => ({ query: vi.fn(), head: vi.fn(), del: vi.fn(), configured: vi.fn() }));
 vi.mock("~/lib/server/db", () => ({ query: m.query, hasDb: () => true, pool: vi.fn() }));
-vi.mock("@vercel/blob", () => ({ head: m.head, del: m.del }));
+vi.mock("~/lib/server/auth", () => ({ audit: vi.fn(async () => {}) }));
+vi.mock("~/lib/server/r2", async (orig) => ({
+  ...(await orig<typeof import("~/lib/server/r2")>()),
+  r2Configured: () => m.configured(),
+  headPrivate: (...a: unknown[]) => m.head(...a),
+  deleteObject: (...a: unknown[]) => m.del(...a),
+}));
 
-import { addMedia, blobConfigured, listMedia, mediaForServing, mediaUsage, removeMedia, setMediaAlt } from "~/lib/server/media";
+import { addMedia, listMedia, mediaForServing, mediaUsage, removeMedia, setMediaAlt, storageConfigured } from "~/lib/server/media";
 
-const URL_OK = "https://abc.private.blob.vercel-storage.com/media/a.png";
+const URL_OK = "r2:media/a-0123456789ab.png";
+const KEY = "media/a-0123456789ab.png";
 
 beforeEach(() => {
   vi.resetAllMocks();
   m.query.mockResolvedValue({ rows: [] });
+  m.configured.mockReturnValue(true);
 });
 
-describe("blobConfigured", () => {
-  it("follows BLOB_READ_WRITE_TOKEN", () => {
-    const old = process.env.BLOB_READ_WRITE_TOKEN;
-    process.env.BLOB_READ_WRITE_TOKEN = "t";
-    expect(blobConfigured()).toBe(true);
-    process.env.BLOB_READ_WRITE_TOKEN = "";
-    expect(blobConfigured()).toBe(false);
-    if (old === undefined) delete process.env.BLOB_READ_WRITE_TOKEN;
-    else process.env.BLOB_READ_WRITE_TOKEN = old;
+describe("storageConfigured", () => {
+  it("follows r2Configured", () => {
+    expect(storageConfigured()).toBe(true);
+    m.configured.mockReturnValue(false);
+    expect(storageConfigured()).toBe(false);
   });
 });
 
@@ -34,22 +38,43 @@ describe("listMedia", () => {
 });
 
 describe("addMedia", () => {
-  it.each(["http://abc.blob.vercel-storage.com/a.png", "https://evil.com/a.png", "https://blob.vercel-storage.com.evil.com/a", "not a url", "", "javascript:alert(1)"])(
-    "rejects non-blob url %j without touching blob or db",
+  it.each(["https://abc.private.blob.vercel-storage.com/media/a.png", "https://evil.com/a.png", "R2:media/a.png", "not a url", "", "javascript:alert(1)"])(
+    "rejects non-r2 reference %j without touching storage or db",
     async (u) => {
-      await expect(addMedia(u, 1, 1)).rejects.toThrow("Not a Vercel Blob URL.");
+      await expect(addMedia(u, 1, 1)).rejects.toThrow("Not an upload reference.");
       expect(m.head).not.toHaveBeenCalled();
       expect(m.query).not.toHaveBeenCalled();
     },
   );
-  it("takes size/type from the blob store, not the client", async () => {
-    m.head.mockResolvedValue({ url: URL_OK, pathname: "media/a.png", contentType: "image/png", size: 123 });
+  it("rejects when R2 is off", async () => {
+    m.configured.mockReturnValue(false);
+    await expect(addMedia(URL_OK, 1, 1)).rejects.toThrow("R2 isn't configured.");
+    expect(m.head).not.toHaveBeenCalled();
+  });
+  it("rejects a bad file name before any storage call", async () => {
+    await expect(addMedia("r2:media/../x.png", 1, 1)).rejects.toThrow("Bad file name.");
+    expect(m.head).not.toHaveBeenCalled();
+  });
+  it("takes size/type from the object store, not the client", async () => {
+    m.head.mockResolvedValue({ type: "image/png", size: 123 });
     m.query.mockResolvedValue({ rows: [{ id: 5 }] });
     expect(await addMedia(URL_OK, 10, 20)).toEqual({ id: 5 });
-    expect(m.query.mock.calls[0][1]).toEqual([URL_OK, "media/a.png", "image/png", 123, 10, 20]);
+    expect(m.head).toHaveBeenCalledWith(KEY);
+    expect(m.query.mock.calls[0][1]).toEqual([URL_OK, KEY, "image/png", 123, 10, 20]);
     expect(m.query.mock.calls[0][0]).toMatch(/on conflict \(url\)/);
   });
-  it("propagates head failure (file not in store) and writes nothing", async () => {
+  it("rejects an upload that isn't there", async () => {
+    m.head.mockResolvedValue(null);
+    await expect(addMedia(URL_OK, null, null)).rejects.toThrow("isn't there");
+    expect(m.query).not.toHaveBeenCalled();
+  });
+  it("deletes a disallowed type or size and writes nothing", async () => {
+    m.head.mockResolvedValue({ type: "text/html", size: 5 });
+    await expect(addMedia(URL_OK, null, null)).rejects.toThrow("isn't allowed");
+    expect(m.del).toHaveBeenCalledWith("private", KEY);
+    expect(m.query).not.toHaveBeenCalled();
+  });
+  it("propagates head failure and writes nothing", async () => {
     m.head.mockRejectedValue(new Error("not found"));
     await expect(addMedia(URL_OK, null, null)).rejects.toThrow("not found");
     expect(m.query).not.toHaveBeenCalled();
@@ -69,17 +94,23 @@ describe("removeMedia", () => {
     expect(m.del).not.toHaveBeenCalled();
     expect(m.query).toHaveBeenCalledTimes(1);
   });
-  it("deletes the blob first, then the row", async () => {
+  it("deletes the public and private objects first, then the row", async () => {
     m.query.mockResolvedValueOnce({ rows: [{ url: URL_OK }] }).mockResolvedValueOnce({ rows: [] });
     await removeMedia(1);
-    expect(m.del).toHaveBeenCalledWith(URL_OK);
+    expect(m.del.mock.calls).toEqual([["public", KEY], ["private", KEY]]);
     expect(m.query.mock.calls[1][0]).toMatch(/delete from media/);
   });
-  it("keeps the row if blob deletion fails", async () => {
+  it("keeps the row if storage deletion fails", async () => {
     m.query.mockResolvedValueOnce({ rows: [{ url: URL_OK }] });
-    m.del.mockRejectedValue(new Error("blob down"));
-    await expect(removeMedia(1)).rejects.toThrow("blob down");
+    m.del.mockRejectedValue(new Error("r2 down"));
+    await expect(removeMedia(1)).rejects.toThrow("r2 down");
     expect(m.query).toHaveBeenCalledTimes(1);
+  });
+  it("a legacy non-r2 row only loses its record, with no storage call", async () => {
+    m.query.mockResolvedValueOnce({ rows: [{ url: "https://x.private.blob.vercel-storage.com/media/a.png" }] }).mockResolvedValueOnce({ rows: [] });
+    await removeMedia(1);
+    expect(m.del).not.toHaveBeenCalled();
+    expect(m.query.mock.calls[1][0]).toMatch(/delete from media/);
   });
 });
 
@@ -88,7 +119,7 @@ describe("mediaUsage", () => {
     expect(await mediaUsage(1)).toEqual([]);
     expect(m.query).toHaveBeenCalledTimes(1);
   });
-  it("searches for the public /media path, not the blob url", async () => {
+  it("searches for the public /media path, not the stored url", async () => {
     m.query.mockResolvedValueOnce({ rows: [{ pathname: "media/a.png" }] }).mockResolvedValueOnce({ rows: [{ kind: "project", key: "p" }] });
     expect(await mediaUsage(1)).toEqual([{ kind: "project", key: "p" }]);
     expect(m.query.mock.calls[1][1]).toEqual(["/media/a.png"]);

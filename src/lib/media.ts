@@ -1,6 +1,6 @@
 /**
  * Media rules shared by the upload route, the server actions and the admin UI.
- * Uploaded files live in Vercel Blob; their public URLs are stored in content fields as-is.
+ * Uploaded files live in Cloudflare R2; content fields store their /media/<name> path.
  */
 
 export const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/svg+xml"] as const;
@@ -23,19 +23,9 @@ export type MediaItem = {
 
 export const isImage = (type: string) => type.startsWith("image/");
 
-/** Only URLs from a Vercel Blob store are accepted as uploaded media. The store is private. */
-export function isBlobUrl(value: string): boolean {
-  try {
-    const u = new URL(value);
-    return u.protocol === "https:" && u.hostname.endsWith(".blob.vercel-storage.com");
-  } catch {
-    return false;
-  }
-}
-
 /**
- * Where a library file is served on this site. The Blob store is private, so files are never
- * linked directly: `/media/<name>` streams them, and only once published content uses them.
+ * Where a library file is referenced in content: `/media/<name>`. Drafts load it from the private bucket through
+ * that route; live content is pointed at the public assets domain once published.
  */
 export const mediaSrc = (m: { pathname: string }) => `/media/${m.pathname.replace(/^media\//, "")}`;
 
@@ -52,7 +42,7 @@ const EXT_BY_TYPE: Record<string, string> = {
   "application/pdf": "pdf",
 };
 
-/** "My Photo (1).JPG" → "my-photo-1.jpg": safe, readable blob pathnames. A missing extension comes from the type. */
+/** "My Photo (1).JPG" → "my-photo-1.jpg": safe, readable file names. A missing extension comes from the type. */
 export function slugFileName(name: string, type?: string): string {
   const dot = name.lastIndexOf(".");
   const ext = dot > 0 ? name.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "") : "";

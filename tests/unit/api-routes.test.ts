@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-/** Route handlers with every external dependency (database, blob, mail, headers, GitHub) replaced. */
+/** Route handlers with every external dependency (database, storage, mail, headers, GitHub) replaced. */
 const h = vi.hoisted(() => ({
   hdrs: new Headers(),
   draft: false,
@@ -11,7 +11,7 @@ const h = vi.hoisted(() => ({
   send: vi.fn(),
   settings: { resume: "" as string },
   mediaFile: null as null | { url: string; content_type: string; published: boolean },
-  blobGet: vi.fn(),
+  getPrivate: vi.fn(),
   palette: vi.fn(async () => [{ id: "x" }]),
 }));
 
@@ -22,7 +22,7 @@ vi.mock("~/lib/server/retention", () => ({ pruneOldData: (...a: unknown[]) => (h
 vi.mock("resend", () => ({ Resend: class { emails = { send: (...a: unknown[]) => h.send(...a) }; } }));
 vi.mock("~/lib/server/settings", () => ({ getSiteSettings: async () => h.settings }));
 vi.mock("~/lib/server/media", () => ({ mediaForServing: async () => h.mediaFile }));
-vi.mock("@vercel/blob", () => ({ get: (...a: unknown[]) => h.blobGet(...a) }));
+vi.mock("~/lib/server/r2", async (orig) => ({ ...(await orig<typeof import("~/lib/server/r2")>()), getPrivate: (...a: unknown[]) => h.getPrivate(...a) }));
 vi.mock("~/lib/server/palette", () => ({ getPaletteItems: (...a: unknown[]) => (h.palette as (...x: unknown[]) => unknown)(...a) }));
 vi.mock("~/lib/server/auth", () => ({ sameOrigin: (x: Headers) => x.get("origin") === "http://localhost:3000" }));
 
@@ -45,7 +45,7 @@ beforeEach(() => {
   h.dbOn = true;
   h.settings = { resume: "" };
   h.mediaFile = null;
-  for (const f of [h.dbq, h.record, h.prune, h.send, h.blobGet, h.palette]) f.mockReset();
+  for (const f of [h.dbq, h.record, h.prune, h.send, h.getPrivate, h.palette]) f.mockReset();
   h.record.mockResolvedValue(true);
   h.prune.mockResolvedValue(true);
   h.palette.mockResolvedValue([{ id: "x" }]);
@@ -171,49 +171,56 @@ describe("/api/e beacon", () => {
 });
 
 describe("/api/resume", () => {
-  const pdf = (bytes = "%PDF-1") => ({ statusCode: 200, stream: new Response(bytes).body });
-  it("records the download and serves the PDF set in settings from blob", async () => {
-    h.settings = { resume: "/media/cv.pdf" };
-    h.mediaFile = { url: "https://blob/x", content_type: "application/pdf", published: true };
-    h.blobGet.mockResolvedValue(pdf("FROMBLOB"));
+  const R2 = { url: "r2:media/cv-0123456789ab.pdf", content_type: "application/pdf", published: true };
+  it("records the download and serves the PDF set in settings from R2", async () => {
+    h.settings = { resume: "/media/cv-0123456789ab.pdf" };
+    h.mediaFile = R2;
+    h.getPrivate.mockResolvedValue(new Response("FROMR2"));
     const r = await resumeGET();
     expect(h.record).toHaveBeenCalledWith("resume-download", "/api/resume");
-    expect(await r.text()).toBe("FROMBLOB");
+    expect(await r.text()).toBe("FROMR2");
     expect(r.headers.get("content-type")).toBe("application/pdf");
     expect(r.headers.get("content-disposition")).toContain("attachment");
-    expect(h.blobGet).toHaveBeenCalledWith("https://blob/x", { access: "private" });
+    expect(h.getPrivate).toHaveBeenCalledWith("media/cv-0123456789ab.pdf");
   });
   it("never streams a non-PDF media file, and falls back to public/resume.pdf", async () => {
     h.settings = { resume: "/media/evil.html" };
-    h.mediaFile = { url: "https://blob/x", content_type: "text/html", published: true };
+    h.mediaFile = { url: "r2:media/evil.html", content_type: "text/html", published: true };
     const r = await resumeGET();
-    expect(h.blobGet).not.toHaveBeenCalled();
+    expect(h.getPrivate).not.toHaveBeenCalled();
     expect(r.status).toBe(200);
     expect(r.headers.get("content-type")).toBe("application/pdf");
     expect((await r.arrayBuffer()).byteLength).toBeGreaterThan(100);
   });
-  it("falls back when the file is gone, blob answers non-200, or blob throws", async () => {
+  it("a legacy non-r2 row falls back to the bundled PDF without a storage call", async () => {
+    h.settings = { resume: "/media/cv.pdf" };
+    h.mediaFile = { url: "https://x.private.blob.vercel-storage.com/media/cv.pdf", content_type: "application/pdf", published: true };
+    const r = await resumeGET();
+    expect(h.getPrivate).not.toHaveBeenCalled();
+    expect(r.status).toBe(200);
+    expect((await r.arrayBuffer()).byteLength).toBeGreaterThan(100);
+  });
+  it("falls back when the file is gone, R2 has no object or a non-ok answer, or R2 throws", async () => {
     h.settings = { resume: "/media/cv.pdf" };
     h.mediaFile = null;
     expect((await resumeGET()).status).toBe(200);
-    h.mediaFile = { url: "u", content_type: "application/pdf", published: true };
-    h.blobGet.mockResolvedValue({ statusCode: 304, stream: null });
+    h.mediaFile = R2;
+    h.getPrivate.mockResolvedValue(new Response(null, { status: 304 }));
     expect((await resumeGET()).status).toBe(200);
-    h.blobGet.mockResolvedValue(null);
+    h.getPrivate.mockResolvedValue(null);
     expect((await resumeGET()).status).toBe(200);
     // A storage error falls back to the bundled PDF too, rather than failing the download.
-    h.blobGet.mockRejectedValue(new Error("blob down"));
+    h.getPrivate.mockRejectedValue(new Error("r2 down"));
     const r = await resumeGET();
     expect(r.status).toBe(200);
     expect(r.headers.get("content-type")).toBe("application/pdf");
   });
-  it("with no setting it serves the bundled file without touching blob", async () => {
+  it("with no setting it serves the bundled file without touching R2", async () => {
     const r = await resumeGET();
     expect(r.status).toBe(200);
-    expect(h.blobGet).not.toHaveBeenCalled();
+    expect(h.getPrivate).not.toHaveBeenCalled();
   });
 });
-
 describe("github repos", () => {
   const raw = (o: Record<string, unknown> = {}) => ({ id: 1, name: "a", full_name: "me/a", description: null, stargazers_count: 3, forks_count: 1, language: "TS", topics: ["x"], html_url: "u", homepage: null, pushed_at: "2026-01-01T00:00:00Z", fork: false, ...o });
   const fetchOk = (data: unknown) => vi.fn(async () => ({ ok: true, json: async () => data }));

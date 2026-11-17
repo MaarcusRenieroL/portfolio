@@ -1,12 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-/** Upload sign route, /media/[name] and /api/resume with R2 on. DB, session, Blob and fs are mocked; fetch is stubbed. */
+/** Upload sign route, /media/[name] and /api/resume with R2 on. DB, session and fs are mocked; fetch is stubbed. */
 const m = vi.hoisted(() => ({
   admin: { on: true },
   mediaForServing: vi.fn(),
   getSiteSettings: vi.fn(),
-  get: vi.fn(),
-  handleUpload: vi.fn(),
   readFile: vi.fn(),
   record: vi.fn(async () => {}),
 }));
@@ -18,8 +16,6 @@ vi.mock("~/lib/server/media", async () => {
 });
 vi.mock("~/lib/server/settings", () => ({ getSiteSettings: m.getSiteSettings }));
 vi.mock("~/lib/server/analytics", () => ({ record: m.record }));
-vi.mock("@vercel/blob", () => ({ get: m.get, head: vi.fn(), del: vi.fn() }));
-vi.mock("@vercel/blob/client", () => ({ handleUpload: m.handleUpload }));
 vi.mock("fs/promises", () => ({ readFile: m.readFile, default: { readFile: m.readFile } }));
 
 import { POST } from "~/app/api/admin/media/upload/route";
@@ -33,11 +29,10 @@ const setEnv = () => Object.entries(ENV).forEach(([k, v]) => vi.stubEnv(k, v));
 beforeEach(() => {
   vi.spyOn(Math, "random").mockReturnValue(0);
   m.admin.on = true;
-  [m.mediaForServing, m.getSiteSettings, m.get, m.handleUpload, m.readFile].forEach((f) => f.mockReset());
+  [m.mediaForServing, m.getSiteSettings, m.readFile].forEach((f) => f.mockReset());
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
   setEnv();
-  vi.stubEnv("BLOB_READ_WRITE_TOKEN", "");
   vi.stubEnv("RESEND_API_KEY", "");
 });
 afterEach(() => {
@@ -48,24 +43,16 @@ afterEach(() => {
 
 const post = (body: unknown, raw?: string) =>
   POST(new Request("http://x/api/admin/media/upload", { method: "POST", body: raw ?? JSON.stringify(body) }));
-const sign = (o: Record<string, unknown> = {}) => post({ type: "r2.sign", name: "My Photo.PNG", contentType: "image/png", size: 1000, ...o });
+const sign = (o: Record<string, unknown> = {}) => post({ name: "My Photo.PNG", contentType: "image/png", size: 1000, ...o });
 
-describe("POST r2.sign", () => {
+describe("POST upload sign", () => {
   it("401 for non-admins, before anything else (even when R2 is off)", async () => {
     m.admin.on = false;
     expect((await sign()).status).toBe(401);
     vi.stubEnv("R2_BUCKET_PUBLIC", "");
-    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "t");
     expect((await sign()).status).toBe(401);
-    expect(m.handleUpload).not.toHaveBeenCalled();
   });
-  it("409 when R2 isn't configured but Blob is (client falls back to Blob)", async () => {
-    vi.stubEnv("R2_BUCKET_PUBLIC", "");
-    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "t");
-    const r = await sign();
-    expect(r.status).toBe(409);
-  });
-  it("503 when neither store is configured", async () => {
+  it("503 when R2 isn't configured", async () => {
     vi.stubEnv("R2_BUCKET_PUBLIC", "");
     expect((await sign()).status).toBe(503);
   });
@@ -130,17 +117,15 @@ describe("POST r2.sign", () => {
     const j = (await (await sign({ name: "scan", contentType: "application/pdf" })).json()) as { ref: string };
     expect(j.ref).toMatch(/^r2:media\/scan-[0-9a-f]{12}\.pdf$/);
   });
-  it("400 on malformed JSON, and on null/array/string bodies (falls to Blob handler which is mocked to throw)", async () => {
+  it("400 on malformed JSON, and on null/string/number bodies", async () => {
     expect((await post(null, "{nope")).status).toBe(400);
-    m.handleUpload.mockRejectedValue(new Error("bad body"));
-    for (const raw of ["null", "[]", '"r2.sign"', "123"]) expect((await post(null, raw)).status, raw).toBe(400);
+    for (const raw of ["null", '"r2.sign"', "123"]) expect((await post(null, raw)).status, raw).toBe(400);
   });
-  it("a body with type 'r2.sign' never reaches handleUpload", async () => {
-    await sign();
-    expect(m.handleUpload).not.toHaveBeenCalled();
+  it("an array body has no usable fields: 400 on type", async () => {
+    expect((await post(null, "[]")).status).toBe(400);
   });
   it("extra/prototype-polluting keys are ignored", async () => {
-    const r = await post(null, '{"type":"r2.sign","name":"a.png","contentType":"image/png","size":5,"__proto__":{"admin":true},"constructor":"x"}');
+    const r = await post(null, '{"name":"a.png","contentType":"image/png","size":5,"__proto__":{"admin":true},"constructor":"x"}');
     expect(r.status).toBe(200);
   });
 });
@@ -239,11 +224,14 @@ describe("GET /media/[name]", () => {
     m.mediaForServing.mockResolvedValue(null);
     expect((await call("zzz.png")).status).toBe(404);
   });
-  it("a legacy blob row is still served through Blob, not R2", async () => {
+  it("a legacy non-r2 row is 404 for everyone, with no storage fetch", async () => {
     m.mediaForServing.mockResolvedValue({ url: "https://s.private.blob.vercel-storage.com/media/a.png", content_type: "image/png", published: false });
-    m.get.mockResolvedValue({ statusCode: 200, stream: new Response("B").body, blob: { etag: '"b"' } });
-    const r = await call("a.png");
-    expect(r.status).toBe(200);
+    for (const admin of [false, true]) {
+      m.admin.on = admin;
+      expect((await call("a.png")).status).toBe(404);
+    }
+    m.mediaForServing.mockResolvedValue({ url: "https://s.blob.vercel-storage.com/media/a.png", content_type: "image/png", published: true });
+    expect((await call("a.png")).status).toBe(404);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
@@ -288,12 +276,12 @@ describe("GET /api/resume with R2", () => {
     fetchMock.mockImplementation(async () => new Response(null, { status: 403 }));
     expect(await (await resume()).text()).toBe("LOCALPDF");
   });
-  it("a Blob error also falls back to the bundled PDF", async () => {
+  it("a legacy non-r2 resume row falls back to the bundled PDF", async () => {
     m.getSiteSettings.mockResolvedValue({ resume: "/media/cv.pdf" });
     m.mediaForServing.mockResolvedValue({ url: "https://s.private.blob.vercel-storage.com/media/cv.pdf", content_type: "application/pdf" });
-    m.get.mockRejectedValue(new Error("blob down"));
     m.readFile.mockResolvedValue(Buffer.from("LOCALPDF"));
     expect(await (await resume()).text()).toBe("LOCALPDF");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
   it("a 304 from R2 (obj.ok false) falls back rather than sending an empty body", async () => {
     m.getSiteSettings.mockResolvedValue({ resume: "/media/cv.pdf" });

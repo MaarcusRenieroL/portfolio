@@ -3,9 +3,8 @@
 //   pnpm assets:upload --dry-run  only list what would happen
 // 1. public/{projects,certificates,logos,resume.pdf} → public bucket as projects/, certifications/, logos/, resume.pdf
 // 2. CORS on the private bucket, so the admin can upload to it straight from the browser
-// 3. media-library files still in Vercel Blob → private bucket, and their rows repointed to r2:media/...
-// 4. files that live content uses → copied to the public bucket (what every publish does from then on)
-// Reads R2_* and NEXT_PUBLIC_ASSETS_URL (and DATABASE_URL, BLOB_READ_WRITE_TOKEN for 3–4) from the env, .env.local or .env.
+// 3. files that live content uses → copied to the public bucket (what every publish does from then on)
+// Reads R2_* and NEXT_PUBLIC_ASSETS_URL (and DATABASE_URL for 3) from the env, .env.local or .env.
 import fs from "node:fs";
 import path from "node:path";
 import { AwsClient } from "aws4fetch";
@@ -89,7 +88,7 @@ else {
   console.log(r.ok ? `  PUT allowed from ${origins.join(", ")}` : `  couldn't set CORS (${r.status}); add it in the dashboard: ${await r.text()}`);
 }
 
-// 3 + 4 need the database
+// 3 needs the database
 if (!env.DATABASE_URL) {
   console.log("No DATABASE_URL: skipping the media library.");
   process.exit(0);
@@ -97,28 +96,7 @@ if (!env.DATABASE_URL) {
 const db = new pg.Client({ connectionString: env.DATABASE_URL });
 await db.connect();
 try {
-  console.log("3. Media library: Vercel Blob → private bucket");
-  const blobs = (await db.query("select id, url, pathname, content_type from media where url not like 'r2:%'")).rows;
-  if (blobs.length && !env.BLOB_READ_WRITE_TOKEN) console.log(`  ${blobs.length} file(s) in Blob, but no BLOB_READ_WRITE_TOKEN to read them`);
-  else {
-    const { get } = await import("@vercel/blob");
-    for (const m of blobs) {
-      if (DRY) {
-        console.log(`  would move ${m.pathname}`);
-        continue;
-      }
-      const b = await get(m.url, { access: "private" });
-      if (!b || b.statusCode !== 200) {
-        console.log(`  couldn't read ${m.pathname}; left as is`);
-        continue;
-      }
-      await put(env.R2_BUCKET_PRIVATE, m.pathname, Buffer.from(await new Response(b.stream).arrayBuffer()), m.content_type, "private, no-store");
-      await db.query("update media set url = $2 where id = $1", [m.id, `r2:${m.pathname}`]);
-    }
-    console.log(`  ${blobs.length} file(s)`);
-  }
-
-  console.log("4. Files live content uses → public bucket");
+  console.log("3. Files live content uses → public bucket");
   const texts = (
     await db.query(
       `select coalesce(published::text, '') || coalesce(published_de::text, '') t from content_item where not deleted and published is not null

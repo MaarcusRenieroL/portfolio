@@ -1,11 +1,10 @@
-import { del, head } from "@vercel/blob";
-import { FILE_TYPES, isBlobUrl, MAX_UPLOAD_BYTES, mediaSrc, type MediaItem } from "~/lib/media";
+import { FILE_TYPES, MAX_UPLOAD_BYTES, mediaSrc, type MediaItem } from "~/lib/media";
 import { audit } from "./auth";
 import { pool, query } from "./db";
 import { copyToPublic, deleteObject, headPrivate, isR2Ref, listPublic, R2_PREFIX, r2Configured } from "./r2";
 
-/** Uploads work when either store is set up. R2 wins when both are. */
-export const blobConfigured = () => r2Configured() || Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+/** Uploads need the R2 buckets set up. */
+export const storageConfigured = () => r2Configured();
 
 const COLS = "id::int as id, url, pathname, content_type, size, width, height, alt, created_at::text";
 
@@ -14,28 +13,22 @@ export async function listMedia(): Promise<MediaItem[]> {
 }
 
 /**
- * Record a finished client upload. The client only says which URL; size and type come from
- * the blob store itself, so a forged request can't register a file that isn't there.
+ * Record a finished upload. The client only says which `r2:` reference; size and type come from R2 itself,
+ * so a forged request can't register a file that isn't there.
  */
 export async function addMedia(url: string, width: number | null, height: number | null): Promise<MediaItem> {
-  let file: { url: string; pathname: string; contentType: string; size: number };
-  if (isR2Ref(url)) {
-    if (!r2Configured()) throw new Error("R2 isn't configured.");
-    const pathname = url.slice(R2_PREFIX.length);
-    if (!/^media\/[a-z0-9-]+\.[a-z0-9]+$/.test(pathname)) throw new Error("Bad file name.");
-    const h = await headPrivate(pathname);
-    if (!h) throw new Error("That upload isn't there.");
-    // The signed upload URL can't pin type or size, so a file that breaks the rules is deleted here.
-    if (!(FILE_TYPES as readonly string[]).includes(h.type) || !(h.size > 0 && h.size <= MAX_UPLOAD_BYTES)) {
-      await deleteObject("private", pathname);
-      throw new Error("That file type or size isn't allowed.");
-    }
-    file = { url, pathname, contentType: h.type, size: h.size };
-  } else {
-    if (!isBlobUrl(url)) throw new Error("Not a Vercel Blob URL.");
-    const blob = await head(url);
-    file = { url: blob.url, pathname: blob.pathname, contentType: blob.contentType, size: blob.size };
+  if (!isR2Ref(url)) throw new Error("Not an upload reference.");
+  if (!r2Configured()) throw new Error("R2 isn't configured.");
+  const pathname = url.slice(R2_PREFIX.length);
+  if (!/^media\/[a-z0-9-]+\.[a-z0-9]+$/.test(pathname)) throw new Error("Bad file name.");
+  const h = await headPrivate(pathname);
+  if (!h) throw new Error("That upload isn't there.");
+  // The signed upload URL can't pin type or size, so a file that breaks the rules is deleted here.
+  if (!(FILE_TYPES as readonly string[]).includes(h.type) || !(h.size > 0 && h.size <= MAX_UPLOAD_BYTES)) {
+    await deleteObject("private", pathname);
+    throw new Error("That file type or size isn't allowed.");
   }
+  const file = { url, pathname, contentType: h.type, size: h.size };
   const r = await query<MediaItem>(
     `insert into media (url, pathname, content_type, size, width, height)
        values ($1, $2, $3, $4, $5, $6)
@@ -53,11 +46,12 @@ export async function setMediaAlt(id: number, alt: string): Promise<void> {
 export async function removeMedia(id: number): Promise<void> {
   const row = (await query<{ url: string }>("select url from media where id = $1", [id])).rows[0];
   if (!row) return;
+  // An old record that isn't in R2 has no file here to delete; only the record goes.
   if (isR2Ref(row.url)) {
     const key = row.url.slice(R2_PREFIX.length);
     await deleteObject("public", key);
     await deleteObject("private", key);
-  } else await del(row.url);
+  }
   await query("delete from media where id = $1", [id]);
 }
 
@@ -109,7 +103,7 @@ export async function publishedMediaKeys(): Promise<Set<string>> {
   return mediaKeysIn((await query<{ t: string }>(LIVE_TEXT)).rows.map((r) => r.t));
 }
 
-/** Library files stored in R2 (as opposed to the older Blob store), by pathname. */
+/** Library files stored in R2, by pathname. */
 export async function r2MediaNames(): Promise<Set<string>> {
   return new Set((await query<{ pathname: string }>("select pathname from media where url like 'r2:%'")).rows.map((r) => r.pathname));
 }

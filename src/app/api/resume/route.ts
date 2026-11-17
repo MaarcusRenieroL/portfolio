@@ -1,4 +1,3 @@
-import { get } from "@vercel/blob";
 import { readFile } from "fs/promises";
 import path from "path";
 import { record } from "~/lib/server/analytics";
@@ -23,15 +22,10 @@ export async function GET() {
       // Live settings may already point at the assets domain: only the file name matters here.
       const name = /\/media\/([\w.-]+)$/.exec(resume)?.[1];
       const file = name ? await mediaForServing(name) : null;
-      if (file && file.content_type === "application/pdf") {
-        if (isR2Ref(file.url)) {
-          // Any storage error falls through to the bundled PDF below rather than failing the download.
-          const obj = await getPrivate(file.url.slice(R2_PREFIX.length)).catch(() => null);
-          if (obj?.ok) return new Response(obj.body, { headers });
-        } else {
-          const blob = await get(file.url, { access: "private" }).catch(() => null);
-          if (blob && blob.statusCode === 200) return new Response(blob.stream, { headers });
-        }
+      if (file && file.content_type === "application/pdf" && isR2Ref(file.url)) {
+        // Any storage error falls through to the bundled PDF below rather than failing the download.
+        const obj = await getPrivate(file.url.slice(R2_PREFIX.length)).catch(() => null);
+        if (obj?.ok) return new Response(obj.body, { headers });
       }
     }
     return new Response(await readFile(path.join(process.cwd(), "public", "resume.pdf")), { headers });

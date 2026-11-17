@@ -4,13 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   dbq: vi.fn(),
-  blob: { on: false },
   listPublic: vi.fn(async (_p: string) => [] as string[]),
   headPrivate: vi.fn(async (_k: string) => null as unknown),
 }));
 
 vi.mock("~/lib/server/db", () => ({ query: (...a: unknown[]) => h.dbq(...a), hasDb: () => true }));
-vi.mock("~/lib/server/media", () => ({ blobConfigured: () => h.blob.on }));
 vi.mock("~/lib/server/r2", async (orig) => {
   const real = await orig<typeof import("~/lib/server/r2")>();
   return { ...real, listPublic: (p: string) => h.listPublic(p), headPrivate: (k: string) => h.headPrivate(k) };
@@ -32,7 +30,6 @@ beforeEach(() => {
   h.dbq.mockReset();
   h.listPublic.mockReset().mockResolvedValue([]);
   h.headPrivate.mockReset().mockResolvedValue(null);
-  h.blob.on = false;
   vi.stubEnv("DATABASE_URL", "postgres://x/portfolio");
   for (const k of Object.keys(R2)) vi.stubEnv(k, "");
 });
@@ -113,10 +110,8 @@ describe("Site address row", () => {
 });
 
 describe("checkStorage", () => {
-  it("reports Blob, or off, without R2", async () => {
-    expect((await checkStorage()).state).toBe("off");
-    h.blob.on = true;
-    expect(await checkStorage()).toMatchObject({ state: "ok", detail: expect.stringContaining("Vercel Blob") });
+  it("reports off, saying R2 isn't set up, without R2", async () => {
+    expect(await checkStorage()).toMatchObject({ state: "off", detail: expect.stringContaining("R2 isn't set up") });
     expect(h.listPublic).not.toHaveBeenCalled();
   });
   it("with R2: ok when both buckets answer and the assets domain serves the résumé", async () => {

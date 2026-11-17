@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { MediaItem } from "~/lib/media";
 import { audit } from "~/lib/server/auth";
-import { addMedia, blobConfigured, listMedia, mediaUsage, removeMedia, setMediaAlt } from "~/lib/server/media";
+import { addMedia, storageConfigured, listMedia, mediaUsage, removeMedia, setMediaAlt } from "~/lib/server/media";
 import { requireAdmin } from "~/lib/server/session";
 import type { Result } from "./actions";
 
@@ -12,7 +12,7 @@ const fail = (e: unknown): { ok: false; errors: string[] } => ({ ok: false, erro
 export async function getMedia(): Promise<Result<{ items: MediaItem[]; configured: boolean }>> {
   await requireAdmin();
   try {
-    return { ok: true, items: await listMedia(), configured: blobConfigured() };
+    return { ok: true, items: await listMedia(), configured: storageConfigured() };
   } catch (e) {
     return fail(e);
   }
