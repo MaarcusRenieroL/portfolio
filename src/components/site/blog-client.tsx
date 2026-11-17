@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import * as m from "motion/react-m";
+import { AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -18,6 +19,8 @@ import { useListNav } from "~/components/site/use-list-nav";
 import { useDict } from "~/components/site/locale";
 import type { PostMeta } from "~/lib/data/blog";
 import { formatShortDate } from "~/lib/utils/date";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 
 export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?: "blog" | "notes" }) {
   const t = useDict()[kind];
@@ -49,6 +52,9 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
 
   const { active, setActive, search } = useListNav(rows.length, (i) => router.push(`${t.base}/${rows[i].slug}`));
 
+  // Nothing published: no search box, toggles or "All 0" chip over an empty page.
+  if (!posts.length) return <p className="muted">{t.empty}</p>;
+
   const isFiltered = q.trim() !== "" || tag !== "all";
 
   return (
@@ -59,7 +65,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
           {/* Enhanced Search Input */}
           <div className="blog-search-box">
             <SearchIcon width={15} height={15} className="blog-search-icon" aria-hidden="true" />
-            <input
+            <Input
               ref={search}
               type="search"
               className="blog-search-input"
@@ -69,14 +75,16 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
               aria-label={t.searchAria}
             />
             {q ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 className="blog-search-clear"
                 onClick={() => setQ("")}
                 aria-label="Clear search"
               >
                 ×
-              </button>
+              </Button>
             ) : (
               <kbd className="blog-search-kbd" aria-hidden="true">/</kbd>
             )}
@@ -84,52 +92,58 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
 
           {/* View Mode Toggle (Grid vs. List) */}
           <div className="blog-view-toggle" role="group" aria-label="Layout view">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               className={`blog-view-btn ${viewMode === "grid" ? "active" : ""}`}
               onClick={() => setViewMode("grid")}
               title="Card Grid view"
               aria-label="Grid view"
             >
               <LayoutGridIcon width={14} height={14} />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               className={`blog-view-btn ${viewMode === "list" ? "active" : ""}`}
               onClick={() => setViewMode("list")}
               title="Compact Editorial List view"
               aria-label="List view"
             >
               <ListIcon width={14} height={14} />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Topic Filter Chips with Item Counts */}
         <div className="chips" role="group" aria-label={t.filterAria}>
           {["all", ...tags].map((tg) => (
-            <button
+            <Button
               key={tg}
               type="button"
-              className={`chip ${tag === tg ? "active" : ""}`}
+              variant="chip"
+              className={tag === tg ? "active" : ""}
               aria-pressed={tag === tg}
               onClick={() => setTag(tg)}
             >
               <span>{tg === "all" ? t.all : tg}</span>
               <span className="chip-n">{tagCounts[tg] ?? 0}</span>
-            </button>
+            </Button>
           ))}
           {isFiltered && (
-            <button
+            <Button
               type="button"
-              className="chip blog-clear-chip"
+              variant="chip"
+              className="blog-clear-chip"
               onClick={() => {
                 setQ("");
                 setTag("all");
               }}
             >
               Reset
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -139,7 +153,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
         <ul className="blog-grid" aria-live="polite">
           <AnimatePresence mode="popLayout" initial={false}>
             {rows.map((p, i) => (
-              <motion.li
+              <m.li
                 key={p.slug}
                 layout="position"
                 initial={{ opacity: 0, y: 14 }}
@@ -187,7 +201,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
                     </div>
                   )}
                 </Link>
-              </motion.li>
+              </m.li>
             ))}
           </AnimatePresence>
         </ul>
@@ -198,7 +212,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
         <ul className="rows" aria-live="polite">
           <AnimatePresence mode="popLayout" initial={false}>
             {rows.map((p, i) => (
-              <motion.li
+              <m.li
                 key={p.slug}
                 layout="position"
                 initial={{ opacity: 0, y: 14 }}
@@ -221,7 +235,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
                     ))}
                   </span>
                 </Link>
-              </motion.li>
+              </m.li>
             ))}
           </AnimatePresence>
         </ul>
@@ -238,8 +252,9 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
           </h3>
           <p className="muted blog-empty-text">{t.none}</p>
           {isFiltered && (
-            <button
+            <Button
               type="button"
+              variant="outline"
               className="blog-empty-reset-btn"
               onClick={() => {
                 setQ("");
@@ -247,7 +262,7 @@ export function BlogClient({ posts, kind = "blog" }: { posts: PostMeta[]; kind?:
               }}
             >
               Clear filters
-            </button>
+            </Button>
           )}
         </div>
       )}

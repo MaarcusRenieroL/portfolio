@@ -24,7 +24,7 @@ export function Life() {
           root.style.setProperty("--my", `${e.clientY}px`);
         });
 
-        const tile = (e.target as Element | null)?.closest<HTMLElement>(".shot");
+        const tile = (e.target instanceof Element ? e.target : null)?.closest<HTMLElement>(".shot");
         if (!tile) return;
         const r = tile.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
@@ -34,7 +34,7 @@ export function Life() {
         tile.style.setProperty("--rx", `${(-y * 8).toFixed(2)}deg`);
       };
       const leave = (e: PointerEvent) => {
-        const tile = (e.target as Element | null)?.closest<HTMLElement>(".shot");
+        const tile = (e.target instanceof Element ? e.target : null)?.closest<HTMLElement>(".shot");
         if (!tile) return;
         delete tile.dataset.tilting;
         tile.style.removeProperty("--rx");

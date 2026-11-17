@@ -4,12 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LANG_COOKIE, stripLang } from "~/lib/i18n";
-import { NAV_LINKS, SITE } from "~/lib/content";
+import { NAV_LINKS, SITE } from "~/lib/site";
 import { FileIcon, GithubIcon, LinkedinIcon, MailIcon } from "~/components/site/icons";
 import { useDict, useLang, useLocalePath } from "~/components/site/locale";
-import { PaletteButton } from "~/components/site/command-palette";
+import { PaletteButton } from "~/components/site/palette-trigger";
 import { FooterShortcutsButton } from "~/components/site/shortcuts";
 import { ThemeToggle } from "~/components/site/theme-toggle";
+import { SoundToggle } from "~/components/site/sound-toggle";
+import { Button } from "~/components/ui/button";
 
 /** Header: name left, tools right, underlined tabs below. */
 export function Nav({ showWriting = true, showNotes = true }: { showWriting?: boolean; showNotes?: boolean }) {
@@ -134,11 +136,12 @@ export function Nav({ showWriting = true, showNotes = true }: { showWriting?: bo
             {SITE.name}
           </Link>
           <div className="header-actions">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               className="lang-switch"
               lang={other}
-              aria-label={t.chrome.otherLangAria}
+              aria-label={`${other.toUpperCase()}: ${t.chrome.otherLangAria}`}
               onClick={() => {
                 try {
                   document.cookie = `${LANG_COOKIE}=${other}; path=/; max-age=31536000; samesite=lax`;
@@ -147,9 +150,10 @@ export function Nav({ showWriting = true, showNotes = true }: { showWriting?: bo
               }}
             >
               {other.toUpperCase()}
-            </button>
+            </Button>
             <PaletteButton />
             <ThemeToggle />
+            <SoundToggle />
           </div>
         </div>
         <div
@@ -198,6 +202,8 @@ export function Footer() {
           </nav>
           <nav className="footer-meta" aria-label={t.site}>
             <Link href={href("/changelog")}>{t.changelog}</Link>
+            <Link href={href("/privacy")}>{t.privacy}</Link>
+            <Link href={href("/legal")}>{t.legal}</Link>
             <a href="/feed.xml">RSS</a>
             <FooterShortcutsButton />
           </nav>

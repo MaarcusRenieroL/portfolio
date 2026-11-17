@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { Crumb } from "~/components/site/json-ld";
 import Link from "next/link";
 import { Portrait } from "~/components/site/media";
-import { MEDIA } from "~/lib/content";
 import { DICT } from "~/lib/dict";
 import { localePath } from "~/lib/i18n";
 import { langOf } from "~/lib/lang";
 import { pageMeta } from "~/lib/seo";
+import { getSiteSettings, photoSrc } from "~/lib/server/settings";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   return pageMeta("about", await langOf(params), "/about");
@@ -14,10 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default async function AboutPage({ params }: { params: Promise<{ lang: string }> }) {
   const lang = await langOf(params);
   const t = DICT[lang].about;
+  const settings = await getSiteSettings();
   const href = (h: string) => localePath(lang, h);
 
   return (
     <div className="wrap page">
+      <Crumb params={params} k="about" />
       <header className="stack g24">
         <h1 className="title col">{t.title}</h1>
       </header>
@@ -33,7 +36,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
         </div>
 
         <figure className="portrait about-portrait">
-          <Portrait src={MEDIA.photo} alt={t.photoAlt} />
+          <Portrait src={photoSrc(settings)} alt={t.photoAlt} sizes="(min-width: 760px) 280px, 60vw" />
         </figure>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useDict } from "~/components/site/locale";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "~/components/ui/button";
 
 export const SHORTCUTS_EVENT = "shortcuts:open";
 
@@ -18,9 +19,14 @@ const typing = (t: EventTarget | null) => {
 export function FooterShortcutsButton() {
   const t = useDict().chrome;
   return (
-    <button type="button" className="footer-keys" onClick={() => window.dispatchEvent(new Event(SHORTCUTS_EVENT))}>
+    <Button
+      type="button"
+      variant="ghost"
+      className="footer-keys"
+      onClick={() => window.dispatchEvent(new Event(SHORTCUTS_EVENT))}
+    >
       {t.shortcuts} <kbd aria-hidden="true">?</kbd>
-    </button>
+    </Button>
   );
 }
 

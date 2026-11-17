@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SITE } from "~/lib/content";
+import { SITE } from "~/lib/site";
 import { useDict, useLocalePath } from "~/components/site/locale";
 import { NotFoundSearch } from "~/components/site/not-found-search";
 import type { SearchData } from "~/lib/site-content";
 import type { Action, Status } from "~/lib/status";
+import { Button } from "~/components/ui/button";
 
 type Props = {
   status: Status;
@@ -29,9 +30,9 @@ export function StatusView({ status, onRetry, digest, search }: Props) {
     switch (a) {
       case "retry":
         return (
-          <button key={a} type="button" className="action primary" onClick={retry}>
+          <Button key={a} type="button" variant="default" className="action primary" onClick={retry}>
             {t.retry}
-          </button>
+          </Button>
         );
       case "home":
         return (

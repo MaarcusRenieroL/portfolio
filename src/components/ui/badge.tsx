@@ -14,8 +14,8 @@ export function Badge({
     <div
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium tracking-wide transition-colors",
-        variant === "default" && "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30",
-        variant === "zoro" && "bg-emerald-950/80 text-emerald-300 border border-emerald-400/40 shadow-[0_0_10px_rgba(74,222,128,0.15)]",
+        variant === "default" && "bg-[var(--green)]/15 text-[var(--green)] border border-[var(--green)]/30",
+        variant === "zoro" && "bg-[var(--green-wash)] text-[var(--green)] border border-[var(--green)]/40 shadow-[0_0_10px_rgba(74,222,128,0.15)]",
         variant === "secondary" && "bg-neutral-900 text-neutral-300 border border-neutral-800",
         variant === "destructive" && "bg-red-500/10 text-red-400 border border-red-500/30",
         variant === "outline" && "border border-neutral-800 text-neutral-400",

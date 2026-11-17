@@ -5,6 +5,7 @@ import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { Toc } from "~/components/site/toc";
 import { ReadingProgress } from "~/components/site/reading-progress";
+import { CodeBlock } from "~/components/blog/code-block";
 import { ClockIcon, CalendarIcon, ArrowLeftIcon } from "~/components/site/icons";
 import { SITE } from "~/lib/content";
 import { getHeadings, makeIdGenerator } from "~/lib/data/blog";
@@ -27,7 +28,19 @@ export async function Article({ kind, slug, lang }: { kind: ArticleKind; slug: s
   const heading = (Tag: "h2" | "h3") =>
     function H({ children }: { children?: React.ReactNode }) {
       const text = String(Array.isArray(children) ? children.join("") : children ?? "");
-      return <Tag id={nextId(text)}>{children}</Tag>;
+      const id = nextId(text);
+      return (
+        <Tag id={id} className="group flex items-center gap-2 scroll-mt-24">
+          <span>{children}</span>
+          <a
+            href={`#${id}`}
+            className="opacity-0 group-hover:opacity-60 hover:!opacity-100 text-[var(--green)] transition-opacity text-sm font-mono no-underline select-none"
+            aria-label={`Link to ${text}`}
+          >
+            #
+          </a>
+        </Tag>
+      );
     };
 
   const jsonLd = {
@@ -81,8 +94,35 @@ export async function Article({ kind, slug, lang }: { kind: ArticleKind; slug: s
 
       <div className="article-grid">
         <div>
+          {/* Mobile/Tablet Inline Collapsible TOC */}
+          {headings.length >= 2 && (
+            <details className="lg:hidden mb-8 p-3.5 rounded-xl border border-[var(--line)] bg-[var(--hover)]/30 text-xs font-mono">
+              <summary className="cursor-pointer text-[var(--fg-3)] hover:text-[var(--fg)] font-medium select-none flex items-center justify-between">
+                <span>{t.onThisPage} ({headings.length})</span>
+                <span className="text-[10px] text-[var(--green)]" aria-hidden="true">▾</span>
+              </summary>
+              <ul className="mt-3 space-y-1.5 pl-2 border-l border-[var(--line)]">
+                {headings.map((h) => (
+                  <li key={h.id} style={{ paddingLeft: h.level === 3 ? "12px" : "0px" }}>
+                    <a href={`#${h.id}`} className="text-[var(--fg-2)] hover:text-[var(--green)] transition-colors">
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+
           <div className="prose">
-            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]} components={{ h2: heading("h2"), h3: heading("h3") }}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
+              components={{
+                h2: heading("h2"),
+                h3: heading("h3"),
+                pre: CodeBlock,
+              }}
+            >
               {body}
             </ReactMarkdown>
           </div>

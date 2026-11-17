@@ -1,27 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
-import { Analytics } from "@vercel/analytics/next";
+import { VercelAnalytics } from "~/components/site/vercel-analytics";
 import "../globals.css";
-import { Events } from "~/components/site/events";
-import { Scramble } from "~/components/site/scramble";
-import { Loader } from "~/components/site/loader";
 import { Footer, Nav } from "~/components/site/chrome";
-import { CommandPalette, type PaletteItem } from "~/components/site/command-palette";
-import { Life } from "~/components/site/life";
+import { LazyOverlays } from "~/components/site/lazy-overlays";
+import { IdleEffects } from "~/components/site/idle-effects";
+import { Loader } from "~/components/site/loader";
+import { SCHEDULE_EVENT } from "~/lib/booking";
 import { LocaleProvider } from "~/components/site/locale";
-import { Motion } from "~/components/site/motion";
-import { Particles } from "~/components/site/particles";
-import { ShortcutsHelp } from "~/components/site/shortcuts";
-import { ZoroAiBubble } from "~/components/zoro-ai/zoro-bubble";
-import { InteractiveTerminal } from "~/components/terminal/interactive-terminal";
 import { NAV_LINKS, SITE } from "~/lib/content";
 import { getPostList } from "~/lib/posts";
 import { DICT } from "~/lib/dict";
 import { LANGS, isLang, localePath, type Lang } from "~/lib/i18n";
-import { getSiteContent } from "~/lib/site-content";
-import type { Project } from "~/lib/schema";
+import { getSiteContent, type SkillGroup } from "~/lib/site-content";
+import type { Certificate, Project, Role } from "~/lib/schema";
 import { jsonLdString } from "~/lib/utils";
+import { siteGraph } from "~/lib/structured-data";
+import { getSiteSettings } from "~/lib/server/settings";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const code = JetBrains_Mono({ weight: ["400", "500"], subsets: ["latin"], variable: "--font-code", display: "swap" });
@@ -66,53 +62,28 @@ const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="light"||t=
 /** First visit in a tab plays the intro; later pages in the same tab skip it. */
 const INTRO_SCRIPT = `try{var s=window.sessionStorage;if(s.getItem("intro")){document.documentElement.dataset.intro="seen"}else{s.setItem("intro","1")}}catch(e){}`;
 
-const personJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: SITE.name,
-  jobTitle: "Full stack engineer",
-  url: SITE.url,
-  address: { "@type": "PostalAddress", addressLocality: "Chennai", addressCountry: "IN" },
-  sameAs: [SITE.github, SITE.linkedin],
-};
-
-function paletteItems(lang: Lang, showWriting: boolean, showNotes: boolean, projects: Project[]): PaletteItem[] {
-  const d = DICT[lang];
-  const navLabel = (href: string) => d.nav[(href === "/" ? "home" : href === "/blog" ? "writing" : href.slice(1)) as keyof typeof d.nav];
-  return [
-    ...NAV_LINKS.filter((l) => (showWriting || l.href !== "/blog") && (showNotes || l.href !== "/notes")).map((l): PaletteItem => ({ id: `page-${l.href}`, group: "Pages", label: navLabel(l.href), hint: localePath(lang, l.href), run: "href", value: localePath(lang, l.href) })),
-    { id: "page-now", group: "Pages", label: "Now", hint: localePath(lang, "/now"), run: "href", value: localePath(lang, "/now") },
-    { id: "page-schedule", group: "Pages", label: "Schedule Call", hint: localePath(lang, "/schedule"), run: "href", value: localePath(lang, "/schedule") },
-    ...projects
-      .filter((p) => p.site ?? p.github)
-      .map((p): PaletteItem => ({ id: `project-${p.slug}`, group: "Projects", label: p.name, hint: p.kind, keywords: p.skills.join(" "), run: "external", value: p.site ?? p.github })),
-    { id: "theme", group: "Actions", label: d.palette.items.theme, keywords: "dark light mode hell dunkel", run: "theme" },
-    { id: "vcard", group: "Actions", label: d.palette.items.vcard, keywords: "save contact vcard", run: "download", value: "/api/vcard" },
-    { id: "shortcuts", group: "Actions", label: d.palette.items.shortcuts, keywords: "keys help ?", run: "event", value: "shortcuts:open" },
-    ...(SITE.call ? [{ id: "call", group: "Actions", label: d.palette.items.call, run: "external", value: SITE.call } as PaletteItem] : []),
-    { id: "email", group: "Actions", label: d.palette.items.email, hint: SITE.email, run: "copy", value: SITE.email },
-    { id: "github", group: "Actions", label: d.palette.items.github, run: "external", value: SITE.github },
-    { id: "linkedin", group: "Actions", label: d.palette.items.linkedin, run: "external", value: SITE.linkedin },
-  ];
-}
-
 export default async function RootLayout({ children, params }: { children: React.ReactNode; params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  const { projects } = await getSiteContent(lang);
+  const { projects, roles, skills, certificates, education } = await getSiteContent(lang);
+  const settings = await getSiteSettings();
+  const graph = siteGraph({ lang, roles, education, skills: skills.flatMap((g) => g.items), photo: settings.photo || undefined });
   const showWriting = (await getPostList("post", lang)).length > 0;
   const showNotes = (await getPostList("note", lang)).length > 0;
 
   return (
     <html lang={lang} className={`${sans.variable} ${code.variable}`} suppressHydrationWarning>
       <head>
-        {/* Runs before first paint so a stored theme never flashes the wrong one. */}
+        {/* Raw inline script, not next/script: beforeInteractive in the App Router is
+            queued and runs after first paint, which would flash the wrong theme.
+            This runs during parse. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT + INTRO_SCRIPT }} />
+        {/* In the HTML itself so crawlers read it without running JavaScript. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(graph) }} />
       </head>
       <body>
+        <Loader />
         <LocaleProvider lang={lang}>
-          <Loader />
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(personJsonLd) }} />
           <div className="site">
             <a className="skip-link" href="#main">
               {DICT[lang].chrome.skip}
@@ -121,16 +92,10 @@ export default async function RootLayout({ children, params }: { children: React
             <main id="main">{children}</main>
             <Footer />
           </div>
-          <Particles />
-          <Motion />
-          <Scramble />
-          <Life />
-          <CommandPalette items={paletteItems(lang, showWriting, showNotes, projects)} />
-          <Analytics />
-          <Events />
-          <ShortcutsHelp />
-          <ZoroAiBubble />
-          <InteractiveTerminal />
+          <LazyOverlays />
+          <IdleEffects />
+          {/* Only on Vercel: elsewhere its script 404s. */}
+          {process.env.VERCEL ? <VercelAnalytics /> : null}
         </LocaleProvider>
       </body>
     </html>

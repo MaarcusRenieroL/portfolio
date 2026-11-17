@@ -9,6 +9,9 @@ import { useDict, useLang } from "~/components/site/locale";
 import { reasonsFor } from "~/lib/localize";
 import { type ContactState, sendContactMessage } from "~/lib/actions/contact";
 import { type ContactField, type ContactInput, type ContactOutput, contactFormSchema } from "~/lib/contact-schema";
+import { Button, MotionButton } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
 
 const idle: ContactState = { status: "idle", message: "" };
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY ?? "";
@@ -70,9 +73,9 @@ export function ContactForm() {
       <div className="stack g16" role="status" aria-live="polite">
         <h2 className="h2">{t.sentH}</h2>
         <p className="muted">{t.sentP}</p>
-        <button className="action" type="button" onClick={() => setSent(false)}>
+        <Button variant="outline" className="action" type="button" onClick={() => setSent(false)}>
           {t.another}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -92,31 +95,40 @@ export function ContactForm() {
         </legend>
         <div className="reasons">
           {REASONS.map((r) => (
-            <button key={r.id} type="button" className="reason" aria-pressed={reason === r.id} onClick={() => setValue("reason", r.id as ContactInput["reason"])}>
+            <MotionButton
+              key={r.id}
+              type="button"
+              variant="ghost"
+              className="reason"
+              aria-pressed={reason === r.id}
+              onClick={() => setValue("reason", r.id as ContactInput["reason"])}
+              whileHover={{ y: -1.5, scale: 1.03 }}
+              whileTap={{ scale: 0.95 }}
+            >
               {r.label}
-            </button>
+            </MotionButton>
           ))}
         </div>
       </fieldset>
 
       <div className="field">
         <label htmlFor="f-n">{t.name}</label>
-        <input className="input" autoComplete="name" {...field("name", "f-n")} />
+        <Input className="input" autoComplete="name" {...field("name", "f-n")} />
         {errors.name && <span id="e-n" className="err">{tr(errors.name.message)}</span>}
       </div>
       <div className="field">
         <label htmlFor="f-e">{t.mail}</label>
-        <input className="input" type="email" autoComplete="email" placeholder="you@company.com" {...field("email", "f-e")} />
+        <Input className="input" type="email" autoComplete="email" placeholder="you@company.com" {...field("email", "f-e")} />
         {errors.email && <span id="e-e" className="err">{tr(errors.email.message)}</span>}
       </div>
       <div className="field">
         <label htmlFor="f-o">{t.org}</label>
-        <input className="input" {...field("org", "f-o")} />
+        <Input className="input" {...field("org", "f-o")} />
         {errors.org && <span id="e-o" className="err">{tr(errors.org.message)}</span>}
       </div>
       <div className="field">
         <label htmlFor="f-m">{t.message}</label>
-        <textarea className="input" placeholder={cur.placeholder} {...field("message", "f-m")} />
+        <Textarea className="input" placeholder={cur.placeholder} {...field("message", "f-m")} />
         {errors.message && <span id="e-m" className="err">{tr(errors.message.message)}</span>}
       </div>
 
@@ -125,7 +137,14 @@ export function ContactForm() {
       {errors.root?.server && <p className="err" role="alert">{tr(errors.root.server.message)}</p>}
 
       <div className="stack g16">
-        <button className="send" type="submit" disabled={isSubmitting}>
+        <MotionButton
+          variant="default"
+          className="send"
+          type="submit"
+          disabled={isSubmitting}
+          whileHover={{ y: -2, scale: 1.03 }}
+          whileTap={{ scale: 0.95 }}
+        >
           {isSubmitting ? (
             <>
               <span className="spin" aria-hidden="true" />
@@ -134,7 +153,7 @@ export function ContactForm() {
           ) : (
             t.send
           )}
-        </button>
+        </MotionButton>
         <span className="help">{t.help}</span>
         {/* Announces progress and validation results to screen readers. */}
         <span className="sr-only" role="status" aria-live="polite">

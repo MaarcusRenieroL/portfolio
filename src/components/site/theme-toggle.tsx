@@ -3,6 +3,7 @@
 import { flushSync } from "react-dom";
 import { useSyncExternalStore } from "react";
 import { useDict } from "~/components/site/locale";
+import { Button } from "~/components/ui/button";
 
 type Theme = "light" | "dark";
 
@@ -82,7 +83,15 @@ export function ThemeToggle() {
   const label = useDict().chrome.themeTo(next);
 
   return (
-    <button type="button" className="theme-toggle" onClick={(e) => choose(next, e.currentTarget)} aria-label={label} title={label}>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="theme-toggle"
+      onClick={(e) => choose(next, e.currentTarget)}
+      aria-label={label}
+      title={label}
+    >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         {theme === "dark" ? (
           <>
@@ -93,6 +102,6 @@ export function ThemeToggle() {
           <path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z" />
         )}
       </svg>
-    </button>
+    </Button>
   );
 }

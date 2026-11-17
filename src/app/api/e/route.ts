@@ -13,7 +13,10 @@ export async function POST(req: Request) {
   try {
     const text = await req.text();
     if (text.length > 1000) return empty;
-    body = JSON.parse(text);
+    const parsed: unknown = JSON.parse(text);
+    // null, numbers, strings and arrays are valid JSON but not an event.
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return empty;
+    body = parsed as typeof body;
   } catch {
     return empty;
   }

@@ -9,7 +9,11 @@ export const Input = React.forwardRef<
     <input
       type={type}
       className={cn(
-        "flex h-9 w-full rounded-md border border-neutral-800 bg-[#060a08] px-3 py-1 text-sm text-neutral-100 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500 focus-visible:outline-none focus-visible:border-emerald-500 focus-visible:ring-1 focus-visible:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50",
+        "font-inherit text-[13px] text-[var(--fg)] placeholder:text-[var(--fg-3)] transition-colors duration-160 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        // Standalone input styling matching .input
+        "w-full bg-transparent border border-[var(--line)] rounded-[6px] px-2.5 py-1.5 hover:border-[var(--line-2)] focus:border-[var(--green)] focus:bg-[var(--hover)]",
+        // Inside search bar: reset borders, bg, and padding
+        "[.search_&]:border-0 [.search_&]:bg-transparent [.search_&]:p-0 [.search_&]:rounded-none [.search_&]:text-[14px] [.search_&]:flex-1 [.search_&]:min-w-0 [.search_&]:hover:border-0 [.search_&]:focus:bg-transparent [.search_&]:focus:border-0",
         className
       )}
       ref={ref}

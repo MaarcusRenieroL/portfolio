@@ -1,16 +1,10 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
-  --color-zoro-bg: #050505;
-  --color-zoro-surface: #090e0c;
-  --color-zoro-card: #0c120f;
-  --color-zoro-border: rgba(74, 222, 128, 0.15);
-  --color-zoro-border-glow: rgba(74, 222, 128, 0.4);
-  --color-zoro-emerald: #10b981;
-  --color-zoro-neon: #4ade80;
-  --color-zoro-glow: #00ff88;
-  --color-zoro-katana: #34d399;
-}
+/* The public stylesheet only carries utilities the public pages use. The admin and its
+   block editor generate their own in admin/admin.css, so visitors don't download them. */
+@source not "./admin";
+@source not "../components/block-editor";
 
 /* Equalizer keyframe animations */
 @keyframes music-bar {
@@ -191,13 +185,15 @@ ol {
   list-style: none;
 }
 
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
+@layer base {
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
 }
 
 /* ---------- Layout ---------- */
@@ -647,8 +643,85 @@ button {
 .socials a:hover,
 .socials a:focus-visible {
   background: var(--hover);
-  color: var(--green);
   border-color: var(--line-2);
+}
+
+.hero-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hero-presence {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.presence-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg-2);
+  font-size: 12px;
+  text-decoration: none;
+  transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease), transform var(--t-base) var(--ease);
+}
+
+.presence-pill:hover {
+  background: var(--hover);
+  color: var(--fg);
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+}
+
+.presence-pill svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.presence-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.presence-dot.online {
+  background: var(--green);
+  box-shadow: 0 0 0 3px var(--green-wash);
+}
+
+.presence-dot.idle {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+}
+
+.presence-dot.dnd {
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.presence-dot.offline {
+  background: var(--fg-3);
+}
+
+.presence-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Selected work: image on top, caption beneath, three across. */
@@ -656,6 +729,11 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+/* Fewer than three featured projects: share the row instead of leaving an empty column. */
+@media (min-width: 721px) {
+  .strip:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .strip:has(> :only-child) { grid-template-columns: minmax(0, 1fr); }
 }
 
 .shot {
@@ -1168,6 +1246,19 @@ textarea.input {
 .send:hover:not(:disabled) { opacity: 0.85; }
 .send:disabled { opacity: 0.5; cursor: progress; }
 
+/* A skill that opens "where I used this": looks like its surrounding text, behaves like a button. */
+.skill-link {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+.skill-link:hover { color: var(--green); }
+.skill-link:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; border-radius: 3px; }
+
 .spin {
   width: 12px;
   height: 12px;
@@ -1191,7 +1282,7 @@ textarea.input {
   --my: 0px;
 }
 
-/* Ambient light: a fixed glow at the top, plus a soft spotlight that follows the pointer. */
+/* Ambient light: a fixed glow at the top, plus a soft spotlight that follows the pointer (set by life.tsx). */
 .site::before {
   content: "";
   position: fixed;
@@ -1342,7 +1433,7 @@ textarea.input {
 
 .job:hover .logo { transform: rotate(-6deg) scale(1.06); }
 
-/* Project tiles lean toward the pointer (the tilt is set from script). */
+/* Project tiles lean toward the pointer (the tilt is set from life.tsx). */
 .shot {
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
   transition: transform var(--t-base) var(--ease), border-color var(--t-fast) var(--ease), box-shadow var(--t-base) var(--ease);
@@ -1389,25 +1480,28 @@ textarea.input {
   border-color: var(--line-2);
 }
 
-/* Buttons and socials: lift on hover, press on click. */
+/* Buttons and actions: lift on hover, press on click.
+   The shadcn Button carries the same motion as utilities; these cover the plain CSS buttons. */
 .action,
-.send,
-.socials a {
+.send {
   transition: transform var(--t-base) var(--ease), background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease), box-shadow var(--t-base) var(--ease);
 }
 
 .action:hover,
-.send:hover:not(:disabled),
-.socials a:hover {
+.send:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
 .action:active,
-.send:active:not(:disabled),
-.socials a:active {
+.send:active:not(:disabled) {
   transform: scale(0.97);
   transition-duration: 80ms;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .action, .send { transform: none !important; }
+}
+
 
 .cta .action:hover,
 .send:hover:not(:disabled) {
@@ -1660,7 +1754,7 @@ body { font-size: 15px; line-height: 1.55; }
   color: var(--fg-3);
 }
 
-.facts dd { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--fg); }
+.facts dd { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--fg); overflow-wrap: anywhere; }
 
 .stats {
   grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
@@ -1714,6 +1808,8 @@ body { font-size: 15px; line-height: 1.55; }
 @media (max-width: 640px) {
   .page { padding-block: 40px 88px; gap: 56px; }
   .facts { gap: 18px 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* A long value (an email address) gets the whole row instead of running into its neighbour. */
+  .facts > .facts-wide { grid-column: 1 / -1; }
 }
 
 /* Experience: one timeline, newest first. */
@@ -1841,20 +1937,47 @@ kbd {
   line-height: 18px;
 }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
 
 .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   height: 26px;
   padding: 0 10px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 9999px;
   color: var(--fg-2);
+  background: transparent;
   font-size: 12px;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
   transition: color 160ms var(--ease), border-color 160ms var(--ease), background 160ms var(--ease);
 }
 
-.chip:hover { color: var(--fg); border-color: var(--line-2); }
-.chip[aria-pressed="true"] { color: var(--green-ink); background: var(--green); border-color: var(--green); }
+.chip:hover {
+  color: var(--fg);
+  border-color: var(--line-2);
+  background: var(--hover);
+}
+
+.chip[aria-pressed="true"],
+.chip.active {
+  color: var(--green-ink);
+  background: var(--green);
+  border-color: var(--green);
+  font-weight: 500;
+}
 
 .rows { display: flex; flex-direction: column; }
 .rows > li { border-bottom: 1px solid var(--line); position: relative; transition: background 160ms var(--ease); }
@@ -1897,14 +2020,12 @@ kbd {
 /* ---------- Table of contents and article layout ---------- */
 
 .article-grid { display: grid; gap: 40px; }
-
-@media (min-width: 1024px) {
-  .article-grid { grid-template-columns: minmax(0, var(--col)) 14rem; justify-content: center; gap: 64px; align-items: start; }
-  .toc { position: sticky; top: 32px; }
-}
-
 .toc { display: none; flex-direction: column; gap: 10px; font-size: 12px; }
-@media (min-width: 1024px) { .toc { display: flex; } }
+
+@media (min-width: 960px) {
+  .article-grid { grid-template-columns: minmax(0, 1fr) 14rem; gap: 48px; align-items: start; }
+  .toc { display: flex; position: sticky; top: 32px; }
+}
 .toc-h { color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; }
 .toc ul { display: flex; flex-direction: column; border-left: 1px solid var(--line); }
 .toc a { display: block; padding: 4px 0 4px 12px; margin-left: -1px; border-left: 1px solid transparent; color: var(--fg-3); transition: color 160ms var(--ease), border-color 160ms var(--ease); }
@@ -1926,9 +2047,181 @@ a.orglink:hover { color: var(--green); }
 /* ---------- Contact block ---------- */
 
 .contact-block { display: flex; flex-direction: column; gap: 14px; padding-block: 24px 8px; }
-.contact-mail { font-size: clamp(1.4rem, 4vw, 2.2rem); font-weight: 600; letter-spacing: -0.02em; width: fit-content; border-bottom: 1px solid var(--line-2); transition: color 160ms var(--ease), border-color 160ms var(--ease); }
+.contact-mail { font-size: clamp(1.15rem, 5.4vw, 2.2rem); font-weight: 600; letter-spacing: -0.02em; width: fit-content; max-width: 100%; overflow-wrap: anywhere; border-bottom: 1px solid var(--line-2); transition: color 160ms var(--ease), border-color 160ms var(--ease); }
 .contact-mail:hover { color: var(--green); border-color: var(--green); }
 .contact-links { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- GitHub contribution heatmap ---------- */
+
+.contrib-box {
+  --c0: #161b22;
+  --c1: #0e4429;
+  --c2: #006d32;
+  --c3: #26a641;
+  --c4: #39d353;
+  --c-edge: rgba(255, 255, 255, 0.05);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+:root[data-theme="light"] .contrib-box { --c0: #ebedf0; --c1: #9be9a8; --c2: #40c463; --c3: #30a14e; --c4: #216e39; --c-edge: rgba(0, 0, 0, 0.05); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .contrib-box { --c0: #ebedf0; --c1: #9be9a8; --c2: #40c463; --c3: #30a14e; --c4: #216e39; --c-edge: rgba(0, 0, 0, 0.05); }
+}
+
+.contrib-scroll {
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.contrib-grid-wrap {
+  min-width: 680px;
+  user-select: none;
+}
+
+.contrib-months {
+  display: grid;
+  gap: 3px;
+  height: 18px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+.contrib-weeks {
+  display: grid;
+  gap: 3px;
+}
+
+.contrib-week {
+  display: grid;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.contrib-cell,
+.contrib-legend-cell {
+  border-radius: 2.5px;
+  background: var(--c0);
+  box-shadow: inset 0 0 0 1px var(--c-edge);
+}
+
+.contrib-cell {
+  aspect-ratio: 1;
+  transition: transform 100ms var(--ease);
+}
+
+.contrib-cell:hover {
+  outline: 1px solid var(--green);
+  outline-offset: 1px;
+  transform: scale(1.15);
+}
+
+.contrib-legend-cell {
+  width: 11px;
+  height: 11px;
+}
+
+.contrib-cell[data-level="1"], .contrib-legend-cell[data-level="1"] { background: var(--c1); }
+.contrib-cell[data-level="2"], .contrib-legend-cell[data-level="2"] { background: var(--c2); }
+.contrib-cell[data-level="3"], .contrib-legend-cell[data-level="3"] { background: var(--c3); }
+.contrib-cell[data-level="4"], .contrib-legend-cell[data-level="4"] { background: var(--c4); }
+
+.contrib-tip {
+  position: absolute;
+  z-index: 10;
+  padding: 4px 9px;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 8px));
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.contrib-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-top: 4px;
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+.contrib-foot a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contrib-foot a:hover { color: var(--green); }
+
+.contrib-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.contrib-legend-scale {
+  display: flex;
+  gap: 3px;
+}
+
+/* ---------- Anime cursor (components/cursor/zoro-cyber-cursor.tsx) ---------- */
+
+.zoro-cursor { transition: opacity 160ms var(--ease); }
+.zoro-cursor.is-hidden { opacity: 0; pointer-events: none; }
+.zoro-cursor.is-visible { opacity: 1; }
+
+.hud-corner {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: var(--green);
+  border-style: solid;
+  border-width: 0;
+}
+.hud-top-left { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+.hud-top-right { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+.hud-bottom-left { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.hud-bottom-right { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+.zoro-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--green) 30%, transparent);
+  animation: zoro-spin 8s linear infinite;
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.zoro-ring.is-hot {
+  border-color: var(--green);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--green) 40%, transparent);
+  animation-duration: 2.5s;
+}
+
+@keyframes zoro-spin { to { transform: rotate(360deg); } }
+
+.katana-slash-beam { animation: katana-slash 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes katana-slash {
+  from { opacity: 1; transform: rotate(-45deg) scaleY(1); }
+  to { opacity: 0; transform: rotate(-45deg) scaleY(2.2); }
+}
+
+@media print {
+  .zoro-cursor { display: none !important; }
+}
 
 /* ---------- Typographic polish ---------- */
 
@@ -1961,7 +2254,8 @@ html.lenis, html.lenis body { height: auto; }
   gap: 8px;
 }
 
-.theme-toggle {
+.theme-toggle,
+.sound-toggle {
   display: inline-grid;
   place-items: center;
   width: 30px;
@@ -1972,7 +2266,8 @@ html.lenis, html.lenis body { height: auto; }
   transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease);
 }
 
-.theme-toggle:hover {
+.theme-toggle:hover,
+.sound-toggle:hover {
   background: var(--hover);
   color: var(--fg);
   border-color: var(--line-2);
@@ -1980,16 +2275,19 @@ html.lenis, html.lenis body { height: auto; }
 
 @media (pointer: coarse) {
   .theme-toggle,
+  .sound-toggle,
   .header .action {
     height: 40px;
   }
-  .theme-toggle {
+  .theme-toggle,
+  .sound-toggle {
     width: 40px;
   }
 }
 
 @media print {
-  .theme-toggle { display: none !important; }
+  .theme-toggle,
+  .sound-toggle { display: none !important; }
 }
 
 /* ---------- Entrances and scroll reveals (CSS only) ---------- */
@@ -2005,12 +2303,20 @@ html.lenis, html.lenis body { height: auto; }
   to { opacity: 1; transform: none; }
 }
 
+/* First screen only: slide, don't fade. Text that starts at opacity 0 doesn't count as painted, so a
+   fade-in delays Largest Contentful Paint until the animation's first frame, which waits behind
+   hydration on slow phones. Sliding keeps the motion and the text is visible from the first paint. */
+@keyframes rise-in {
+  from { transform: translateY(14px); }
+  to { transform: none; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* First screen: rises in order. */
   .hero > *,
   .page > header > *,
   .page > .hero + * {
-    animation: rise var(--t-slow) var(--ease) both;
+    animation: rise-in var(--t-slow) var(--ease) both;
     animation-delay: calc(var(--i, 0) * 70ms);
   }
   .hero > :nth-child(2), .page > header > :nth-child(2) { --i: 1; }
@@ -2083,6 +2389,7 @@ html.lenis, html.lenis body { height: auto; }
 @media print {
   .particles { display: none !important; }
 }
+
 
 /* ---------- Theme change: a circle grows from the toggle ---------- */
 
@@ -2214,94 +2521,186 @@ html.lenis, html.lenis body { height: auto; }
   image-rendering: -webkit-optimize-contrast;
 }
 
-/* ---------- Intro loader: three cuts, then the screen splits ---------- */
+/* ---------- Intro loader: three-sword style (swords cross, three cuts, screen splits) ---------- */
+/* Timeline: swords cross 0-0.4s, cuts 0.3-0.74s, split 0.62-1.07s, gone at 1.12s. */
 
-.zoro {
+.zoro-loader {
+  --zl-core: #fff;
+  --zl-glow: var(--green);
+  --zl-blade: #dcdce1;
+  --zl-edge: rgba(0, 0, 0, 0.35);
   position: fixed;
   inset: 0;
   z-index: 300;
+  overflow: hidden;
   pointer-events: none;
-  animation: zoro-gone 0s linear 1.65s forwards;
+  animation: zl-done 0s linear 1.12s forwards;
 }
 
-.zoro-half {
+:root[data-theme="light"] .zoro-loader { --zl-core: #052e16; --zl-blade: #c9c9d0; --zl-edge: rgba(0, 0, 0, 0.45); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .zoro-loader { --zl-core: #052e16; --zl-blade: #c9c9d0; --zl-edge: rgba(0, 0, 0, 0.45); }
+}
+
+/* The two halves of the screen, cut along the last slash (-4deg through centre). */
+.zl-half {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--zl-glow) 65%, transparent));
+  will-change: transform;
+}
+.zl-half::before {
+  content: "";
   position: absolute;
   inset: 0;
   background: var(--bg);
 }
+.zl-top::before { clip-path: polygon(0 0, 100% 0, 100% calc(50% - 3.5vw), 0 calc(50% + 3.5vw)); }
+.zl-bot::before { clip-path: polygon(0 calc(50% + 3.5vw - 1px), 100% calc(50% - 3.5vw - 1px), 100% 100%, 0 100%); }
+.zl-top { animation: zl-split-top 0.45s cubic-bezier(0.65, 0, 0.35, 1) 0.62s forwards; }
+.zl-bot { animation: zl-split-bot 0.45s cubic-bezier(0.65, 0, 0.35, 1) 0.62s forwards; }
 
-.zoro-a {
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  animation: zoro-away-a 0.62s cubic-bezier(0.7, 0, 0.2, 1) 1s forwards;
-}
+@keyframes zl-split-top { to { transform: translate(-12vw, -62vh) rotate(-1.5deg); } }
+@keyframes zl-split-bot { to { transform: translate(12vw, 62vh) rotate(1.5deg); } }
 
-.zoro-b {
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-  animation: zoro-away-b 0.62s cubic-bezier(0.7, 0, 0.2, 1) 1s forwards;
-}
-
-.zoro-slashes {
+/* Emblem: three katana crossing, with 三刀流 under them. */
+.zl-emblem {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: min(340px, 66vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  animation: zl-emblem-out 0.16s ease-in 0.52s forwards;
+}
+
+.zl-swords {
+  position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1 / 0.62;
+}
+
+.zl-katana {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: auto;
+  margin-top: -3%;
   overflow: visible;
-  animation: zoro-fade 0.2s linear 0.98s forwards;
+  opacity: 0;
+}
+.zl-k1 { animation: zl-k1 0.3s cubic-bezier(0.2, 0.9, 0.25, 1) both; }
+.zl-k2 { animation: zl-k2 0.3s cubic-bezier(0.2, 0.9, 0.25, 1) 0.04s both; }
+.zl-k3 { animation: zl-k3 0.3s cubic-bezier(0.2, 0.9, 0.25, 1) 0.1s both; }
+
+@keyframes zl-k1 {
+  from { opacity: 0; transform: translateX(-16%) rotate(-60deg); }
+  to { opacity: 1; transform: rotate(-32deg); }
+}
+@keyframes zl-k2 {
+  from { opacity: 0; transform: scaleX(-1) translateX(-16%) rotate(-60deg); }
+  to { opacity: 1; transform: scaleX(-1) rotate(-32deg); }
+}
+@keyframes zl-k3 {
+  from { opacity: 0; transform: translateX(-28%) scale(0.94); }
+  to { opacity: 1; transform: translateX(0) scale(0.94); }
 }
 
-.zoro-slashes path {
-  fill: none;
-  stroke: var(--green);
-  stroke-width: 2.5px;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  /* Non-scaling strokes measure dashes in screen pixels, so use a length longer than any screen diagonal. */
-  stroke-dasharray: 5000;
-  stroke-dashoffset: 5000;
-  filter: drop-shadow(0 0 6px var(--green));
-  animation: zoro-draw 0.3s cubic-bezier(0.3, 0, 0.1, 1) var(--d) forwards;
+.zl-metal { fill: #a1a1aa; }
+.zl-handle { stroke: var(--zl-edge); stroke-width: 0.8; }
+.zl-guard { fill: #27272a; stroke: #a1a1aa; stroke-width: 1; }
+.zl-blade { fill: var(--zl-blade); stroke: var(--zl-edge); stroke-width: 0.7; }
+.zl-hamon { fill: none; stroke: rgba(255, 255, 255, 0.75); stroke-width: 0.9; }
+
+.zl-kanji {
+  margin-top: 8px;
+  padding-left: 0.7em;
+  font-size: 13px;
+  letter-spacing: 0.7em;
+  color: var(--fg-3);
+  opacity: 0;
+  animation: zl-fade-in 0.2s ease-out 0.16s forwards;
 }
 
-.zoro-mark {
+@keyframes zl-fade-in { to { opacity: 1; } }
+@keyframes zl-emblem-out { to { opacity: 0; transform: translate(-50%, -50%) scale(1.06); } }
+
+/* Three blade-light cuts across the whole screen. */
+.zl-slash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 170vmax;
+  height: 3px;
+  margin: -1.5px 0 0 -85vmax;
+}
+.zl-slash::before {
+  content: "";
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  font-family: var(--mono);
-  font-size: 1rem;
-  letter-spacing: 0.5em;
-  color: var(--fg-2);
-  animation: zoro-mark 0.95s ease both;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--zl-core) 30%, var(--zl-core) 70%, transparent);
+  box-shadow: 0 0 10px 1px var(--zl-glow), 0 0 28px 3px var(--zl-glow);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  animation: zl-cut 0.28s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.zl-s1 { transform: rotate(-24deg); }
+.zl-s2 { transform: rotate(19deg); }
+.zl-s3 { transform: rotate(-4deg); }
+.zl-s1::before { animation-delay: 0.3s; }
+.zl-s2::before { animation-delay: 0.38s; transform-origin: 100% 50%; }
+.zl-s3::before { animation-delay: 0.46s; }
+
+@keyframes zl-cut {
+  0% { transform: scaleX(0); opacity: 1; }
+  45% { transform: scaleX(1) scaleY(1); opacity: 1; }
+  100% { transform: scaleX(1) scaleY(0.2); opacity: 0; }
 }
 
-@keyframes zoro-draw { to { stroke-dashoffset: 0; } }
-@keyframes zoro-fade { to { opacity: 0; } }
-@keyframes zoro-mark {
-  0% { opacity: 0; }
-  25%, 62% { opacity: 1; }
-  100% { opacity: 0; }
-}
-@keyframes zoro-away-a { to { transform: translate(-58%, -58%); } }
-@keyframes zoro-away-b { to { transform: translate(58%, 58%); } }
-@keyframes zoro-gone { to { visibility: hidden; } }
+@keyframes zl-done { to { visibility: hidden; } }
 
-html[data-intro="seen"] .zoro { display: none; }
+html[data-intro="seen"] .zoro-loader { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .zoro { display: none; }
+  .zoro-loader { display: none; }
 }
 
 @media print {
-  .zoro { display: none; }
+  .zoro-loader { display: none; }
 }
 
-/* The page's own entrances wait for the cut, but only when the intro plays. */
+/* Ultra-fast instant page entrance without artificial delays */
 @media (prefers-reduced-motion: no-preference) {
-  html:not([data-intro="seen"]) .hero > *,
-  html:not([data-intro="seen"]) .page > header > *,
-  html:not([data-intro="seen"]) .page > .hero + * {
-    animation-delay: calc(var(--i, 0) * 70ms + 1000ms);
+  .hero > *,
+  .page > header > *,
+  .page > .hero + * {
+    animation-delay: calc(var(--i, 0) * 20ms);
   }
+}
+
+/* Native hardware-accelerated smooth scroll */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Off-screen paint optimization for long content lists */
+.timeline-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 120px;
 }
 
 /* ---------- Command palette ---------- */
@@ -2445,6 +2844,10 @@ html[data-intro="seen"] .zoro { display: none; }
 /* Skills page: one flat set of pills, no cards. */
 .skill-flat { gap: 8px; }
 .skill-flat li { padding: 5px 14px; font-size: 13px; }
+/* A skill with usage: the button fills the pill so the whole pill is tappable. */
+.skill-chips li:has(> .skill-link) { padding: 0; }
+.skill-chips li > .skill-link { display: block; padding: 3px 10px; border-radius: inherit; }
+.skill-flat li > .skill-link { padding: 5px 14px; }
 
 /* ---------- Certifications ---------- */
 
@@ -2459,7 +2862,6 @@ html[data-intro="seen"] .zoro { display: none; }
 .cert {
   display: flex;
   flex-direction: column;
-  aspect-ratio: 1 / 1;
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -2563,7 +2965,7 @@ html[data-intro="seen"] .zoro { display: none; }
 @media print {
   :root, :root[data-theme] { --bg: #fff; --fg: #000; --fg-2: #222; --fg-3: #444; --line: #bbb; --line-2: #999; --green: #000; }
   html, body { background: #fff !important; color: #000 !important; }
-  .header, .footer, .particles, .zoro, .palette-backdrop, .skip-link, .site::before { display: none !important; }
+  .header, .footer, .particles, .palette-backdrop, .skip-link, .site::before { display: none !important; }
   .site { display: block; }
   .page { padding: 0 !important; gap: 12px; }
   body:has(.resume-print) .page > header,
@@ -3075,4 +3477,46 @@ html[data-intro="seen"] .zoro { display: none; }
   .blog-card {
     padding: 18px 16px;
   }
+}
+
+/* Kept last so it wins over each component's own `transition` shorthand. */
+/* shadcn Buttons that also carry a site class with its own `transition` list: keep the
+   Button's lift/press (translate, scale) animated instead of snapping. */
+.theme-toggle,
+.sound-toggle,
+.palette-btn,
+.footer-keys,
+.chip,
+.lang-switch {
+  transition-property: background, background-color, color, border-color, opacity, box-shadow, translate, scale;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease);
+}
+
+/* Touch screens: keyboard hints are meaningless, and small controls need a thumb-sized target. */
+@media (pointer: coarse) {
+  .footer-keys,
+  .search kbd,
+  .blog-search-kbd { display: none !important; }
+  .reason { height: 36px; }
+  .skill-chips li > .skill-link { padding-block: 7px; }
+  .skill-flat li > .skill-link { padding-block: 9px; }
+  /* Plain chips (no usage to link to) match the linked ones beside them, so a row stays one height. */
+  .skill-chips li:not(:has(> .skill-link)) { padding-block: 7px; }
+  .skill-flat li:not(:has(> .skill-link)) { padding-block: 9px; }
+  /* Skill tags inside project cards and the timeline. */
+  .skill-link { min-height: 32px; display: inline-flex; align-items: center; }
+  /* Text links: a finger-sized hit area without moving anything (padding grows
+     the box, the matching negative margin gives the space back). */
+  .brand,
+  .footer-social a,
+  .footer-meta a,
+  .plinks a,
+  .orglink,
+  .contact-mail,
+  a.link,
+  .gh-link { padding-block: 8px; margin-block: -8px; }
+  .footer-meta { row-gap: 14px; }
+  .footer-social { row-gap: 14px; }
+  .search { height: 40px; }
 }

@@ -1,35 +1,109 @@
 import * as React from "react";
+import * as m from "motion/react-m";
+import { type HTMLMotionProps } from "motion/react";
 import { cn } from "~/lib/utils";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "zoro";
-  size?: "default" | "sm" | "lg" | "icon";
+export type ButtonVariant =
+  | "default"
+  | "action"
+  | "chip"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | "destructive"
+  | "link";
+
+export type ButtonSize = "default" | "sm" | "lg" | "icon";
+
+export interface ButtonVariantProps {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
 }
+
+export function buttonVariants({
+  variant = "default",
+  size = "default",
+  className = "",
+}: ButtonVariantProps = {}) {
+  // Exact class match: a substring test would also catch "header-actions", "transaction", etc.
+  const classes = className.split(/\s+/);
+  const isChip = variant === "chip" || classes.includes("chip");
+  const isAction = variant === "action" || classes.includes("action");
+
+  if (isChip) {
+    return cn(
+      "chip inline-flex items-center justify-center gap-1 h-[26px] px-2.5 rounded-full border border-[var(--line)] bg-transparent text-[var(--fg-2)] text-[12px] font-normal leading-none whitespace-nowrap cursor-pointer select-none transition-[color,background-color,border-color,opacity,translate,scale,box-shadow] duration-160 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] active:duration-75 motion-reduce:translate-none motion-reduce:scale-100 hover:text-[var(--fg)] hover:border-[var(--line-2)] hover:bg-[var(--hover)] aria-pressed:bg-[var(--green)] aria-pressed:text-[var(--green-ink)] aria-pressed:border-[var(--green)] aria-pressed:font-medium disabled:pointer-events-none disabled:opacity-50",
+      className
+    );
+  }
+
+  if (isAction) {
+    return cn(
+      "action inline-flex items-center justify-center gap-1.5 h-[30px] px-3 rounded-[6px] border border-[var(--line)] bg-transparent text-[var(--fg-2)] text-[12px] font-normal leading-none whitespace-nowrap cursor-pointer select-none transition-colors duration-160 hover:text-[var(--fg)] hover:border-[var(--line-2)] hover:bg-[var(--hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--green)] disabled:pointer-events-none disabled:opacity-50",
+      className
+    );
+  }
+
+  return cn(
+    "inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-[12px] font-normal leading-none transition-[color,background-color,border-color,opacity,translate,scale,box-shadow] duration-160 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--green)] disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer",
+    // Every button lifts on hover and presses on click (links stay put; reduced motion stays still).
+    variant !== "link" && "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] active:duration-75 motion-reduce:translate-none motion-reduce:scale-100",
+    // Variants
+    variant === "default" &&
+      "h-[32px] px-3.5 rounded-[6px] bg-[var(--green)] text-[var(--green-ink)] font-semibold border border-[var(--green)] hover:opacity-90",
+    variant === "outline" &&
+      "h-[30px] px-3 rounded-[6px] border border-[var(--line)] bg-transparent text-[var(--fg-2)] hover:bg-[var(--hover)] hover:text-[var(--fg)] hover:border-[var(--line-2)]",
+    variant === "secondary" &&
+      "h-[30px] px-3 rounded-[6px] border border-[var(--line)] bg-[var(--hover)] text-[var(--fg)] hover:border-[var(--line-2)]",
+    variant === "ghost" &&
+      "h-[30px] px-2.5 rounded-[6px] bg-transparent text-[var(--fg-2)] hover:bg-[var(--hover)] hover:text-[var(--fg)]",
+    variant === "destructive" &&
+      "h-[30px] px-3 rounded-[6px] bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 hover:bg-[var(--danger)]/20",
+    variant === "link" &&
+      "text-[var(--green)] underline-offset-4 hover:underline p-0 h-auto font-normal",
+    // Sizing overrides if specified
+    size === "sm" && variant !== "link" && "h-[24px] px-2 text-[11px]",
+    size === "lg" && variant !== "link" && "h-[36px] px-4 text-[13px]",
+    size === "icon" && variant !== "link" && "h-[30px] w-[30px] p-0",
+    className
+  );
+}
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonVariantProps {}
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", ...props }, ref) => {
     return (
       <button
         ref={ref}
-        className={cn(
-          "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 disabled:pointer-events-none disabled:opacity-50 select-none",
-          variant === "default" && "bg-emerald-500 text-black hover:bg-emerald-400 shadow-sm shadow-emerald-500/20 active:translate-y-px",
-          variant === "zoro" && "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-900/60 hover:border-emerald-400 hover:text-emerald-200 shadow-sm shadow-emerald-950/50",
-          variant === "destructive" && "bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20",
-          variant === "outline" && "border border-neutral-800 bg-transparent text-neutral-200 hover:bg-neutral-900 hover:text-neutral-50 hover:border-neutral-700",
-          variant === "secondary" && "bg-neutral-900 text-neutral-200 border border-neutral-800 hover:bg-neutral-800",
-          variant === "ghost" && "hover:bg-neutral-800/60 text-neutral-300 hover:text-white",
-          variant === "link" && "text-emerald-400 underline-offset-4 hover:underline",
-          size === "default" && "h-9 px-4 py-2",
-          size === "sm" && "h-8 rounded-md px-3 text-xs",
-          size === "lg" && "h-10 rounded-md px-8",
-          size === "icon" && "h-9 w-9 p-0",
-          className
-        )}
+        className={buttonVariants({ variant, size, className })}
         {...props}
       />
     );
   }
 );
 Button.displayName = "Button";
+
+export interface MotionButtonProps
+  extends HTMLMotionProps<"button">,
+    ButtonVariantProps {}
+
+export const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
+  ({ className, variant = "default", size = "default", whileHover, whileTap, transition, ...props }, ref) => {
+    return (
+      <m.button
+        ref={ref}
+        // motion/react animates this one; drop the CSS lift so the two don't fight.
+        className={cn(buttonVariants({ variant, size, className }), "hover:translate-y-0 active:scale-100")}
+        whileHover={whileHover ?? { y: -2, scale: 1.02 }}
+        whileTap={whileTap ?? { scale: 0.96 }}
+        transition={transition ?? { type: "spring" as const, stiffness: 450, damping: 25 }}
+        {...props}
+      />
+    );
+  }
+);
+MotionButton.displayName = "MotionButton";

@@ -41,11 +41,11 @@ export function Scramble() {
   useEffect(() => {
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (calm.matches) return;
-    // The intro loader covers the first visit in a tab; start after it.
-    const wait = document.documentElement.dataset.intro === "seen" ? 80 : 1700;
+    // The intro loader covers the first visit in a tab (~1.1s); start once it has split open.
+    const wait = document.documentElement.dataset.intro === "seen" ? 40 : 1000;
     const t = setTimeout(() => {
       const h1 = document.querySelector<HTMLElement>("#main h1.title");
-      if (h1) scramble(h1, 700);
+      if (h1) scramble(h1, 400);
     }, wait);
     return () => clearTimeout(t);
   }, [pathname]);

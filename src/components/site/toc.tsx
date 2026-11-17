@@ -8,17 +8,26 @@ export function Toc({ headings, label = "On this page" }: { headings: Heading[];
   const [current, setCurrent] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {
-    const els = headings.map((h) => document.getElementById(h.id)).filter((e): e is HTMLElement => !!e);
-    if (els.length === 0) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const seen = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (seen[0]) setCurrent(seen[0].target.id);
-      },
-      { rootMargin: "0px 0px -70% 0px" },
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    // Active = the last heading whose top has passed just under the sticky header.
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      let active = headings[0]?.id ?? "";
+      for (const h of headings) {
+        const el = document.getElementById(h.id);
+        if (el && el.getBoundingClientRect().top <= 140) active = h.id;
+      }
+      setCurrent(active);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, [headings]);
 
   if (headings.length < 2) return null;

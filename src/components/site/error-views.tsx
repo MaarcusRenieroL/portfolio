@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useLang } from "~/components/site/locale";
-import { statusFor } from "~/lib/localize";
+import { statusFor } from "~/lib/localize-ui";
 import type { SearchData } from "~/lib/site-content";
 import { StatusView } from "./status-view";
 

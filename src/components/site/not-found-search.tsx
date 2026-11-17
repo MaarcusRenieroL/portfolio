@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useDict, useLang } from "~/components/site/locale";
-import { NAV_LINKS } from "~/lib/content";
+import { NAV_LINKS } from "~/lib/site";
 import { localePath, type Lang } from "~/lib/i18n";
 import type { SearchData } from "~/lib/site-content";
+import { Input } from "~/components/ui/input";
 
 type Entry = { label: string; hint: string; href: string; external?: boolean };
 
@@ -32,7 +33,7 @@ export function NotFoundSearch({ data }: { data: SearchData }) {
           <circle cx="11" cy="11" r="7" />
           <path d="M20 20l-3.5-3.5" />
         </svg>
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.notFound.placeholder} aria-label={t.notFound.aria} />
+        <Input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.notFound.placeholder} aria-label={t.notFound.aria} />
       </label>
       {needle && (
         <ul className="nf-results" aria-live="polite">
