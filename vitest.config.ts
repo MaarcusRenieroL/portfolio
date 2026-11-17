@@ -17,5 +17,11 @@ function localEnv(): Record<string, string> {
 
 export default defineConfig({
   resolve: { alias: { "~": path.resolve(__dirname, "src") } },
-  test: { environment: "node", include: ["tests/unit/**/*.test.ts"], env: localEnv() },
+  test: { environment: "node", include: ["tests/unit/**/*.test.ts"], env: localEnv(),
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary"],
+      include: ["src/lib/**/*.ts", "src/app/api/**/*.ts", "src/app/admin/*actions.ts", "src/app/media/**/*.ts", "src/app/.well-known/**/*.ts"],
+    },
+  },
 });
