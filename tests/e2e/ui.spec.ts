@@ -197,10 +197,11 @@ test.describe("nav, skills, palette, loader, placeholders", () => {
     await expect(pills).toHaveCount(all);
 
     const backend = SKILLS.used.find((g) => g.name === "Backend")!;
-    await page.getByRole("group", { name: "Filter by category" }).getByRole("button", { name: "Backend" }).click();
+    await page.getByRole("combobox", { name: "Filter by category" }).click();
+    await page.getByRole("option", { name: new RegExp(backend.name) }).click();
     await expect(pills).toHaveCount(backend.items.length);
-    await expect(page.getByRole("button", { name: "Backend" })).toHaveAttribute("aria-pressed", "true");
-    await page.getByRole("button", { name: "All", exact: true }).click();
+    await page.getByRole("combobox", { name: "Filter by category" }).click();
+    await page.getByRole("option", { name: /All categories/i }).click();
     await expect(pills).toHaveCount(all);
   });
 
@@ -218,7 +219,7 @@ test.describe("nav, skills, palette, loader, placeholders", () => {
     await expect(page).toHaveURL(/\/skills$/);
     await expect(dialog).toBeHidden();
 
-    await page.getByRole("button", { name: "Open command palette" }).click();
+    await page.getByRole("button", { name: /open the command palette/i }).click();
     await expect(dialog).toBeVisible();
     await page.keyboard.press("ArrowDown");
     await expect(dialog.getByRole("option").nth(1)).toHaveAttribute("aria-selected", "true");
@@ -237,21 +238,21 @@ test.describe("nav, skills, palette, loader, placeholders", () => {
 
   test("intro loader plays on the first visit in a tab, never blocks clicks, and is skipped after", async ({ page }) => {
     await page.goto("/");
-    const loader = page.locator(".zoro");
+    const loader = page.locator(".zoro-loader");
     await expect(loader).toHaveCount(1);
     await expect(loader).toHaveCSS("pointer-events", "none");
     await expect(loader).toHaveAttribute("aria-hidden", "true");
     await expect(loader).toHaveCSS("visibility", "hidden", { timeout: 4000 });
     await page.goto("/projects");
     await expect(page.locator("html")).toHaveAttribute("data-intro", "seen");
-    await expect(page.locator(".zoro")).toBeHidden();
+    await expect(page.locator(".zoro-loader")).toBeHidden();
   });
 
   test("intro loader is off for reduced motion", async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: "reduce" });
     const page = await ctx.newPage();
     await page.goto("/");
-    await expect(page.locator(".zoro")).toBeHidden();
+    await expect(page.locator(".zoro-loader")).toBeHidden();
     await ctx.close();
   });
 
@@ -312,9 +313,10 @@ test.describe("certifications", () => {
     await expect(cards).toHaveCount(CERTIFICATES.filter((c) => /react/i.test(`${c.title} ${c.issuer} ${c.about} ${c.instructors ?? ""}`)).length);
     await page.getByRole("searchbox", { name: "Search certifications" }).fill("");
     const udemy = CERTIFICATES.filter((c) => c.issuer === "Udemy").length;
-    await page.getByRole("group", { name: "Filter by issuer" }).getByRole("button", { name: /^Udemy/ }).click();
+    await page.getByRole("combobox", { name: "Filter by issuer" }).click();
+    await page.getByRole("option", { name: /^Udemy/ }).click();
     await expect(cards).toHaveCount(udemy);
-    await page.getByRole("button", { name: "All", exact: true }).click();
+    await page.getByRole("button", { name: "Reset filters" }).click();
     await expect(cards).toHaveCount(all);
   });
 
@@ -346,7 +348,7 @@ test.describe("shareable filters, shortcuts, print, vcard, feed, 404 search", ()
     await expect(page).not.toHaveURL(/q=/);
 
     await page.goto("/projects?cat=backend");
-    await expect(page.getByRole("button", { name: "Backend" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("combobox", { name: "Filter by area" })).toContainText("Backend");
     await page.goto("/certifications?issuer=Udemy");
     await expect(page.locator(".cert")).toHaveCount(CERTIFICATES.filter((c) => c.issuer === "Udemy").length);
   });

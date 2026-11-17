@@ -43,14 +43,15 @@ test("with an empty database the public site still serves the file content", asy
 test("import, edit with autosave and live preview, publish, German, hide", async ({ page, context, browser }) => {
   await signIn(context);
   await page.goto("/admin/content/project");
-  await page.getByRole("button", { name: "Import the current site content" }).click();
-  await expect(page.locator(".item strong", { hasText: "nyx" })).toBeVisible();
+  await page.getByRole("button", { name: "Import from the site" }).click();
+  await expect(page.getByRole("link", { name: "nyx", exact: true })).toBeVisible();
   expect(Number((await db.query("select count(*) n from content_item where kind='project'")).rows[0].n)).toBe(4);
 
   // Open nyx and change the description.
   await page.goto("/admin/content/project/nyx");
   await expect(page.getByRole("heading", { name: "nyx" })).toBeVisible();
-  const frame = page.frameLocator('iframe[title="Live preview of the site"]');
+  await page.getByRole("button", { name: "Show preview" }).click();
+  const frame = page.frameLocator('iframe[title^="Preview of"]');
   await expect(frame.locator(".pname", { hasText: "nyx" })).toBeVisible({ timeout: 30_000 });
   await page.getByLabel("Description").fill("EDITED-IN-CMS description");
   await expect(page.getByText("Draft saved")).toBeVisible();
@@ -69,7 +70,7 @@ test("import, edit with autosave and live preview, publish, German, hide", async
   await expect(visitor.getByText("EDITED-IN-CMS description")).toBeVisible();
 
   // German tab: type a German description, publish, and a German visitor sees it.
-  await page.getByRole("tab", { name: /Deutsch/ }).click();
+  await page.getByRole("tab", { name: /^DE/ }).click();
   await page.getByLabel("Description").fill("GERMAN-EDIT Beschreibung");
   await expect(page.getByText("Draft saved")).toBeVisible();
   await page.getByRole("button", { name: "Publish", exact: true }).click();
@@ -93,7 +94,7 @@ test("validation errors are shown and nothing invalid is saved", async ({ page, 
   await page.goto("/admin/content/project/new");
   await page.locator("#f-slug").fill("Bad Slug!");
   await page.locator("#f-name").fill("Broken");
-  await expect(page.locator("ul.err")).toContainText("slug");
+  await expect(page.getByRole("alert")).toContainText("slug");
   expect(Number((await db.query("select count(*) n from content_item where key='Bad Slug!'")).rows[0].n)).toBe(0);
 });
 
@@ -128,11 +129,13 @@ for (const [kind, base, tabLabel] of [["note", "/notes", "Notes"], ["post", "/bl
     await page.locator("#f-title").fill(`My first ${kind}`);
     await page.locator("#f-description").fill("A short summary.");
     await page.locator("#f-date").fill("2026-11-14");
+    await page.getByRole("button", { name: "Source" }).click();
     await page.locator("#f-body").fill(BODY);
     await expect.poll(async () => Number((await db.query("select count(*) n from content_item where kind=$1 and key=$2", [kind, `first-${kind}`])).rows[0].n), { timeout: 15_000 }).toBe(1);
     await expect(page).toHaveURL(new RegExp(`${kind}/first-${kind}$`));
     // The right-hand preview renders the draft article.
-    const frame = page.frameLocator('iframe[title="Live preview of the site"]');
+    await page.getByRole("button", { name: "Show preview" }).click();
+    const frame = page.frameLocator('iframe[title^="Preview of"]');
     await expect(frame.getByRole("heading", { name: `My first ${kind}` })).toBeVisible({ timeout: 30_000 });
 
     // Before publishing, a visitor sees nothing.

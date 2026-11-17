@@ -58,7 +58,7 @@ test.describe("German site", () => {
   test("German skills: translated groups, search and count", async ({ page }) => {
     await german(page);
     await page.goto("/skills");
-    await expect(page.getByRole("group", { name: "Nach Kategorie filtern" }).getByRole("button", { name: "Sprachen" })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Nach Kategorie filtern" })).toBeVisible();
     await page.getByRole("searchbox", { name: "Skills suchen" }).fill("spring");
     await expect(page.getByRole("status")).toContainText("passen");
     await page.getByRole("searchbox", { name: "Skills suchen" }).fill("zzzz");
@@ -74,7 +74,8 @@ test.describe("German site", () => {
     await expect(page.locator(".cert", { hasText: "AWS Academy Cloud Foundations" }).getByRole("link", { name: /Prüfen/ })).toBeVisible();
     await expect(page.locator(".cert-title", { hasText: "Datenbankprogrammierung mit PL/SQL" })).toBeVisible();
     await page.goto("/experience");
-    await expect(page.getByText("Aug 2026 — heute")).toBeVisible();
+    // The timeline renders each date twice (desktop column, mobile row); one of them is visible.
+    await expect(page.getByText("Aug 2026 — heute").filter({ visible: true })).toBeVisible();
     await expect(page.getByText("Spring-Boot- und Spring-Batch-Microservices").first()).toBeVisible();
   });
 
@@ -200,6 +201,6 @@ test.describe("language routing", () => {
     await page.goto("/skills?q=spring");
     await expect(page.getByRole("searchbox", { name: "Skills suchen" })).toHaveValue("spring");
     await page.goto("/projects?cat=backend");
-    await expect(page.getByRole("button", { name: "Backend" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("combobox", { name: "Nach Bereich filtern" })).toContainText("Backend");
   });
 });

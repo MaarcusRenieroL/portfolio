@@ -35,7 +35,8 @@ describe("localePath / stripLang", () => {
 describe("dictionary", () => {
   it("German has exactly the same keys as English", () => {
     // The German error map is keyed by the English message, so it is the one place the shapes differ on purpose.
-    const keys = (d: Dict) => paths(d).filter((p) => !p.startsWith("contact.errors")).sort();
+    // Error maps are keyed by the English message, so only German has entries.
+    const keys = (d: Dict) => paths(d).filter((p) => !p.startsWith("contact.errors") && !p.startsWith("booking.errors")).sort();
     expect(keys(DICT.de)).toEqual(keys(DICT.en));
   });
   it("no German string is left identical to English where it must differ", () => {

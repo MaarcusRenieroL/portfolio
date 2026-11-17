@@ -11,6 +11,14 @@ vi.mock("resend", () => ({
   },
 }));
 
+// Never touch a real database from unit tests (vitest loads .env, which may point at one).
+const db = { on: false, fail: false };
+const queryMock = vi.fn(async () => {
+  if (db.fail) throw new Error("db down");
+  return { rows: [] };
+});
+vi.mock("~/lib/server/db", () => ({ hasDb: () => db.on, query: (...a: unknown[]) => queryMock(...(a as [])) }));
+
 import { sendContactMessage, type ContactState } from "~/lib/actions/contact";
 import { allowContact, resetContactLimits } from "~/lib/rate-limit";
 
@@ -30,6 +38,9 @@ const fd = (o: Record<string, string> = {}) => {
 const run = (o: Record<string, string> = {}) => sendContactMessage(prev, fd(o));
 
 beforeEach(() => {
+  db.on = false;
+  db.fail = false;
+  queryMock.mockClear();
   resetContactLimits();
   send.mockReset();
   ctor.mockReset();
@@ -290,5 +301,55 @@ describe("spam check and auto-reply", () => {
     vi.stubEnv("CONTACT_AUTOREPLY", "1");
     send.mockResolvedValueOnce({ error: null }).mockRejectedValueOnce(new Error("boom"));
     expect((await run()).status).toBe("success");
+  });
+});
+
+describe("sendContactMessage with the message store", () => {
+  it("keeps a copy and still emails", async () => {
+    db.on = true;
+    send.mockResolvedValue({ error: null });
+    expect(await run()).toEqual({ status: "success", message: "sent" });
+    expect(queryMock).toHaveBeenCalledWith(expect.stringContaining("insert into contact_message"), ["Ada Lovelace", "ada@example.com", null, "role", "Hello there, this is long enough."]);
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  it("a stored message counts as delivered when email fails", async () => {
+    db.on = true;
+    send.mockResolvedValue({ error: { message: "down" } });
+    expect(await run()).toEqual({ status: "success", message: "sent" });
+  });
+
+  it("a stored message counts as delivered when email isn't configured", async () => {
+    db.on = true;
+    vi.stubEnv("RESEND_API_KEY", "");
+    expect(await run()).toEqual({ status: "success", message: "sent" });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("if storing fails, the email result decides", async () => {
+    db.on = true;
+    db.fail = true;
+    send.mockResolvedValue({ error: { message: "down" } });
+    expect((await run()).status).toBe("error");
+  });
+
+  it("spam (honeypot) is never stored", async () => {
+    db.on = true;
+    await run({ website: "http://spam" });
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses when the hourly database cap is reached (all senders)", async () => {
+    db.on = true;
+    queryMock.mockResolvedValueOnce({ rows: [{ all: 20, mine: 0 }] } as never);
+    const r = await run();
+    expect(r.status).toBe("error");
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("refuses a fourth message from the same address within an hour", async () => {
+    db.on = true;
+    queryMock.mockResolvedValueOnce({ rows: [{ all: 4, mine: 3 }] } as never);
+    expect((await run()).status).toBe("error");
   });
 });
