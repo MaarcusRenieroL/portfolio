@@ -36,7 +36,12 @@ const contact = createLimiter({ max: 3, windowMs: 10 * 60_000 }, { max: 30, wind
 /** Generated images are CPU work: a normal visitor or link-preview bot needs a handful. */
 const og = createLimiter({ max: 20, windowMs: 60_000 }, { max: 600, windowMs: 60 * 60_000 });
 
+/** Call bookings send email and hold a slot: a person books one or two, never a burst. */
+const booking = createLimiter({ max: 3, windowMs: 60 * 60_000 }, { max: 20, windowMs: 60 * 60_000 });
+
 export const resetContactLimits = contact.reset;
+export const resetBookingLimits = booking.reset;
+export const allowBooking = booking.allow;
 export const allowContact = contact.allow;
 export const resetOgLimits = og.reset;
 export const allowOg = og.allow;

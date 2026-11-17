@@ -54,12 +54,53 @@ export async function saveDraft(kind: Kind, key: string, data: Record<string, un
   );
 }
 
+/** Change an item's key. Only for items that were never published, so no live link can break. */
+export async function renameRow(kind: Kind, from: string, to: string): Promise<boolean> {
+  // One statement: the "never published" check and the rename can't be split by a publish in between.
+  const r = await query("update content_item set key = $3, updated_at = now() where kind = $1 and key = $2 and published is null returning key", [kind, from, to]);
+  return (r.rowCount ?? 0) > 0;
+}
+
+/**
+ * Publishing records a version of what went live, unless it is the same as the newest version
+ * (publishing twice, or a removal that only re-publishes the same data). One statement, so a
+ * publish and its version can't be split by another publish in between.
+ */
+const RECORD_VERSION = `
+  insert into content_version (kind, key, data, data_de)
+  select p.kind, p.key, p.published, p.published_de from p
+  where p.published is not null and not exists (
+    select 1 from content_version v
+    where v.id = (select max(w.id) from content_version w where w.kind = p.kind and w.key = p.key)
+      and v.data = p.published and v.data_de is not distinct from p.published_de
+  )`;
+
 export async function publishRow(kind: Kind, key: string) {
-  await query("update content_item set published = draft, published_de = draft_de, published_at = now() where kind = $1 and key = $2", [kind, key]);
+  await query(
+    `with p as (update content_item set published = draft, published_de = draft_de, published_at = now() where kind = $1 and key = $2 returning kind, key, published, published_de) ${RECORD_VERSION}`,
+    [kind, key],
+  );
 }
 
 export async function publishKind(kind: Kind) {
-  await query("update content_item set published = draft, published_de = draft_de, published_at = now() where kind = $1 and not deleted", [kind]);
+  await query(
+    `with p as (update content_item set published = draft, published_de = draft_de, published_at = now() where kind = $1 and not deleted returning kind, key, published, published_de) ${RECORD_VERSION}`,
+    [kind],
+  );
+}
+
+/** How many published versions of each item are kept. */
+export const VERSIONS_KEPT = 30;
+
+export type Version = { id: number; at: string; data: Record<string, unknown>; de: Record<string, unknown> | null };
+
+/** Published versions of one item, newest first. */
+export async function listVersions(kind: Kind, key: string): Promise<Version[]> {
+  const r = await query<{ id: string; at: string; data: Record<string, unknown>; data_de: Record<string, unknown> | null }>(
+    "select id, created_at::text at, data, data_de from content_version where kind = $1 and key = $2 order by id desc limit $3",
+    [kind, key, VERSIONS_KEPT],
+  );
+  return r.rows.map((x) => ({ id: Number(x.id), at: x.at, data: x.data, de: x.data_de }));
 }
 
 export async function setDeleted(kind: Kind, key: string, deleted: boolean) {

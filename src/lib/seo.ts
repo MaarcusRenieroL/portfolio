@@ -12,6 +12,8 @@ export const OG_PAGES = {
   contact: { title: "Contact", subtitle: "A role, a freelance project, or something you're building." },
   resume: { title: "Resume", subtitle: "Java/Spring Boot, TypeScript/Next.js, healthcare ETL." },
   changelog: { title: "Changelog", subtitle: "What changed on this site, and when." },
+  privacy: { title: "Privacy", subtitle: "What this site collects, and how to get it deleted." },
+  legal: { title: "Legal", subtitle: "Copyright, takedown requests and who runs this site." },
 } as const;
 
 export type OgPage = keyof typeof OG_PAGES;

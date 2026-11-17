@@ -3,7 +3,7 @@ import { LANGS, LANG_COOKIE, isLang, type Lang } from "~/lib/i18n";
 import { maintenanceHtml } from "~/lib/maintenance-html";
 
 /** Anything that isn't a localized page: API routes, feeds, generated images, and files with an extension. */
-const NOT_A_PAGE = /^\/(api|og|_next|\.well-known|admin)(\/|$)|\.[a-z0-9]+$/i;
+const NOT_A_PAGE = /^\/(api|og|_next|\.well-known|admin|media)(\/|$)|\.[a-z0-9]+$/i;
 
 /**
  * 1. Maintenance mode: set MAINTENANCE=1 and every page answers a real 503 with

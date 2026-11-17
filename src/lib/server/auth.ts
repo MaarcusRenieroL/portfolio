@@ -47,9 +47,10 @@ export const SESSION_IDLE_MS = 60 * 60_000;
 const RP_NAME = "Portfolio admin";
 
 export const adminEmail = () => (process.env.MY_EMAIL ?? "").trim().toLowerCase();
-export const appUrl = () => (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
-export const rpID = () => process.env.WEBAUTHN_RP_ID ?? new URL(appUrl()).hostname;
-export const rpOrigin = () => process.env.WEBAUTHN_ORIGIN ?? appUrl();
+// `||`, not `??`: a blank line in .env (WEBAUTHN_RP_ID=) must fall back too, or every passkey request is refused.
+export const appUrl = () => (process.env.APP_URL || "http://localhost:3000").replace(/\/$/, "");
+export const rpID = () => process.env.WEBAUTHN_RP_ID || new URL(appUrl()).hostname;
+export const rpOrigin = () => process.env.WEBAUTHN_ORIGIN || appUrl();
 
 export const isProd = () => process.env.NODE_ENV === "production";
 export const ATTEMPT_COOKIE = () => (isProd() ? "__Host-adm_a" : "adm_a");

@@ -1,7 +1,7 @@
 import type { Kind } from "./server/store";
 
 /** How each kind of content is edited. Shared by the form (client) and the actions (server). */
-export type FieldType = "text" | "textarea" | "url" | "number" | "bool" | "select" | "date" | "tags" | "lines" | "cats" | "markdown" | "steps";
+export type FieldType = "text" | "textarea" | "url" | "number" | "bool" | "select" | "date" | "tags" | "lines" | "cats" | "markdown" | "steps" | "media";
 export type Field = {
   name: string;
   label: string;
@@ -10,6 +10,10 @@ export type Field = {
   options?: string[];
   /** Has a German version that can be edited and machine-translated. */
   de?: boolean;
+  /** For "media": images only, or images and PDFs. */
+  accept?: "image" | "file";
+  /** For "media": where an older bare file name lives under /public. `{slug}` is the item's slug. */
+  legacy?: string;
 };
 
 export type KindSpec = {
@@ -45,7 +49,7 @@ export const SPECS: Record<Kind, KindSpec> = {
       { name: "hidden", label: "Hidden from the site", type: "bool" },
       { name: "site", label: "Live URL", type: "url" },
       { name: "github", label: "GitHub URL", type: "url" },
-      { name: "cover", label: "Cover file", type: "text", help: "File in /public/projects/<slug>/" },
+      { name: "cover", label: "Cover image", type: "media", accept: "image", legacy: "/projects/{slug}/", help: "Card image. Pick from the media library or upload one." },
     ],
   },
   role: {
@@ -60,7 +64,7 @@ export const SPECS: Record<Kind, KindSpec> = {
       { name: "date", label: "Dates", type: "text", de: true, help: "e.g. Jan 2025 — Present" },
       { name: "place", label: "Place", type: "text" },
       { name: "url", label: "Company URL", type: "url" },
-      { name: "logo", label: "Logo file", type: "text", help: "File in /public/logos/" },
+      { name: "logo", label: "Logo", type: "media", accept: "image", legacy: "/logos/", help: "Square works best." },
       { name: "logoOn", label: "Logo tile", type: "select", options: ["", "light", "dark"] },
       { name: "now", label: "Current role", type: "bool" },
       { name: "summary", label: "Summary", type: "textarea", de: true },
@@ -109,8 +113,8 @@ export const SPECS: Record<Kind, KindSpec> = {
       { name: "hours", label: "Hours", type: "number" },
       { name: "instructors", label: "Instructors", type: "text" },
       { name: "about", label: "What it covered", type: "textarea", de: true },
-      { name: "preview", label: "Preview image file", type: "text", help: "File in /public/certificates/" },
-      { name: "file", label: "Certificate file", type: "text", help: "PDF or image in /public/certificates/" },
+      { name: "preview", label: "Preview image", type: "media", accept: "image", legacy: "/certificates/" },
+      { name: "file", label: "Certificate file", type: "media", accept: "file", legacy: "/certificates/", help: "PDF or image." },
       { name: "verify", label: "Verification URL", type: "url" },
     ],
   },
@@ -126,6 +130,7 @@ export const SPECS: Record<Kind, KindSpec> = {
       { name: "description", label: "Summary", type: "textarea", de: true },
       { name: "date", label: "Date", type: "date" },
       { name: "tags", label: "Tags", type: "tags" },
+      { name: "featured", label: "Featured on the home page", type: "bool" },
       { name: "body", label: "Body", type: "markdown", de: true },
     ],
   },
@@ -141,6 +146,7 @@ export const SPECS: Record<Kind, KindSpec> = {
       { name: "description", label: "Summary", type: "textarea", de: true },
       { name: "date", label: "Date", type: "date" },
       { name: "tags", label: "Tags", type: "tags" },
+      { name: "featured", label: "Featured on the home page", type: "bool" },
       { name: "body", label: "Body", type: "markdown", de: true },
     ],
   },

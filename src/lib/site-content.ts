@@ -6,6 +6,8 @@ import { certificateSchema, educationSchema, projectSchema, roleSchema, skillGro
 import { certificatesFor, educationFor, projectsFor, rolesFor, skillsFor } from "./localize";
 import type { Lang } from "./i18n";
 import { hasDb } from "./server/db";
+import { toPublicAssets } from "./server/r2";
+import { r2Names } from "./server/r2-names";
 import { readAll } from "./server/store";
 
 /**
@@ -21,7 +23,8 @@ export type SiteContent = { projects: Project[]; roles: Role[]; education: Educa
 
 type Rows = Awaited<ReturnType<typeof readAll>>;
 
-const published = unstable_cache(async () => readAll("published"), ["site-content-published"], { tags: ["content"], revalidate: 3600 });
+// Live content points library files at the public assets domain (when R2 is set up); drafts keep /media/.
+const published = unstable_cache(async () => toPublicAssets(await readAll("published"), await r2Names()), ["site-content-published", process.env.NEXT_PUBLIC_ASSETS_URL ?? ""], { tags: ["content"], revalidate: 3600 });
 
 export async function contentRows(): Promise<Rows | null> {
   if (!hasDb()) return null;

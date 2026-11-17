@@ -3,31 +3,9 @@
  * waiting on real content: it stays visible on purpose (see HANDOFF.md).
  */
 
-export const SITE = {
-  name: "Maarcus Reniero L",
-  domain: "maarcus.dev",
-  url: "https://maarcus.dev",
-  email: "maarcusreniero.l@gmail.com",
-  github: "https://github.com/MaarcusRenieroL",
-  linkedin: "https://linkedin.com/in/maarcusrenierol",
-  location: "Chennai, IN",
-  /** Optional booking link (Cal.com etc.), set NEXT_PUBLIC_CAL_URL to show it. */
-  call: process.env.NEXT_PUBLIC_CAL_URL || "",
-  open: "Looking for a full-time remote or hybrid role in Germany, Bangalore or Chennai. Open to freelance work too.",
-};
+import { logoUrl, shotUrl } from "./site";
+export { SITE, NAV_LINKS, CATEGORIES, shotUrl, logoUrl, certAsset } from "./site";
 
-export const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/projects", label: "Projects" },
-  { href: "/experience", label: "Experience" },
-  { href: "/certifications", label: "Certifications" },
-  { href: "/blog", label: "Writing" },
-  { href: "/notes", label: "Notes" },
-  { href: "/skills", label: "Skills" },
-  { href: "/about", label: "About" },
-  { href: "/resume", label: "Resume" },
-  { href: "/contact", label: "Contact" },
-] as const;
 
 import { assertContent, certificateSchema, check, educationSchema, projectSchema, roleSchema, skillsSchema } from "./schema";
 import type { Category, Certificate, Education, Project, Role, Skills } from "./schema";
@@ -92,9 +70,6 @@ const PROJECT_DATA = [
   },
 ];
 
-/** Plain <img> tags don't get Next's basePath, so prefix it here (empty in production). */
-export const shotUrl = (slug: string, file: string) => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/projects/${slug}/${file}`;
-
 /** Every project in the data, including hidden ones. The site shows `PROJECTS`. */
 export const ALL_PROJECT_DATA = PROJECT_DATA.map((p) => check("project", p.slug, projectSchema, p));
 
@@ -108,14 +83,7 @@ export const COVERS: Record<string, string> = Object.fromEntries(
   PROJECTS.filter((p) => p.cover).map((p) => [p.slug, shotUrl(p.slug, p.cover!)]),
 );
 
-export const CATEGORIES: [string, string][] = [
-  ["all", "All"],
-  ["backend", "Backend"],
-  ["frontend", "Frontend"],
-  ["ai", "AI"],
-  ["systems", "Systems"],
-  ["tooling", "Tooling"],
-];
+
 
 const ROLE_DATA = [
   {
@@ -333,6 +301,7 @@ export const CERTIFICATES: Certificate[] = CERTIFICATE_DATA.map((c) => check("ce
 export const EDUCATION: Education[] = [
   {
     school: "Rajalakshmi Engineering College",
+    url: "https://rajalakshmi.org",
     degree: "B.Tech, Computer Science and Business Systems",
     date: "2020 — 2024",
     note: "GPA 7.98 / 10",
@@ -465,7 +434,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 export const MEDIA = {
   photo: `${BASE}/me.jpg`,
   /** Built from each role's `logo` field, so a new role needs no edit here. */
-  logos: Object.fromEntries(ROLES.filter((r) => r.logo).map((r) => [r.org, `${BASE}/logos/${r.logo}`])) as Record<string, string>,
+  logos: Object.fromEntries(ROLES.filter((r) => r.logo).map((r) => [r.org, logoUrl(r.logo!)])) as Record<string, string>,
   shot: (slug: string) => COVERS[slug] ?? "",
   /** Class for a role's logo tile, so light artwork gets a dark tile. */
   logoClass: (org: string) => (ROLES.find((r) => r.org === org)?.logoOn === "dark" ? "logo logo-dark" : "logo"),

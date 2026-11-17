@@ -4,9 +4,13 @@ import { headers } from "next/headers";
 import { Resend } from "resend";
 import { record } from "~/lib/server/analytics";
 import { allowContact, clientKeyFrom } from "~/lib/rate-limit";
+import { hasDb, query } from "~/lib/server/db";
+import { humanOk } from "~/lib/server/human";
 import { type ContactField, REASON_LABELS, contactSchema as schema } from "~/lib/contact-schema";
 
 const REASONS = REASON_LABELS;
+const MAX_PER_HOUR = 20;
+const MAX_PER_SENDER_PER_HOUR = 3;
 
 type Field = ContactField;
 
@@ -21,19 +25,6 @@ async function clientKey() {
     return clientKeyFrom(await headers());
   } catch {
     return "unknown";
-  }
-}
-
-/** Cloudflare Turnstile: only enforced when TURNSTILE_SECRET is set, so local dev and tests need nothing. */
-async function humanOk(token: FormDataEntryValue | null, ip: string) {
-  const secret = process.env.TURNSTILE_SECRET;
-  if (!secret) return true;
-  if (typeof token !== "string" || !token) return false;
-  try {
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret, response: token, remoteip: ip }) });
-    return ((await res.json()) as { success?: boolean }).success === true;
-  } catch {
-    return false;
   }
 }
 
@@ -70,7 +61,38 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_EMAIL;
   const to = process.env.MY_EMAIL;
-  if (!apiKey || !from || !to) return { status: "error", message: "Email isn't configured right now. Please reach out directly." };
+  // Keep a copy first, so a message survives an email outage and shows up in the admin inbox.
+  let stored = false;
+  if (hasDb()) {
+    // A cap that survives restarts and spans server instances (the in-memory limit doesn't), so a
+    // flood can't fill the inbox or the database while the spam check is off.
+    try {
+      const recent = (
+        await query<{ all: number; mine: number }>(
+          "select count(*)::int as all, count(*) filter (where lower(email) = lower($1))::int as mine from contact_message where created_at > now() - interval '1 hour'",
+          [email],
+        )
+      ).rows[0];
+      if (recent && (recent.all >= MAX_PER_HOUR || recent.mine >= MAX_PER_SENDER_PER_HOUR)) {
+        return { status: "error", message: "Too many messages right now. Please try again later or email me directly." };
+      }
+    } catch {
+      // Can't check: fall through; the in-memory limit still applies.
+    }
+    try {
+      await query("insert into contact_message (name, email, org, reason, message) values ($1, $2, $3, $4, $5)", [name, email, org ?? null, reason, message]);
+      stored = true;
+    } catch (err) {
+      console.error("[contact] couldn't store message:", err);
+    }
+  }
+  if (!apiKey || !from || !to) {
+    if (stored) {
+      await record("contact-sent", "/contact");
+      return { status: "success", message: "sent" };
+    }
+    return { status: "error", message: "Email isn't configured right now. Please reach out directly." };
+  }
 
   try {
     const { error } = await new Resend(apiKey).emails.send({
@@ -82,7 +104,7 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     });
     if (error) {
       console.error("[contact] resend error:", error);
-      return { status: "error", message: "Couldn't send right now. Please try again or email me directly." };
+      if (!stored) return { status: "error", message: "Couldn't send right now. Please try again or email me directly." };
     }
     // Off by default: replying to an unverified address can be abused to mail strangers. Turn on with CONTACT_AUTOREPLY=1 once Turnstile is on.
     if (process.env.CONTACT_AUTOREPLY === "1") {
@@ -102,6 +124,7 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     return { status: "success", message: "sent" };
   } catch (err) {
     console.error("[contact] unexpected error:", err);
+    if (stored) return { status: "success", message: "sent" };
     return { status: "error", message: "Something went wrong. Please try again or email me directly." };
   }
 }

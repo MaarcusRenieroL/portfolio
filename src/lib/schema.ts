@@ -10,7 +10,10 @@ import { z } from "zod";
 
 const slug = z.string().regex(/^[a-z0-9-]+$/, "use lowercase letters, numbers and dashes");
 const text = z.string().min(1);
-const url = z.url();
+/** A file name under /public (older content), a media-library path (`/media/<name>`), or an https URL. */
+const asset = z.union([z.string().regex(/^[\w.-]+$/), z.string().regex(/^\/media\/[\w.-]+$/), z.url({ protocol: /^https$/ })]);
+/** http(s) only: these render as links, so javascript: and data: URLs must never validate. */
+const url = z.url({ protocol: /^https?$/ });
 
 export const categorySchema = z.enum(["backend", "frontend", "ai", "systems", "tooling"]);
 
@@ -30,7 +33,7 @@ export const projectSchema = z.object({
   /** Public repo, if there is one. */
   github: url.optional(),
   /** Card image: a file in /public/projects/<slug>/. Without one the card shows the project's glyph. */
-  cover: z.string().regex(/^[\w.-]+$/).optional(),
+  cover: asset.optional(),
   /** Kept in the data but not shown on the site. */
   hidden: z.boolean().optional(),
 });
@@ -56,7 +59,7 @@ export const roleSchema = z.object({
   org: text,
   url: url.optional(),
   /** File name under /public/logos. Without one the page shows the initials. */
-  logo: z.string().regex(/^[\w.-]+$/).optional(),
+  logo: asset.optional(),
   /** The tile the logo sits on. Use "dark" for artwork that is white or very light. */
   logoOn: z.enum(["light", "dark"]).optional(),
   title: text,
@@ -94,9 +97,9 @@ export const certificateSchema = z.object({
   /** One line on what it covered. */
   about: text,
   /** Thumbnail in /public/certificates. Leave out when the file can't be shown publicly. */
-  preview: z.string().regex(/^[\w.-]+$/).optional(),
+  preview: asset.optional(),
   /** Full certificate (PDF or image) in /public/certificates. */
-  file: z.string().regex(/^[\w.-]+$/).optional(),
+  file: asset.optional(),
   /** Public verification link, if the issuer has one. */
   verify: url.optional(),
 });

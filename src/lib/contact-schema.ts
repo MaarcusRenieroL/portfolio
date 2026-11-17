@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "./zod-browser";
 
 /**
  * The one contact schema. The form validates with it in the browser for

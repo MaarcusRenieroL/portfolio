@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { clientKeyFrom } from "~/lib/rate-limit";
 import { dailyHash } from "./crypto";
+import { after } from "next/server";
+import { pruneOldData } from "./retention";
 import { hasDb, query } from "./db";
 import { isAdmin } from "./session";
 
@@ -47,6 +49,12 @@ async function write(kind: string, path?: unknown, target?: unknown): Promise<bo
   const p = clean(path, 200);
   try {
     await query("insert into site_event (kind, path, target, visitor) values ($1, $2, $3, $4)", [kind, p && p.startsWith("/") ? p : null, clean(target, 120), dailyHash(ip, ua)]);
+    // After the response, so a visitor never waits on it (and serverless doesn't cut it short).
+    try {
+      after(() => pruneOldData());
+    } catch {
+      void pruneOldData(); // outside a request (scripts, tests)
+    }
     return true;
   } catch (err) {
     console.error("[analytics] insert failed:", err);
