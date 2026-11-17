@@ -1,12 +1,14 @@
-// Applies db/migrations/*.sql in order, once each. Usage: pnpm db:migrate  (reads DATABASE_URL from the environment or .env.local)
+// Applies db/migrations/*.sql in order, once each. Usage: pnpm db:migrate  (reads DATABASE_URL from the environment, .env.local or .env)
 import fs from "node:fs";
 import path from "node:path";
 import pg from "pg";
 
-if (!process.env.DATABASE_URL && fs.existsSync(".env.local")) {
-  for (const line of fs.readFileSync(".env.local", "utf8").split("\n")) {
+// .env.local wins over .env, like Next. Quotes around a value are stripped.
+for (const file of [".env.local", ".env"]) {
+  if (process.env.DATABASE_URL || !fs.existsSync(file)) continue;
+  for (const line of fs.readFileSync(file, "utf8").split("\n")) {
     const m = /^([A-Z_][A-Z0-9_]*)=(.*)$/.exec(line);
-    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2];
+    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].trim().replace(/^(["'])(.*)\1$/, "$2");
   }
 }
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not set");
