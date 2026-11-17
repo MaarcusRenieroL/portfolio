@@ -4,7 +4,18 @@ packages:
 overrides:
   postcss: ">=8.5.10"
   js-yaml: ">=4.1.2"
+  # Security fixes for build-time tools (pnpm audit, moderate): same major for postcss-selector-parser;
+  # typescript-eslint 8.73+ moves minimatch to 11.
+  postcss-selector-parser: ^6.1.5
+  "@typescript-eslint/typescript-estree": ^8.73.0
 
 allowBuilds:
   sharp: false
   unrs-resolver: false
+
+minimumReleaseAgeExclude:
+  - '@typescript-eslint/project-service@8.73.0'
+  - '@typescript-eslint/tsconfig-utils@8.73.0'
+  - '@typescript-eslint/types@8.73.0'
+  - '@typescript-eslint/typescript-estree@8.73.0'
+  - '@typescript-eslint/visitor-keys@8.73.0'
