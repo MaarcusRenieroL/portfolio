@@ -71,8 +71,13 @@ export function ScheduleCallDialog({ initialOpen = false }: { initialOpen?: bool
         .then((j: { taken?: string[] }) => setTaken(new Set(j.taken ?? [])))
         .catch(() => setTaken(new Set()));
     };
+    // Mounted already open (LazyOverlays loads this on the first click, after that click's event has fired):
+    // run the same opening step, or the times would never load.
+    if (initialOpen) onOpen();
     window.addEventListener(SCHEDULE_EVENT, onOpen);
     return () => window.removeEventListener(SCHEDULE_EVENT, onOpen);
+    // initialOpen only matters on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const keyOf = useMemo(() => new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }), [tz]);
