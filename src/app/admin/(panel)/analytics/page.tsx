@@ -1,3 +1,4 @@
+import { requireAdmin } from "~/lib/server/session";
 import { query } from "~/lib/server/db";
 import { AnalyticsDashboard } from "../../_components/analytics-dashboard";
 
@@ -20,9 +21,11 @@ export default async function Analytics({
 }: {
   searchParams: Promise<{ days?: string }>;
 }) {
+  // Each page checks on its own: a layout check alone does not stop this segment from rendering.
+  await requireAdmin();
   const rawDays = (await searchParams).days;
   const parsed = rawDays ? parseInt(rawDays, 10) : 7;
-  const days = isNaN(parsed) || parsed <= 0 ? 7 : Math.min(parsed, 365);
+  const days = [7, 30, 90].includes(parsed) ? parsed : 7;
   const since = `now() - interval '${days} days'`;
 
   const [totals, pages, actions, targets, daily] = await Promise.all([
@@ -39,7 +42,10 @@ export default async function Analytics({
       `select kind, target, count(*) n from site_event where kind in ('social-click','project-click','email-click','resume-download','resume-open','book-call') and target is not null and at > ${since} group by kind, target order by n desc limit 20`
     ),
     query<{ label: string; n: string }>(
-      `select to_char(d, 'Mon DD') label, n from (select date_trunc('day', at) d, count(*) n from site_event where kind='view' and at > ${since} group by 1) t order by d`
+      `select to_char(d, 'Mon DD') label, coalesce(e.n, 0) n
+         from generate_series(date_trunc('day', now()) - interval '${days - 1} days', date_trunc('day', now()), interval '1 day') d
+         left join (select date_trunc('day', at) t, count(*) n from site_event where kind='view' and at > ${since} group by 1) e on e.t = d
+        order by d`
     ),
   ]);
 

@@ -1,34 +1,32 @@
 "use client";
 
+import {
+  ArrowLeft,
+  Check,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  History,
+  Languages,
+  Loader2,
+  Monitor,
+  SlidersHorizontal,
+  RotateCw,
+  Smartphone,
+  Trash2,
+  Undo2,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { deleteItem, moveItem, publishItem, saveItem, translateItem } from "../actions";
-import { deFields, SPECS } from "~/lib/cms-fields";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { deFields, SPECS, type Field } from "~/lib/cms-fields";
 import type { Kind } from "~/lib/server/store";
+import { deleteItem, publishItem, saveItem, translateItem } from "../actions";
 import { FieldInput } from "./fields";
-import { ShadcnSelect } from "./shadcn-select";
-import {
-  ArrowLeftIcon,
-  CheckIcon,
-  DeviceDesktopIcon,
-  DeviceMobileIcon,
-  RefreshIcon,
-  ExternalLinkIcon,
-  TabletIcon,
-  EditIcon,
-  PlusIcon,
-  LayersIcon,
-  GripVerticalIcon,
-  GlobeIcon,
-  FolderIcon,
-  BriefcaseIcon,
-  GraduationCapIcon,
-  SparklesIcon,
-  AwardIcon,
-  FileTextIcon,
-  StickyNoteIcon,
-} from "./icons";
+import { HistoryPanel } from "./history-panel";
+import type { Version } from "~/lib/server/store";
+import { readingStats, slugify, WriterCanvas, WriterSettings } from "./writer";
 
 export interface CollectionItemSummary {
   key: string;
@@ -44,121 +42,132 @@ type Props = {
   de: Record<string, unknown>;
   machine: boolean;
   live: boolean;
+  /** Draft differs from the live copy (or was never published). */
+  pending: boolean;
   deleted: boolean;
   collectionItems?: CollectionItemSummary[];
 };
 
-type Save = "idle" | "saving" | "saved" | "error";
+type Save = "idle" | "dirty" | "saving" | "saved" | "error";
 
-const BLOCK_TYPES: Array<{
-  kind: Kind;
-  label: string;
-  description: string;
-  icon: typeof FolderIcon;
-}> = [
-  { kind: "project", label: "Project", description: "Featured build, tool, or client delivery", icon: FolderIcon },
-  { kind: "role", label: "Work Experience", description: "Company, employment dates, responsibilities", icon: BriefcaseIcon },
-  { kind: "education", label: "Education", description: "Degree, university, honours or coursework", icon: GraduationCapIcon },
-  { kind: "skillgroup", label: "Skill Group", description: "Category of technical capabilities & tools", icon: SparklesIcon },
-  { kind: "certificate", label: "Certificate", description: "Official accreditation, credential, or exam", icon: AwardIcon },
-  { kind: "post", label: "Blog Article", description: "Long-form technical article or guide", icon: FileTextIcon },
-  { kind: "note", label: "Quick Note", description: "TIL insight, code snippet or reflection", icon: StickyNoteIcon },
-];
+const PREVIEW_KEY = "admin_editor_preview";
 
-const matchKindAndKey = (route: string): { kind: Kind; key?: string } | null => {
-  const clean = route.replace(/^\/(en|de)(\/|$)/, "/").split("?")[0].split("#")[0];
-  const parts = clean.split("/").filter(Boolean);
+/** The same content with empty strings and empty lists dropped, so a cleared field isn't "a change". */
+const meaningful = (o: Record<string, unknown>) =>
+  JSON.stringify(Object.entries(o).filter(([, v]) => v !== "" && v !== undefined && v !== null && !(Array.isArray(v) && v.length === 0)).sort(([a], [b]) => a.localeCompare(b)));
 
-  if (clean.startsWith("/certifications")) {
-    return { kind: "certificate" };
-  }
-  if (clean.startsWith("/projects")) {
-    return { kind: "project", key: parts[1] };
-  }
-  if (clean.startsWith("/experience")) {
-    return { kind: "role" };
-  }
-  if (clean.startsWith("/skills")) {
-    return { kind: "skillgroup" };
-  }
-  if (clean.startsWith("/blog")) {
-    return { kind: "post", key: parts[1] };
-  }
-  if (clean.startsWith("/notes")) {
-    return { kind: "note", key: parts[1] };
-  }
-  return null;
-};
+/** Fields render as one column; short ones (switches, selects, numbers, dates) pair up on wide screens. */
+const compact = (f: Field) => f.type === "bool" || f.type === "select" || f.type === "number" || f.type === "date";
 
-/** Full-screen Drag & Drop Visual Website Builder Studio with Resizable Preview */
+function FieldRow({ f, children, locked }: { f: Field; children: React.ReactNode; locked?: boolean }) {
+  return (
+    <div className={`min-w-0 ${compact(f) ? "" : "sm:col-span-2"}`}>
+      {f.type !== "bool" && (
+        <div className="mb-1.5 flex items-center gap-2">
+          <span id={`l-${f.name}`} className="text-[12px] font-medium text-[var(--fg-2)]">
+            <label htmlFor={`f-${f.name}`} style={{ display: "inline", fontSize: "inherit", color: "inherit" }}>
+              {f.label}
+            </label>
+          </span>
+          {locked && <span className="rounded border border-[var(--line)] px-1 font-mono text-[10px] text-[var(--fg-3)]">fixed</span>}
+        </div>
+      )}
+      {children}
+      {f.help && <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--fg-3)]">{f.help}</p>}
+    </div>
+  );
+}
+
+/**
+ * Edit one item. Changes save as a draft on their own (or with ⌘S); Publish copies the draft
+ * to the live site. English and German are two tabs over the same item. The preview shows the
+ * page this item appears on, drawn from the draft.
+ */
 export function Editor(p: Props) {
   const spec = SPECS[p.kind];
   const router = useRouter();
-  const [data, setData] = useState(p.data);
+  /** Posts and notes are written on a page; everything else is a form. */
+  const writer = p.kind === "post" || p.kind === "note";
+  // A new post starts dated today; that default isn't an edit.
+  const [initial] = useState<Record<string, unknown>>(() =>
+    writer && p.keyValue === null && !p.data.date ? { ...p.data, date: new Date().toISOString().slice(0, 10) } : p.data,
+  );
+  const [data, setData] = useState<Record<string, unknown>>(initial);
+  // A new post's slug follows its title until someone types their own (or it's published).
+  const [slugAuto, setSlugAuto] = useState(() => writer && !p.live && (p.keyValue === null || p.data.slug === slugify(String(p.data.title ?? ""))));
+  const [settings, setSettings] = useState(true);
+  const [settingsSheet, setSettingsSheet] = useState(false);
   const [de, setDe] = useState(p.de);
   const [machine, setMachine] = useState(p.machine);
-  const [tab, setTab] = useState<"en" | "de">("en");
-  const [sidebarTab, setSidebarTab] = useState<"content" | "add" | "reorder">("content");
+  const [lang, setLang] = useState<"en" | "de">("en");
   const [save, setSave] = useState<Save>("idle");
   const [errors, setErrors] = useState<string[]>([]);
-  const [info, setInfo] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  // Resizable Panels State
-  const [sidebarWidth, setSidebarWidth] = useState<number>(480);
-  const [isResizingSidebar, setIsResizingSidebar] = useState(false);
-  const [device, setDevice] = useState<"desktop" | "tablet" | "mobile" | "custom">("desktop");
-  const [frameWidth, setFrameWidth] = useState<number | null>(null);
-  const [isResizingFrame, setIsResizingFrame] = useState(false);
-
-  const previewPaneRef = useRef<HTMLDivElement>(null);
-  const frameBoxRef = useRef<HTMLDivElement>(null);
+  const [notice, setNotice] = useState<{ tone: "ok" | "err"; text: string } | null>(null);
+  const [busy, setBusy] = useState<"" | "publish" | "translate" | "remove">("");
+  const [preview, setPreview] = useState(false);
+  const [sheet, setSheet] = useState(false);
+  const [history, setHistory] = useState(false);
+  const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
+  const [live, setLive] = useState(p.live);
+  // Something here isn't on the live site yet: a draft, or edits saved since the last publish.
+  const [unpublished, setUnpublished] = useState(p.pending);
 
   const key = useRef<string | null>(p.keyValue);
   const [savedKey, setSavedKey] = useState<string | null>(p.keyValue);
   const frame = useRef<HTMLIFrameElement>(null);
-  const saved = useRef(JSON.stringify({ d: p.data, e: p.de, m: p.machine }));
+  const sheetFrame = useRef<HTMLIFrameElement>(null);
+  const saved = useRef(JSON.stringify({ d: initial, e: p.de, m: p.machine }));
 
-  // Reorder items state
-  const [itemsList, setItemsList] = useState<CollectionItemSummary[]>(p.collectionItems ?? []);
-  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
-
-  const initialPreview = spec.preview(String(data[spec.keyField] ?? p.keyValue ?? ""));
-  const [previewRoute, setPreviewRoute] = useState(initialPreview);
-
-  // Restore saved sidebar width
   useEffect(() => {
     try {
-      const savedWidth = localStorage.getItem("cms_studio_sidebar_width");
-      if (savedWidth) {
-        const parsed = parseInt(savedWidth, 10);
-        if (!isNaN(parsed) && parsed >= 340 && parsed <= 900) {
-          setSidebarWidth(parsed);
-        }
-      }
+      setPreview(localStorage.getItem(PREVIEW_KEY) === "1");
     } catch {}
   }, []);
+  const togglePreview = () => {
+    if (!writer && window.matchMedia("(min-width: 1280px)").matches) {
+      setPreview((v) => {
+        try {
+          localStorage.setItem(PREVIEW_KEY, v ? "0" : "1");
+        } catch {}
+        return !v;
+      });
+    } else setSheet(true);
+  };
+
+  const previewPath = spec.preview(String(data[spec.keyField] ?? savedKey ?? ""));
+  const previewSrc = `/api/admin/preview?path=${encodeURIComponent(previewPath)}`;
 
   const reload = useCallback(() => {
-    try {
-      frame.current?.contentWindow?.location.reload();
-    } catch {
-      /* cross-origin only if misconfigured */
+    for (const f of [frame.current, sheetFrame.current]) {
+      try {
+        f?.contentWindow?.location.reload();
+      } catch {}
     }
   }, []);
 
-  const persist = useCallback(async () => {
+  // The newest edits, for a save that was queued behind another one.
+  const latest = useRef({ d: data, e: de, m: machine });
+  useEffect(() => {
+    latest.current = { d: data, e: de, m: machine };
+  }, [data, de, machine]);
+  const inFlight = useRef<Promise<boolean> | null>(null);
+  const again = useRef(false);
+
+  const saveOnce = useCallback(async () => {
+    const { d, e, m } = latest.current;
     setSave("saving");
-    const snap = JSON.stringify({ d: data, e: de, m: machine });
-    const r = await saveItem(p.kind, key.current, data, de, machine);
+    const snap = JSON.stringify({ d, e, m });
+    const r = await saveItem(p.kind, key.current, d, e, m);
     if (r.ok) {
       saved.current = snap;
       setErrors([]);
       setSave("saved");
-      if (key.current === null) {
+      setUnpublished(true);
+      if (key.current !== r.key) {
+        // New item, or a renamed draft: update the address bar without reloading the editor.
         key.current = r.key;
         setSavedKey(r.key);
-        router.replace(`/admin/content/${p.kind}/${encodeURIComponent(r.key)}`);
+        window.history.replaceState(null, "", `/admin/content/${p.kind}/${encodeURIComponent(r.key)}`);
       }
       reload();
     } else {
@@ -166,797 +175,467 @@ export function Editor(p: Props) {
       setSave("error");
     }
     return r.ok;
-  }, [p.kind, data, de, machine, router, reload]);
+  }, [p.kind, reload]);
 
-  // Autosave 900ms after the last change.
+  /**
+   * One save at a time. A save asked for while another runs (autosave, ⌘S, Publish) waits for
+   * it and then saves the newest edits once: two overlapping saves of a new item would create
+   * two rows, and an out-of-order reply would leave the editor pointing at the wrong key.
+   */
+  const persist = useCallback(async (): Promise<boolean> => {
+    if (inFlight.current) {
+      again.current = true;
+      return inFlight.current;
+    }
+    const run = (async () => {
+      let ok = await saveOnce();
+      while (ok && again.current) {
+        again.current = false;
+        ok = await saveOnce();
+      }
+      return ok;
+    })();
+    inFlight.current = run;
+    try {
+      return await run;
+    } finally {
+      inFlight.current = null;
+    }
+  }, [saveOnce]);
+
+  // Autosave 900ms after the last change. A brand-new item waits for its key field.
   useEffect(() => {
     if (JSON.stringify({ d: data, e: de, m: machine }) === saved.current) return;
-    setSave("idle");
+    setSave("dirty");
+    if (key.current === null && !String(data[spec.keyField] ?? "").trim()) return;
+    if (writer && key.current === null && !String(data.title ?? "").trim()) return;
     const t = setTimeout(() => void persist(), 900);
     return () => clearTimeout(t);
-  }, [data, de, machine, persist]);
+  }, [data, de, machine, persist, spec.keyField, writer]);
 
-  const setField = (name: string, v: unknown) => setData((d) => ({ ...d, [name]: v }));
+  // ⌘S / Ctrl+S saves now; leaving with unsaved edits asks first.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        void persist();
+      }
+    };
+    const onLeave = (e: BeforeUnloadEvent) => {
+      const before = JSON.parse(saved.current) as { d: Record<string, unknown>; e: Record<string, unknown> };
+      if (meaningful(data) !== meaningful(before.d) || meaningful(de) !== meaningful(before.e)) e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("beforeunload", onLeave);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("beforeunload", onLeave);
+    };
+  }, [persist, data, de, machine]);
+
+  const setField = (name: string, v: unknown) =>
+    setData((d) => {
+      const next = { ...d, [name]: v };
+      if (name === "title" && slugAuto && !live) next.slug = slugify(String(v));
+      return next;
+    });
   const setDeField = (name: string, v: unknown) => {
     setDe((d) => ({ ...d, [name]: v }));
     setMachine(true);
   };
 
   async function publish() {
-    setBusy(true);
-    setInfo("");
-    if (!(await persist())) return setBusy(false);
+    setBusy("publish");
+    setNotice(null);
+    if (save === "dirty" || save === "error" || key.current === null) {
+      if (!(await persist())) return setBusy("");
+    }
     const r = await publishItem(p.kind, key.current!);
-    setBusy(false);
-    setInfo(r.ok ? "Published. Visitors see it within moments." : r.errors.join(" "));
-    if (r.ok) router.refresh();
+    setBusy("");
+    if (r.ok) {
+      setLive(true);
+      setUnpublished(false);
+      setNotice(r.warning ? { tone: "err", text: r.warning } : { tone: "ok", text: "Published. It's live on the site now." });
+      router.refresh();
+    } else setNotice({ tone: "err", text: r.errors.join(" ") });
+  }
+
+  /** Bring back a published version as unsaved edits; autosave keeps it as the draft, Publish makes it live. */
+  function restore(v: Version) {
+    const before = JSON.parse(saved.current) as { d: Record<string, unknown>; e: Record<string, unknown> };
+    const unsaved = meaningful(data) !== meaningful(before.d) || meaningful(de) !== meaningful(before.e);
+    if (unsaved && !confirm("Replace your unsaved edits with this version?")) return;
+    // The key can't change once published, and every version here was published under this key.
+    setData({ ...v.data, [spec.keyField]: data[spec.keyField] ?? v.data[spec.keyField] });
+    setDe(v.de ?? {});
+    setMachine(false);
+    setHistory(false);
+    setNotice({ tone: "ok", text: "Earlier version restored as a draft. The site still shows the current version until you publish." });
   }
 
   async function translate() {
-    setBusy(true);
-    setInfo("Translating…");
+    setBusy("translate");
+    setNotice(null);
     const r = await translateItem(p.kind, data);
-    setBusy(false);
-    if (!r.ok) return setInfo(r.errors.join(" "));
+    setBusy("");
+    if (!r.ok) return setNotice({ tone: "err", text: r.errors.join(" ") });
     setDe((d) => ({ ...d, ...r.de }));
     setMachine(true);
-    setInfo("Translated by Gemini. Read it before you publish.");
+    setNotice({ tone: "ok", text: "Translated with Gemini. Read it through, then tick “reviewed”." });
   }
 
   async function remove(deleted: boolean) {
     if (!key.current) return;
-    if (deleted && !confirm("Remove this from the site? You can restore it later.")) return;
-    setBusy(true);
+    if (deleted && !confirm("Take this off the site? You can restore it later from the Removed filter.")) return;
+    setBusy("remove");
     const r = await deleteItem(p.kind, key.current, deleted);
-    setBusy(false);
+    setBusy("");
     if (r.ok) router.push(`/admin/content/${p.kind}`);
+    else setNotice({ tone: "err", text: r.errors.join(" ") });
   }
 
-  const setLang = (lang: "en" | "de") => {
-    document.cookie = `lang=${lang}; path=/; max-age=31536000; samesite=lax`;
+  const switchLang = (l: "en" | "de") => {
+    setLang(l);
+    document.cookie = `lang=${l}; path=/; max-age=31536000; samesite=lax`;
     reload();
   };
 
-  // Drag and drop reordering
-  const handleDragStart = (idx: number) => {
-    setDraggedIdx(idx);
-  };
-
-  const handleDragOver = (e: React.DragEvent, idx: number) => {
-    e.preventDefault();
-    if (draggedIdx === null || draggedIdx === idx) return;
-    const next = [...itemsList];
-    const [moved] = next.splice(draggedIdx, 1);
-    next.splice(idx, 0, moved);
-    setDraggedIdx(idx);
-    setItemsList(next);
-  };
-
-  const handleDragEnd = async () => {
-    setDraggedIdx(null);
-    reload();
-  };
-
-  const handleMove = async (itemKey: string, dir: -1 | 1) => {
-    await moveItem(p.kind, itemKey, dir);
-    const idx = itemsList.findIndex((i) => i.key === itemKey);
-    if (idx === -1) return;
-    const targetIdx = idx + dir;
-    if (targetIdx < 0 || targetIdx >= itemsList.length) return;
-    const next = [...itemsList];
-    const temp = next[idx];
-    next[idx] = next[targetIdx];
-    next[targetIdx] = temp;
-    setItemsList(next);
-    reload();
-  };
-
-  // Resizable Panels Handlers
-  const startSidebarResize = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizingSidebar(true);
-
-    const onMouseMove = (ev: MouseEvent) => {
-      const maxW = Math.max(340, window.innerWidth - 420);
-      const newW = Math.max(340, Math.min(maxW, ev.clientX));
-      setSidebarWidth(newW);
-    };
-
-    const onMouseUp = (ev: MouseEvent) => {
-      setIsResizingSidebar(false);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-      const maxW = Math.max(340, window.innerWidth - 420);
-      const finalW = Math.max(340, Math.min(maxW, ev.clientX));
-      try {
-        localStorage.setItem("cms_studio_sidebar_width", String(finalW));
-      } catch {}
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  }, []);
-
-  const startFrameResize = useCallback((e: React.MouseEvent, _side: "left" | "right") => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizingFrame(true);
-    setDevice("custom");
-
-    const onMouseMove = (ev: MouseEvent) => {
-      if (!previewPaneRef.current) return;
-      const rect = previewPaneRef.current.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      const distFromCenter = Math.abs(ev.clientX - center);
-      let targetW = Math.round(distFromCenter * 2);
-
-      // Snapping to common device presets
-      if (Math.abs(targetW - 768) < 18) {
-        targetW = 768;
-      } else if (Math.abs(targetW - 390) < 18) {
-        targetW = 390;
-      } else if (targetW >= rect.width - 32) {
-        targetW = Math.round(rect.width);
-      }
-
-      const clamped = Math.max(320, Math.min(Math.round(rect.width), targetW));
-      setFrameWidth(clamped);
-    };
-
-    const onMouseUp = () => {
-      setIsResizingFrame(false);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-  }, []);
-
-  // Bi-directional Navigation Sync
-  const syncToPath = useCallback(
-    async (rawPath: string) => {
-      const clean = rawPath.replace(/^\/(en|de)(\/|$)/, "/").split("?")[0].split("#")[0];
-      const target = matchKindAndKey(clean);
-      setPreviewRoute(clean);
-      if (!target) return;
-
-      if (target.kind !== p.kind || (target.key && target.key !== p.keyValue)) {
-        if (p.keyValue !== null && JSON.stringify({ d: data, e: de, m: machine }) !== saved.current) {
-          try {
-            await persist();
-          } catch {
-            /* ignore auto-persist error when switching sections */
-          }
-        }
-        const dest = target.key
-          ? `/admin/content/${target.kind}/${encodeURIComponent(target.key)}`
-          : `/admin/content/${target.kind}/new`;
-        window.location.href = dest;
-      }
-    },
-    [p.kind, p.keyValue, data, de, machine, persist]
-  );
-
-  const handleRouteChange = useCallback(
-    (newRoute: string) => {
-      void syncToPath(newRoute);
-    },
-    [syncToPath]
-  );
-
-  const handleFrameLoad = useCallback(() => {
-    try {
-      const frameWin = frame.current?.contentWindow;
-      const frameDoc = frame.current?.contentDocument;
-      if (!frameWin || !frameDoc) return;
-
-      // 1. Initial check when iframe loads
-      const currentPath = frameWin.location.pathname;
-      if (currentPath && currentPath !== "/api/admin/preview") {
-        const clean = currentPath.replace(/^\/(en|de)(\/|$)/, "/").split("?")[0].split("#")[0];
-        const target = matchKindAndKey(clean);
-        if (target && (target.kind !== p.kind || (target.key && target.key !== p.keyValue))) {
-          void syncToPath(clean);
-          return;
-        }
-      }
-
-      // 2. Click listener on all links inside the iframe preview (capturing phase)
-      const handleDocumentClick = (e: MouseEvent) => {
-        const anchor = (e.target as HTMLElement | null)?.closest("a");
-        if (!anchor || !anchor.href) return;
-        try {
-          const url = new URL(anchor.href, frameWin.location.href);
-          if (url.origin === window.location.origin) {
-            void syncToPath(url.pathname);
-          }
-        } catch {
-          /* ignore invalid url */
-        }
-      };
-
-      frameDoc.addEventListener("click", handleDocumentClick, { capture: true });
-
-      // 3. Patch pushState & replaceState for Next.js soft client-side routing inside the iframe
-      const origPushState = frameWin.history.pushState.bind(frameWin.history);
-      // eslint-disable-next-line react-hooks/immutability
-      frameWin.history.pushState = (...args) => {
-        const res = origPushState(...args);
-        try {
-          const nextUrl = args[2];
-          if (typeof nextUrl === "string") {
-            const url = new URL(nextUrl, frameWin.location.href);
-            void syncToPath(url.pathname);
-          } else if (frameWin.location.pathname) {
-            void syncToPath(frameWin.location.pathname);
-          }
-        } catch {}
-        return res;
-      };
-
-      const origReplaceState = frameWin.history.replaceState.bind(frameWin.history);
-      frameWin.history.replaceState = (...args) => {
-        const res = origReplaceState(...args);
-        try {
-          const nextUrl = args[2];
-          if (typeof nextUrl === "string") {
-            const url = new URL(nextUrl, frameWin.location.href);
-            void syncToPath(url.pathname);
-          } else if (frameWin.location.pathname) {
-            void syncToPath(frameWin.location.pathname);
-          }
-        } catch {}
-        return res;
-      };
-
-      // 4. Listen to popstate (back / forward navigation inside the preview)
-      frameWin.addEventListener("popstate", () => {
-        if (frameWin.location.pathname) {
-          void syncToPath(frameWin.location.pathname);
-        }
-      });
-    } catch {
-      // Cross-origin fallback
-    }
-  }, [p.kind, p.keyValue, syncToPath]);
-
+  const title = savedKey ? String(data[spec.titleField] || savedKey) : `New ${spec.label.toLowerCase()}`;
+  // The tab title follows edits (a renamed draft doesn't reload the page).
+  useEffect(() => {
+    document.title = `${title} | Admin`;
+  }, [title]);
+  const pending = !live || unpublished || save === "dirty";
   const enSteps = (Array.isArray(data.path) ? data.path : []) as { note?: string }[];
-  const titleText = savedKey
-    ? String(data[spec.titleField] ?? savedKey)
-    : `New ${spec.label.toLowerCase()}`;
+  const deList = deFields(p.kind);
 
-  const currentDisplayWidth = useMemo(() => {
-    if (frameWidth !== null) return frameWidth;
-    if (device === "tablet") return 768;
-    if (device === "mobile") return 390;
-    return "100%";
-  }, [frameWidth, device]);
+  const saveText =
+    save === "saving" ? "Saving…" : save === "saved" ? "Draft saved" : save === "dirty" ? (savedKey === null ? "Not saved yet" : "Unsaved") : save === "error" ? "Couldn't save" : savedKey ? "Up to date" : "Not saved yet";
 
-  const routeOptions = useMemo(() => {
-    const list = [
-      { label: "Home", value: "/", hint: "/" },
-      { label: "Projects", value: "/projects", hint: "/projects" },
-      { label: "Experience", value: "/experience", hint: "/experience" },
-      { label: "Skills", value: "/skills", hint: "/skills" },
-      { label: "Certificates", value: "/certifications", hint: "/certifications" },
-      { label: "Writing", value: "/blog", hint: "/blog" },
-      { label: "Notes", value: "/notes", hint: "/notes" },
-    ];
-    if (!list.some((r) => r.value === previewRoute)) {
-      list.push({
-        label: `${spec.label} Preview`,
-        value: previewRoute,
-        hint: previewRoute,
-      });
-    }
-    return list;
-  }, [previewRoute, spec.label]);
+  const segBtn = (on: boolean) =>
+    `inline-flex h-7 items-center gap-1.5 rounded px-2.5 text-[12px] transition-colors pointer-coarse:h-9 ${on ? "bg-[var(--hover)] text-[var(--fg)]" : "text-[var(--fg-3)] hover:text-[var(--fg)]"}`;
+  const iconBtn =
+    "flex h-8 w-8 items-center justify-center rounded-md text-[var(--fg-3)] transition-colors hover:bg-[var(--hover)] hover:text-[var(--fg)] pointer-coarse:h-10 pointer-coarse:w-10";
+
+  const previewBar = (onClose?: () => void) => (
+    <div className="flex h-11 shrink-0 items-center gap-1 border-b border-[var(--line)] px-2">
+      <div className="inline-flex rounded-md border border-[var(--line)] p-0.5" role="group" aria-label="Preview width">
+        <button type="button" aria-pressed={device === "desktop"} className={segBtn(device === "desktop")} onClick={() => setDevice("desktop")} aria-label="Desktop width">
+          <Monitor className="h-3.5 w-3.5" />
+        </button>
+        <button type="button" aria-pressed={device === "mobile"} className={segBtn(device === "mobile")} onClick={() => setDevice("mobile")} aria-label="Phone width">
+          <Smartphone className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <span className="ml-1 min-w-0 flex-1 truncate font-mono text-[11px] text-[var(--fg-3)]">{previewPath}</span>
+      <button type="button" className={iconBtn} onClick={reload} aria-label="Reload preview" title="Reload">
+        <RotateCw className="h-3.5 w-3.5" />
+      </button>
+      <a href={previewSrc} target="_blank" rel="noopener noreferrer" className={iconBtn} aria-label="Open preview in a new tab" title="Open in new tab">
+        <ExternalLink className="h-3.5 w-3.5" />
+      </a>
+      {onClose && (
+        <button type="button" className={iconBtn} onClick={onClose} aria-label="Close preview">
+          <X className="h-4 w-4" />
+        </button>
+      )}
+    </div>
+  );
+
+  const previewFrame = (refEl: React.RefObject<HTMLIFrameElement | null>) => (
+    <div className="flex min-h-0 flex-1 justify-center overflow-hidden bg-[var(--hover)]/50 p-0">
+      <iframe
+        ref={refEl}
+        title={`Preview of ${previewPath}`}
+        src={previewSrc}
+        className={`h-full border-0 bg-[var(--bg)] ${device === "mobile" ? "my-3 w-[390px] max-w-full rounded-xl border border-[var(--line)] shadow-[0_8px_30px_rgb(0_0_0/0.25)]" : "w-full"}`}
+      />
+    </div>
+  );
 
   return (
-    <div className="cms-doc-view cms-studio-mode">
-      {/* Studio Top Control Bar */}
-      <header className="cms-studio-topbar">
-        {/* Left: Document Info */}
-        <div className="cms-studio-topbar-left">
-          <Link
-            href={`/admin/content/${p.kind}`}
-            className="cms-studio-back-btn"
-            title={`Back to ${spec.plural}`}
-          >
-            <ArrowLeftIcon width={13} height={13} />
-            <span>{spec.plural}</span>
+    <div className="-mx-4 -my-6 sm:-mx-6 lg:-mx-10 lg:-my-8">
+      {/* Document bar */}
+      <div className="sticky top-12 z-10 border-b border-[var(--line)] bg-[var(--bg)]/90 backdrop-blur-md">
+        <div className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:px-10">
+          <Link href={`/admin/content/${p.kind}`} className={`${iconBtn} -ml-2`} aria-label={`Back to ${spec.plural}`} title={`Back to ${spec.plural}`}>
+            <ArrowLeft className="h-4 w-4" />
           </Link>
-
-          <div className="cms-studio-title-box">
-            <h1 className="cms-doc-title">{titleText}</h1>
-            <span className={`pill ${p.live ? "live" : "draft"}`}>
-              <span className={`tablecn-dot ${p.live ? "live" : "draft"}`} />
-              {p.live ? "published" : "draft"}
-            </span>
-          </div>
-
-          {/* Autosave Status Badge */}
-          <div aria-live="polite">
-            {save === "saving" && (
-              <span className="cms-studio-save-badge saving">Saving…</span>
-            )}
-            {save === "saved" && (
-              <span className="cms-studio-save-badge">
-                <CheckIcon width={12} height={12} />
-                Draft saved
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[var(--fg)]">{title}</h1>
+            <p className="flex items-center gap-2 text-[12px]" aria-live="polite">
+              <span className={`inline-flex items-center gap-1.5 ${p.deleted ? "text-[var(--danger)]" : live && !pending ? "text-[var(--fg-2)]" : "text-[var(--green)]"}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${p.deleted ? "bg-[var(--danger)]" : live ? "bg-[var(--green)]" : "border border-[var(--fg-3)]"}`} aria-hidden="true" />
+                {p.deleted ? "Removed" : !live ? "Draft" : pending ? "Live, with unpublished changes" : "Live"}
               </span>
-            )}
-            {save === "error" && (
-              <span className="cms-studio-save-badge error">Not saved</span>
-            )}
-          </div>
-        </div>
-
-        {/* Center: Live Site Navigation & Viewport Controls */}
-        <div className="cms-studio-topbar-center">
-          {/* shadcn Route Selector */}
-          <ShadcnSelect
-            value={previewRoute}
-            onChange={handleRouteChange}
-            options={routeOptions}
-            icon={<GlobeIcon width={13} height={13} style={{ color: "var(--green)" }} />}
-          />
-
-          {/* Viewport Device Switcher with Live Dimensions */}
-          <div className="cms-studio-devices" role="group" aria-label="Device Viewport">
-            <button
-              type="button"
-              className={`cms-studio-device-btn ${device === "desktop" && frameWidth === null ? "active" : ""}`}
-              onClick={() => {
-                setDevice("desktop");
-                setFrameWidth(null);
-              }}
-              title="Desktop View (100%)"
-              aria-label="Desktop view"
-            >
-              <DeviceDesktopIcon width={13} height={13} />
-            </button>
-            <button
-              type="button"
-              className={`cms-studio-device-btn ${device === "tablet" || frameWidth === 768 ? "active" : ""}`}
-              onClick={() => {
-                setDevice("tablet");
-                setFrameWidth(768);
-              }}
-              title="Tablet View (768px)"
-              aria-label="Tablet view"
-            >
-              <TabletIcon width={13} height={13} />
-            </button>
-            <button
-              type="button"
-              className={`cms-studio-device-btn ${device === "mobile" || frameWidth === 390 ? "active" : ""}`}
-              onClick={() => {
-                setDevice("mobile");
-                setFrameWidth(390);
-              }}
-              title="Mobile View (390px)"
-              aria-label="Mobile view"
-            >
-              <DeviceMobileIcon width={13} height={13} />
-            </button>
-            <span
-              className="cms-studio-device-dimension-badge"
-              title="Current preview viewport width"
-            >
-              {typeof currentDisplayWidth === "number" ? `${currentDisplayWidth}px` : "100%"}
-            </span>
+              <span className="text-[var(--line-2)]">·</span>
+              <span className={`inline-flex items-center gap-1 ${save === "error" ? "text-[var(--danger)]" : "text-[var(--fg-3)]"}`}>
+                {save === "saving" ? <Loader2 className="h-3 w-3 animate-spin" /> : save === "saved" ? <Check className="h-3 w-3" /> : null}
+                {saveText}
+              </span>
+            </p>
           </div>
 
-          {/* Reload Live Preview */}
-          <button
-            type="button"
-            className="cms-studio-icon-btn"
-            onClick={reload}
-            title="Reload live preview"
-          >
-            <RefreshIcon width={13} height={13} />
-          </button>
-
-          {/* Open live in new tab */}
-          <a
-            href={`/api/admin/preview?path=${encodeURIComponent(previewRoute)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cms-studio-icon-btn"
-            title="Open preview in new tab ↗"
-          >
-            <ExternalLinkIcon width={12} height={12} />
-          </a>
-        </div>
-
-        {/* Right: Actions, Language & Publish */}
-        <div className="cms-studio-topbar-right">
-          {/* Unified Language Switcher Tabs */}
-          <div className="cms-studio-lang-tabs" role="tablist" aria-label="Language">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "en"}
-              className={`cms-studio-lang-tab ${tab === "en" ? "active" : ""}`}
-              onClick={() => {
-                setTab("en");
-                setLang("en");
-              }}
-            >
-              English
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={tab === "de"}
-              className={`cms-studio-lang-tab ${tab === "de" ? "active" : ""}`}
-              onClick={() => {
-                setTab("de");
-                setLang("de");
-              }}
-            >
-              Deutsch{machine && Object.keys(de).length ? " (machine)" : ""}
-            </button>
-          </div>
-
-          {tab === "de" && (
-            <button
-              type="button"
-              className="ghost"
-              style={{ height: 30, fontSize: 11.5, padding: "0 10px" }}
-              onClick={translate}
-              disabled={busy}
-            >
-              Translate with Gemini
-            </button>
-          )}
-
-          {savedKey && !p.deleted && (
-            <button
-              type="button"
-              className="danger cms-studio-remove-btn"
-              onClick={() => remove(true)}
-              disabled={busy}
-            >
-              Remove from site
-            </button>
-          )}
-
-          {savedKey && p.deleted && (
-            <button
-              type="button"
-              className="ghost"
-              style={{ height: 30, fontSize: 12, padding: "0 10px" }}
-              onClick={() => remove(false)}
-              disabled={busy}
-            >
-              Restore
-            </button>
-          )}
-
-          <button
-            type="button"
-            className="btn cms-studio-publish-btn"
-            onClick={publish}
-            disabled={busy || (savedKey === null && save !== "saved")}
-          >
-            Publish
-          </button>
-        </div>
-      </header>
-
-      {/* Split Studio Body: Left Builder Drawer, Right Live Website */}
-      <div className="cms-studio-body">
-        {/* Left Visual Builder Drawer */}
-        <aside
-          className="cms-builder-sidebar"
-          style={{ width: `${sidebarWidth}px` }}
-        >
-          {/* Studio Navigation Tabs */}
-          <nav className="cms-builder-tabs" role="tablist" aria-label="Builder Modes">
-            <button
-              type="button"
-              className={`cms-builder-tab ${sidebarTab === "content" ? "active" : ""}`}
-              onClick={() => setSidebarTab("content")}
-            >
-              <EditIcon width={13} height={13} />
-              <span>Edit Content</span>
-            </button>
-            <button
-              type="button"
-              className={`cms-builder-tab ${sidebarTab === "add" ? "active" : ""}`}
-              onClick={() => setSidebarTab("add")}
-            >
-              <PlusIcon width={13} height={13} />
-              <span>Add Blocks</span>
-            </button>
-            <button
-              type="button"
-              className={`cms-builder-tab ${sidebarTab === "reorder" ? "active" : ""}`}
-              onClick={() => setSidebarTab("reorder")}
-            >
-              <LayersIcon width={13} height={13} />
-              <span>Reorder ({itemsList.length})</span>
-            </button>
-          </nav>
-
-          {/* Drawer Content */}
-          <div className="cms-builder-panel">
-            {/* TAB 1: Edit Content */}
-            {sidebarTab === "content" && (
-              <>
-                {info && <div className="cms-info-banner" role="status">{info}</div>}
-
-                {errors.length > 0 && (
-                  <ul className="err" role="alert">
-                    {errors.map((e) => (
-                      <li key={e}>{e}</li>
-                    ))}
-                  </ul>
-                )}
-
-                {tab === "en" &&
-                  spec.fields.map((f) => {
-                    const isKey = f.name === spec.keyField;
-                    return (
-                      <div key={f.name} className="shadcn-form-item">
-                        <div className="shadcn-form-label-row">
-                          <label className="shadcn-form-label" htmlFor={`f-${f.name}`}>
-                            {f.label}
-                          </label>
-                          {isKey && savedKey !== null && (
-                            <span className="shadcn-form-locked-pill">Permanent Key</span>
-                          )}
-                        </div>
-                        <FieldInput
-                          field={f}
-                          value={data[f.name]}
-                          onChange={(v) => setField(f.name, v)}
-                          locked={isKey && savedKey !== null}
-                        />
-                        {f.help && <p className="shadcn-form-help">{f.help}</p>}
-                      </div>
-                    );
-                  })}
-
-                {tab === "de" && (
-                  <>
-                    <div className="cms-de-notice">
-                      <label className="cms-toggle-label" style={{ marginBottom: 0 }}>
-                        <input
-                          type="checkbox"
-                          className="cms-checkbox"
-                          checked={!machine}
-                          onChange={(e) => setMachine(!e.target.checked)}
-                        />
-                        <span className="cms-toggle-text">I reviewed this German</span>
-                      </label>
-                      <p className="cms-field-help" style={{ margin: 0 }}>
-                        Anything left empty falls back to English on the site.
-                      </p>
-                    </div>
-
-                    {deFields(p.kind).map((f) =>
-                      f.type === "steps" ? (
-                        <div key={f.name} className="cms-field-group">
-                          <span className="cms-field-label">{f.label} (German notes)</span>
-                          <div className="cms-steps-list">
-                            {enSteps.map((s, i) => {
-                              const cur = (Array.isArray(de.path) ? de.path : []) as string[];
-                              return (
-                                <label key={i} className="cms-field-group">
-                                  <span className="cms-field-help">Original: {s.note}</span>
-                                  <textarea
-                                    rows={2}
-                                    value={cur[i] ?? ""}
-                                    placeholder="German translation for this step..."
-                                    onChange={(e) => {
-                                      const next = [...cur];
-                                      next[i] = e.target.value;
-                                      setDeField("path", next);
-                                    }}
-                                  />
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ) : (
-                        <div key={f.name} className="shadcn-form-item">
-                          <label className="shadcn-form-label" htmlFor={`f-${f.name}`}>
-                            {f.label}
-                          </label>
-                          <FieldInput
-                            field={f}
-                            value={de[f.name]}
-                            onChange={(v) => setDeField(f.name, v)}
-                            hint={typeof data[f.name] === "string" ? (data[f.name] as string) : undefined}
-                          />
-                        </div>
-                      ),
-                    )}
-                  </>
-                )}
-
-                <div className="cms-form-bottom-actions">
-                  <span className="cms-field-help">
-                    Autosaved as drafts. Press Publish to push to live.
-                  </span>
-                  <span className={`pill ${p.live ? "live" : "draft"}`}>
-                    <span className={`tablecn-dot ${p.live ? "live" : "draft"}`} />
-                    {p.live ? "published" : "draft"}
-                  </span>
-                </div>
-              </>
-            )}
-
-            {/* TAB 2: Add New Stuff / Blocks */}
-            {sidebarTab === "add" && (
-              <>
-                <p className="cms-add-blocks-intro">
-                  Select or drag a content block to add new entries to your website.
-                </p>
-                <div className="cms-add-blocks-grid">
-                  {BLOCK_TYPES.map((b) => {
-                    const IconComponent = b.icon;
-                    return (
-                      <Link
-                        key={b.kind}
-                        href={`/admin/content/${b.kind}/new`}
-                        className="cms-add-block-card"
-                        draggable
-                      >
-                        <div className="cms-add-block-info">
-                          <div className="cms-add-block-icon">
-                            <IconComponent width={18} height={18} />
-                          </div>
-                          <div className="cms-add-block-text">
-                            <strong>{b.label}</strong>
-                            <span>{b.description}</span>
-                          </div>
-                        </div>
-                        <PlusIcon width={14} height={14} style={{ color: "var(--fg-3)" }} />
-                      </Link>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-
-            {/* TAB 3: Reorder & Items */}
-            {sidebarTab === "reorder" && (
-              <>
-                <p className="cms-add-blocks-intro">
-                  Drag items by their handle or use arrows to reorder section content on the live site.
-                </p>
-                <div className="cms-reorder-list">
-                  {itemsList.map((item, idx) => (
-                    <div
-                      key={item.key}
-                      className={`cms-reorder-item ${
-                        item.key === savedKey ? "active" : ""
-                      } ${draggedIdx === idx ? "dragging" : ""}`}
-                      draggable
-                      onDragStart={() => handleDragStart(idx)}
-                      onDragOver={(e) => handleDragOver(e, idx)}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <div className="cms-reorder-item-left">
-                        <span className="cms-reorder-handle" title="Drag to reorder">
-                          <GripVerticalIcon width={14} height={14} />
-                        </span>
-                        <Link
-                          href={`/admin/content/${p.kind}/${encodeURIComponent(item.key)}`}
-                          className="cms-reorder-item-title"
-                          title={`Edit ${item.title}`}
-                        >
-                          {item.title}
-                        </Link>
-                      </div>
-
-                      <div className="cms-reorder-item-right">
-                        <span className={`pill ${item.live ? "live" : "draft"}`} style={{ fontSize: 10, padding: "2px 6px" }}>
-                          {item.live ? "live" : "draft"}
-                        </span>
-                        <button
-                          type="button"
-                          className="cms-reorder-btn"
-                          disabled={idx === 0}
-                          onClick={() => handleMove(item.key, -1)}
-                          title="Move up"
-                        >
-                          ↑
-                        </button>
-                        <button
-                          type="button"
-                          className="cms-reorder-btn"
-                          disabled={idx === itemsList.length - 1}
-                          onClick={() => handleMove(item.key, 1)}
-                          title="Move down"
-                        >
-                          ↓
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </aside>
-
-        {/* Splitter Resizer between Sidebar & Preview */}
-        <div
-          className={`cms-studio-resizer ${isResizingSidebar ? "active" : ""}`}
-          onMouseDown={startSidebarResize}
-          role="separator"
-          aria-orientation="vertical"
-          aria-label="Resize studio panels"
-          title="Drag to resize builder and preview"
-        >
-          <div className="cms-studio-resizer-line" />
-        </div>
-
-        {/* Right Live Website Viewport (The Entire Website) */}
-        <main
-          ref={previewPaneRef}
-          className="cms-studio-preview-pane"
-          aria-label="Live preview"
-        >
-          <div
-            ref={frameBoxRef}
-            className={`cms-studio-frame-box ${device} ${
-              isResizingFrame ? "resizing" : ""
-            }`}
-            style={
-              frameWidth !== null
-                ? { width: `${frameWidth}px`, maxWidth: "100%" }
-                : undefined
-            }
-          >
-            {/* Draggable resize handle on left */}
-            <div
-              className="cms-frame-resize-handle left"
-              onMouseDown={(e) => startFrameResize(e, "left")}
-              title="Drag to resize preview width"
-              role="separator"
-              aria-orientation="vertical"
-            >
-              <div className="cms-frame-resize-pill" />
+          <div className="flex items-center gap-2">
+            <div className="inline-flex rounded-md border border-[var(--line)] p-0.5" role="tablist" aria-label="Language">
+              <button type="button" role="tab" aria-selected={lang === "en"} className={segBtn(lang === "en")} onClick={() => switchLang("en")}>
+                EN
+              </button>
+              <button type="button" role="tab" aria-selected={lang === "de"} className={segBtn(lang === "de")} onClick={() => switchLang("de")}>
+                DE
+                {machine && Object.keys(de).length > 0 && <span className="h-1.5 w-1.5 rounded-full bg-[var(--fg-3)]" title="Machine translated, not reviewed" />}
+              </button>
             </div>
-
-            <iframe
-              ref={frame}
-              title="Live preview of the site"
-              src={`/api/admin/preview?path=${encodeURIComponent(previewRoute)}`}
-              onLoad={handleFrameLoad}
-            />
-
-            {/* Draggable resize handle on right */}
-            <div
-              className="cms-frame-resize-handle right"
-              onMouseDown={(e) => startFrameResize(e, "right")}
-              title="Drag to resize preview width"
-              role="separator"
-              aria-orientation="vertical"
+            {savedKey && (
+              <button type="button" onClick={() => setHistory(true)} className={iconBtn} aria-label="Publish history" title="Publish history">
+                <History className="h-4 w-4" />
+              </button>
+            )}
+            <button type="button" onClick={togglePreview} className={`${iconBtn} ${preview && !writer ? "xl:bg-[var(--hover)] xl:text-[var(--fg)]" : ""}`} aria-label={preview && !writer ? "Hide preview" : "Show preview"} title="Preview">
+              {preview && !writer ? <EyeOff className="h-4 w-4 max-xl:hidden" /> : null}
+              <Eye className={`h-4 w-4 ${preview && !writer ? "xl:hidden" : ""}`} />
+            </button>
+            {writer && (
+              <button
+                type="button"
+                onClick={() => (window.matchMedia("(min-width: 1280px)").matches ? setSettings((v) => !v) : setSettingsSheet(true))}
+                className={`${iconBtn} ${settings ? "xl:bg-[var(--hover)] xl:text-[var(--fg)]" : ""}`}
+                aria-label="Post settings"
+                title="Settings: URL, date, tags"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => void publish()}
+              disabled={Boolean(busy) || p.deleted || (!pending && live)}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md bg-[var(--green)] px-3.5 text-[13px] font-medium text-[var(--green-ink)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 pointer-coarse:h-10"
             >
-              <div className="cms-frame-resize-pill" />
-            </div>
-
-            {/* Live pixel dimensions indicator during drag or custom width */}
-            <div className="cms-frame-width-indicator">
-              <span>{typeof currentDisplayWidth === "number" ? `${currentDisplayWidth}px` : currentDisplayWidth}</span>
-            </div>
+              {busy === "publish" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              {live && !pending ? "Published" : "Publish"}
+            </button>
           </div>
-
-          {/* Iframe shielding layer while dragging so mouse events are not swallowed */}
-          {(isResizingFrame || isResizingSidebar) && (
-            <div className="cms-frame-drag-overlay" />
-          )}
-        </main>
+        </div>
       </div>
+
+      <div className={writer ? (settings ? "xl:grid xl:grid-cols-[minmax(0,1fr)_19rem]" : "") : preview ? "xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" : ""}>
+        {/* Form */}
+        <div className={`min-w-0 px-4 sm:px-6 lg:px-10 ${writer ? "py-8 lg:py-12" : "py-6 lg:py-8"}`}>
+          <div className={`mx-auto space-y-6 ${writer ? "max-w-[42rem]" : "max-w-3xl"}`}>
+            {notice && (
+              <div
+                role="status"
+                className={`flex items-start gap-2 rounded-lg border px-3 py-2.5 text-[13px] ${notice.tone === "ok" ? "border-[var(--green)]/30 text-[var(--fg)]" : "border-[var(--danger)]/40 text-[var(--danger)]"}`}
+              >
+                {notice.tone === "ok" && <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--green)]" />}
+                <span className="flex-1">{notice.text}</span>
+                <button type="button" onClick={() => setNotice(null)} className="text-[var(--fg-3)] hover:text-[var(--fg)]" aria-label="Dismiss">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+
+            {errors.length > 0 && (
+              <div role="alert" className="rounded-lg border border-[var(--danger)]/40 px-3 py-2.5 text-[13px] text-[var(--danger)]">
+                <p className="font-medium">Not saved. Fix these first:</p>
+                <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                  {errors.map((e) => (
+                    <li key={e}>{e}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {lang === "en" && writer ? (
+              <WriterCanvas
+                title={String(data.title ?? "")}
+                description={String(data.description ?? "")}
+                body={String(data.body ?? "")}
+                onTitle={(v) => setField("title", v)}
+                onDescription={(v) => setField("description", v)}
+                onBody={(v) => setField("body", v)}
+              />
+            ) : lang === "en" ? (
+              <div className="grid gap-x-5 gap-y-6 sm:grid-cols-2">
+                {spec.fields.map((f) => {
+                  const locked = f.name === spec.keyField && savedKey !== null;
+                  return (
+                    <FieldRow key={f.name} f={f} locked={locked}>
+                      <FieldInput field={f} value={data[f.name]} onChange={(v) => setField(f.name, v)} locked={locked} doc={data} />
+                    </FieldRow>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex flex-col gap-3 rounded-lg border border-[var(--line)] p-3 sm:flex-row sm:items-center">
+                  <Languages className="hidden h-4 w-4 shrink-0 text-[var(--fg-3)] sm:block" aria-hidden="true" />
+                  <p className="flex-1 text-[12px] leading-relaxed text-[var(--fg-3)]">
+                    Empty fields fall back to English on the German site. The English text shows as the placeholder.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void translate()}
+                    disabled={Boolean(busy)}
+                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-[var(--line)] px-3 text-[12px] text-[var(--fg-2)] transition-colors hover:border-[var(--line-2)] hover:text-[var(--fg)] disabled:opacity-50 pointer-coarse:h-10"
+                  >
+                    {busy === "translate" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Languages className="h-3.5 w-3.5" />}
+                    Translate with Gemini
+                  </button>
+                </div>
+
+                {writer ? (
+                  <WriterCanvas
+                    title={String(de.title ?? "")}
+                    description={String(de.description ?? "")}
+                    body={String(de.body ?? "")}
+                    onTitle={(v) => setDeField("title", v)}
+                    onDescription={(v) => setDeField("description", v)}
+                    onBody={(v) => setDeField("body", v)}
+                    placeholders={{ title: String(data.title ?? ""), description: String(data.description ?? ""), body: "en" }}
+                  />
+                ) : (
+                <div className="grid gap-x-5 gap-y-6 sm:grid-cols-2">
+                  {deList.map((f) =>
+                    f.type === "steps" ? (
+                      <div key={f.name} className="min-w-0 space-y-3 sm:col-span-2">
+                        <p className="text-[12px] font-medium text-[var(--fg-2)]">{f.label}</p>
+                        {enSteps.map((s, i) => {
+                          const cur = (Array.isArray(de.path) ? de.path : []) as string[];
+                          return (
+                            <div key={i}>
+                              <p className="mb-1 text-[12px] text-[var(--fg-3)]">{s.note}</p>
+                              <textarea
+                                rows={2}
+                                aria-label={`${f.label}, step ${i + 1}`}
+                                value={cur[i] ?? ""}
+                                placeholder="German for this step"
+                                onChange={(e) => {
+                                  const next = [...cur];
+                                  next[i] = e.target.value;
+                                  setDeField("path", next);
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <FieldRow key={f.name} f={{ ...f, help: undefined }}>
+                        <FieldInput field={f} value={de[f.name]} onChange={(v) => setDeField(f.name, v)} hint={typeof data[f.name] === "string" ? (data[f.name] as string) : undefined} />
+                      </FieldRow>
+                    ),
+                  )}
+                </div>
+                )}
+
+                <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[var(--line)] p-3" style={{ display: "flex" }}>
+                  <input type="checkbox" checked={!machine} onChange={(e) => setMachine(!e.target.checked)} className="h-4 w-4 accent-[var(--green)]" style={{ width: 16, padding: 0 }} />
+                  <span className="text-[13px] text-[var(--fg)]">I read this German and it&apos;s right</span>
+                </label>
+              </div>
+            )}
+
+            {savedKey && (
+              <div className="flex flex-col gap-3 border-t border-[var(--line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-[12px] text-[var(--fg-3)]">
+                  {p.deleted ? "This item is off the site. Restore it to edit and publish again." : "Removing takes it off the site. It stays here under Removed."}
+                </p>
+                {p.deleted ? (
+                  <button
+                    type="button"
+                    onClick={() => void remove(false)}
+                    disabled={Boolean(busy)}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--line)] px-3 text-[13px] text-[var(--fg-2)] hover:text-[var(--fg)] pointer-coarse:h-10"
+                  >
+                    <Undo2 className="h-3.5 w-3.5" /> Restore
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void remove(true)}
+                    disabled={Boolean(busy)}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-md border border-[var(--danger)]/40 px-3 text-[13px] text-[var(--danger)] transition-colors hover:bg-[var(--danger)]/10 pointer-coarse:h-10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Remove from site
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Post settings, wide screens */}
+        {writer && settings && (
+          <aside className="sticky top-[6.5rem] hidden h-[calc(100dvh-6.5rem)] overflow-y-auto border-l border-[var(--line)] px-5 py-8 xl:block" aria-label="Post settings" data-lenis-prevent>
+            <WriterSettings
+              fields={spec.fields}
+              data={data}
+              setField={setField}
+              slugLocked={live}
+              slugAuto={slugAuto}
+              onSlugEdited={() => setSlugAuto(false)}
+              base={p.kind === "post" ? "/blog" : "/notes"}
+              stats={readingStats(String(data.body ?? ""))}
+            />
+          </aside>
+        )}
+
+        {/* Side preview, wide screens */}
+        {preview && !writer && (
+          <aside className="sticky top-[6.5rem] hidden h-[calc(100dvh-6.5rem)] flex-col border-l border-[var(--line)] xl:flex" aria-label="Live preview">
+            {previewBar()}
+            {previewFrame(frame)}
+          </aside>
+        )}
+      </div>
+
+      {/* Full-screen preview, phones and tablets */}
+      {/* Post settings, smaller screens */}
+      {writer && settingsSheet && (
+        <div className="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label="Post settings">
+          <button type="button" className="absolute inset-0 bg-black/60" aria-label="Close settings" onClick={() => setSettingsSheet(false)} />
+          <div className="absolute inset-y-0 right-0 w-[20rem] max-w-[88vw] overflow-y-auto border-l border-[var(--line)] bg-[var(--bg)] px-5 py-5 shadow-[-8px_0_32px_rgb(0_0_0/0.35)]" data-lenis-prevent>
+            <div className="mb-5 flex items-center justify-between">
+              <p className="text-[13px] font-medium text-[var(--fg)]">Settings</p>
+              <button type="button" className={iconBtn} onClick={() => setSettingsSheet(false)} aria-label="Close settings">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <WriterSettings
+              fields={spec.fields}
+              data={data}
+              setField={setField}
+              slugLocked={live}
+              slugAuto={slugAuto}
+              onSlugEdited={() => setSlugAuto(false)}
+              base={p.kind === "post" ? "/blog" : "/notes"}
+              stats={readingStats(String(data.body ?? ""))}
+            />
+          </div>
+        </div>
+      )}
+
+      {history && savedKey && (
+        <HistoryPanel
+          kind={p.kind}
+          itemKey={savedKey}
+          fields={spec.fields}
+          data={data}
+          de={de}
+          live={live && !p.deleted}
+          onRestore={restore}
+          onClose={() => setHistory(false)}
+        />
+      )}
+
+      {sheet && (
+        <div className={`fixed inset-0 z-50 flex flex-col bg-[var(--bg)] ${writer ? "" : "xl:hidden"}`} role="dialog" aria-modal="true" aria-label="Preview">
+          {previewBar(() => setSheet(false))}
+          {previewFrame(sheetFrame)}
+        </div>
+      )}
     </div>
   );
 }

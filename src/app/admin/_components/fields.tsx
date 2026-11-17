@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { Field } from "~/lib/cms-fields";
-import { EditorCn } from "./editor-cn";
+import { MarkdownEditor } from "./markdown-editor";
+import { MediaField } from "./media-field";
 import { ShadcnDatePicker } from "./shadcn-date-picker";
 import { ShadcnSelect } from "./shadcn-select";
 
@@ -104,12 +105,15 @@ export function FieldInput({
   onChange,
   hint,
   locked,
+  doc,
 }: {
   field: Field;
   value: unknown;
   onChange: (v: unknown) => void;
   hint?: string;
   locked?: boolean;
+  /** The whole item, for fields that depend on another field (a cover's folder is the slug). */
+  doc?: Record<string, unknown>;
 }) {
   const common = { id: `f-${field.name}`, disabled: locked };
   const str = typeof value === "string" ? value : "";
@@ -255,16 +259,19 @@ export function FieldInput({
         </div>
       );
     }
-    case "markdown":
+    case "media":
       return (
-        <EditorCn
-          id={`f-${field.name}`}
+        <MediaField
+          id={common.id}
           value={str}
+          onChange={onChange}
+          accept={field.accept ?? "image"}
           disabled={Boolean(locked)}
-          onChange={(v) => onChange(v)}
-          placeholder={hint ? "" : "Write content in Markdown…"}
+          legacyBase={field.legacy?.replace("{slug}", String(doc?.slug ?? ""))}
         />
       );
+    case "markdown":
+      return <MarkdownEditor id={`f-${field.name}`} value={str} disabled={Boolean(locked)} onChange={(v) => onChange(v)} />;
     case "textarea":
       return (
         <textarea

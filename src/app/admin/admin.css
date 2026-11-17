@@ -1,13 +1,39 @@
+/* Tailwind utilities for the admin and its editor only (globals.css skips these folders). */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "./";
+@source "../../components/block-editor";
+
 /* ==========================================================================
    Admin & CMS Styles - Harmonized with maarcus.dev Portfolio Tokens
    ========================================================================== */
 
 :root {
   --panel: var(--hover);
-  --muted: var(--fg-2);
-  --accent: var(--green);
   --err: var(--danger);
   --r: 8px;
+
+  /* shadcn/ui token names, mapped onto the site palette, so registry components
+     (editorcn's block editor and friends) pick up the admin theme unmodified. */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --popover: color-mix(in srgb, var(--bg) 94%, var(--fg));
+  --popover-foreground: var(--fg);
+  --card: var(--bg);
+  --card-foreground: var(--fg);
+  --primary: var(--green);
+  --primary-foreground: var(--green-ink);
+  --secondary: var(--hover);
+  --secondary-foreground: var(--fg);
+  --muted: var(--hover);
+  --muted-foreground: var(--fg-3);
+  --accent: var(--hover);
+  --accent-foreground: var(--fg);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--green);
+  --radius: 0.5rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -605,7 +631,8 @@ button.theme-toggle svg,
 }
 
 .tablecn-dot.draft {
-  background: var(--warn);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--fg-3);
 }
 
 .tablecn-locale-none {
@@ -2941,11 +2968,7 @@ button.link:hover {
   color: var(--fg);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-}
+/* (A bare .grid rule used to live here; it overrode Tailwind's grid-cols utilities.) */
 
 .stat {
   display: flex;
@@ -3721,3 +3744,58 @@ ul.err {
 .shadcn-calendar-footer-btn.clear:hover {
   background: rgba(248, 113, 113, 0.1) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Sign-in and setup (admin/(auth)): one card, one primary action per step
+   -------------------------------------------------------------------------- */
+.admin-auth .card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg) 96%, var(--fg));
+  box-shadow: 0 12px 40px -12px rgb(0 0 0 / 0.35);
+}
+.admin-auth .card form { display: flex; flex-direction: column; gap: 14px; }
+.admin-auth .card h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: var(--fg); }
+.admin-auth .card p { margin: 0; font-size: 13px; line-height: 1.55; }
+.admin-auth .card label { gap: 6px; font-size: 12px; }
+.admin-auth .card input { height: 38px; font-size: 14px; }
+.admin-auth .card button,
+.admin-auth .card a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  margin-top: 2px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--green);
+  color: var(--green-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 160ms var(--ease);
+}
+.admin-auth .card button:hover:not(:disabled),
+.admin-auth .card a.btn:hover { opacity: 0.9; }
+.admin-auth .card button:disabled { opacity: 0.5; cursor: progress; }
+.admin-auth .card .err { color: var(--danger); font-size: 12px; }
+.admin-auth .card .qr { align-self: center; width: 180px; padding: 10px; border-radius: 10px; background: #fff; }
+.admin-auth .card .qr svg { display: block; width: 100%; height: auto; }
+.admin-auth .card .codes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.admin-auth .card .codes code { display: block; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 12px; text-align: center; }
+@media (pointer: coarse) {
+  .admin-auth .card input,
+  .admin-auth .card button,
+  .admin-auth .card a.btn { height: 44px; }
+}
+
+/* Full-page writer: body text lines up with the title; the block editor's drag handles sit in the gutter. */
+.admin-md-bare .block-editor-content .ProseMirror { padding-left: 0; overflow: visible; }
+.admin-md-bare .prose { font-size: 16px; }

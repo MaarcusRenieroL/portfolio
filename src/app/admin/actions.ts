@@ -6,8 +6,9 @@ import { z } from "zod";
 import { deFields, SPECS } from "~/lib/cms-fields";
 import { certificateSchema, educationSchema, postSchema, projectSchema, roleSchema, skillGroupSchema } from "~/lib/schema";
 import { audit, revokeAllSessions } from "~/lib/server/auth";
+import { afterPublish } from "~/lib/server/media";
 import { seedFromFiles } from "~/lib/server/seed";
-import { getRow, isKind, move, publishKind, publishRow, saveDraft, setDeleted, type Kind } from "~/lib/server/store";
+import { getRow, isKind, listVersions, move, publishKind, publishRow, renameRow, saveDraft, setDeleted, type Kind, type Version } from "~/lib/server/store";
 import { extractTranslatable, translateConfigured, translateToGerman, type Translatable } from "~/lib/server/translate";
 import { requireAdmin } from "~/lib/server/session";
 
@@ -74,35 +75,63 @@ export async function saveItem(kindIn: string, originalKey: string | null, rawDa
   if (!parsed.success) return bad(...parsed.error.issues.map((i) => `${i.path.join(".") || spec.keyField}: ${i.message}`));
   const data = parsed.data as Record<string, unknown>;
   const key = String(data[spec.keyField]);
-  if (originalKey !== null && key !== originalKey) return bad(`${spec.keyField} can not be changed. Create a new item instead.`);
+  // "/admin/content/<kind>/new" is the create page, so an item keyed "new" could never be opened again.
+  if (key.toLowerCase() === "new") return bad(`${spec.keyField} can't be "new". Pick another.`);
+  if (originalKey !== null && key !== originalKey) {
+    // Until its first publish an item can still change its key (a post's slug follows its title).
+    const current = await getRow(kind, originalKey);
+    if (!current) return bad("Not found.");
+    if (current.published) return bad(`${spec.keyField} can not be changed after publishing. Create a new item instead.`);
+    if (await getRow(kind, key)) return bad(`An item with ${spec.keyField} "${key}" already exists.`);
+    try {
+      if (!(await renameRow(kind, originalKey, key))) return bad(`${spec.keyField} can not be changed after publishing. Create a new item instead.`);
+    } catch (e) {
+      if ((e as { code?: string }).code === "23505") return bad(`An item with ${spec.keyField} "${key}" already exists.`);
+      throw e;
+    }
+  }
   if (originalKey === null && (await getRow(kind, key))) return bad(`An item with ${spec.keyField} "${key}" already exists.`);
   await saveDraft(kind, key, data, cleanDe(kind, rawDe), machine);
   return { ok: true, key };
 }
 
-export async function publishItem(kindIn: string, key: string): Promise<Result> {
+export async function publishItem(kindIn: string, key: string): Promise<Result<{ warning?: string }>> {
   await requireAdmin();
   if (!isKind(kindIn)) return bad("Unknown content type.");
   if (!(await getRow(kindIn, key))) return bad("Not found.");
   await publishRow(kindIn, key);
+  const warning = await afterPublish();
   revalidateTag("content", { expire: 0 });
-  return { ok: true };
+  return warning ? { ok: true, warning } : { ok: true };
 }
 
-export async function publishAll(kindIn: string): Promise<Result> {
+export async function publishAll(kindIn: string): Promise<Result<{ warning?: string }>> {
   await requireAdmin();
   if (!isKind(kindIn)) return bad("Unknown content type.");
   await publishKind(kindIn);
+  const warning = await afterPublish();
   revalidateTag("content", { expire: 0 });
-  return { ok: true };
+  return warning ? { ok: true, warning } : { ok: true };
+}
+
+/** What has been live for one item, newest first. Restoring happens in the editor: a version loads as unsaved edits. */
+export async function getVersions(kindIn: string, key: string): Promise<Result<{ versions: Version[] }>> {
+  await requireAdmin();
+  if (!isKind(kindIn)) return bad("Unknown content type.");
+  try {
+    return { ok: true, versions: await listVersions(kindIn, key) };
+  } catch (e) {
+    return bad(e instanceof Error ? e.message : "Couldn't load the history.");
+  }
 }
 
 export async function deleteItem(kindIn: string, key: string, deleted: boolean): Promise<Result> {
   await requireAdmin();
   if (!isKind(kindIn)) return bad("Unknown content type.");
+  // Takes effect at once: the live site skips removed rows whatever their published copy says. Publishing the
+  // draft here as well would put unreviewed edits live (and into the history) the moment the item is restored.
   await setDeleted(kindIn, key, deleted);
-  // A removal only reaches visitors once published, same as an edit.
-  if (deleted) await publishRow(kindIn, key);
+  await afterPublish();
   revalidateTag("content", { expire: 0 });
   return { ok: true };
 }

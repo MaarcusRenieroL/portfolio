@@ -4,6 +4,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { addSkill, removeSkillFromGroup } from "../actions";
 import { PlusIcon } from "./icons";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
 
 export function AddSkillDialog({
   groups,
@@ -98,26 +107,32 @@ export function AddSkillDialog({
               <label>
                 Skill Group
                 {!isNewGroup && groups.length > 0 ? (
-                  <select
+                  <Select
                     value={selectedGroup}
-                    onChange={(e) => {
-                      if (e.target.value === "__NEW__") {
+                    onValueChange={(val) => {
+                      if (val === "__NEW__") {
                         setIsNewGroup(true);
                       } else {
-                        setSelectedGroup(e.target.value);
+                        setSelectedGroup(val);
                       }
                     }}
                   >
-                    {groups.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                    <option value="__NEW__">+ Create a new group...</option>
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select group" />
+                    </SelectTrigger>
+                    {/* Above the admin modal (z-index 1000), or the list opens behind it. */}
+                    <SelectContent className="z-[1100]">
+                      {groups.map((g) => (
+                        <SelectItem key={g} value={g}>
+                          {g}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="__NEW__">+ Create a new group...</SelectItem>
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="row" style={{ gap: 6 }}>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. DevOps, Cloud & Tools"
                       value={customGroup}
@@ -125,14 +140,15 @@ export function AddSkillDialog({
                       required
                     />
                     {groups.length > 0 && (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         className="btn ghost"
                         style={{ padding: "6px 10px", fontSize: 11 }}
                         onClick={() => setIsNewGroup(false)}
                       >
                         Choose existing
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}
