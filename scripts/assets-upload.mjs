@@ -85,7 +85,15 @@ const cors = `<?xml version="1.0" encoding="UTF-8"?><CORSConfiguration><CORSRule
 if (DRY) console.log(`  would allow PUT from ${origins.join(", ")}`);
 else {
   const r = await r2.fetch(url(env.R2_BUCKET_PRIVATE, "", "?cors"), { method: "PUT", body: cors, headers: { "Content-Type": "application/xml" } });
-  console.log(r.ok ? `  PUT allowed from ${origins.join(", ")}` : `  couldn't set CORS (${r.status}); add it in the dashboard: ${await r.text()}`);
+  // An "Object Read & Write" token may not change bucket settings (403). The rule only has to exist once:
+  // set it in the dashboard (bucket → Settings → CORS Policy: PUT from the origins above, header content-type).
+  console.log(
+    r.ok
+      ? `  PUT allowed from ${origins.join(", ")}`
+      : r.status === 403
+        ? "  skipped: this token can't change bucket settings. Set the CORS rule once in the dashboard (or it may already be set)."
+        : `  couldn't set CORS (${r.status}): ${await r.text()}`,
+  );
 }
 
 // 3 needs the database
