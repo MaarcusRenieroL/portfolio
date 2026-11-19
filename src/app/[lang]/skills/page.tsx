@@ -16,7 +16,7 @@ export default async function SkillsPage({ params }: { params: Promise<{ lang: s
   const t = DICT[lang].skills;
   const { skills, roles, projects } = await getSiteContent(lang);
   const usage = {
-    roles: roles.map((r) => ({ org: r.org, title: r.title, date: r.date, tags: r.tags })),
+    roles: roles.map((r) => ({ org: r.org, title: r.title, date: r.date, tags: r.tags, points: r.points })),
     projects: projects.map((p) => ({ name: p.name, slug: p.slug, kind: p.kind, skills: p.skills })),
   };
   return (
