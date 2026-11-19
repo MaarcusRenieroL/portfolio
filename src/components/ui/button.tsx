@@ -80,6 +80,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={buttonVariants({ variant, size, className })}
+        // Opts the control into the site-wide button animation (globals.css, "Button and link animation").
+        data-fx={variant === "link" ? undefined : "btn"}
         {...props}
       />
     );
@@ -97,6 +99,7 @@ export const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProp
       <m.button
         ref={ref}
         // motion/react animates this one; drop the CSS lift so the two don't fight.
+        data-fx={variant === "link" ? undefined : "btn"}
         className={cn(buttonVariants({ variant, size, className }), "hover:translate-y-0 active:scale-100")}
         whileHover={whileHover ?? { y: -2, scale: 1.02 }}
         whileTap={whileTap ?? { scale: 0.96 }}

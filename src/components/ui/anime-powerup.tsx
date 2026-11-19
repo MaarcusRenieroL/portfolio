@@ -268,7 +268,7 @@ export function AnimePowerup({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center ${className}`}
+      className={`anime-powerup relative inline-flex items-center justify-center ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}

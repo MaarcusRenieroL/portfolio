@@ -3652,3 +3652,71 @@ html {
   .footer-social { row-gap: 14px; }
   .search { height: 40px; }
 }
+
+/* ---------- Button and link animation (public site only) ----------
+   A CSS-only cousin of AnimePowerup for every other control: on hover a green ignition ring
+   expands once, the control flickers like it took a charge, and a steady glow holds while the
+   pointer stays; a press snaps it down with a light slash across it. Text links draw a green
+   underline from the left with a faint glow. Controls already wrapped in AnimePowerup keep that
+   effect instead. All of it is off for reduced motion, where only the colour change remains. */
+
+.site :is([data-fx="btn"], .action, .chip, .orglink.border, button[role="combobox"], .search-clear):not(.anime-powerup *):not(:disabled) {
+  --fx: var(--green);
+  transition-property: color, background-color, border-color, box-shadow, opacity, translate, scale;
+  transition-duration: 180ms;
+  transition-timing-function: var(--ease);
+}
+
+.site :is([data-fx="btn"], .action, .chip, .orglink.border, button[role="combobox"], .search-clear):not(.anime-powerup *):not(:disabled):hover {
+  border-color: color-mix(in srgb, var(--fx) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fx) 25%, transparent), 0 0 16px -4px color-mix(in srgb, var(--fx) 45%, transparent);
+  animation: fx-ignite 460ms var(--ease) 1, fx-charge 520ms steps(1, end) 1;
+}
+
+.site :is([data-fx="btn"], .action, .chip, .orglink.border, button[role="combobox"], .search-clear):not(.anime-powerup *):not(:disabled):active {
+  scale: 0.96;
+  background-image: linear-gradient(115deg, transparent 38%, color-mix(in srgb, var(--fx) 55%, transparent) 50%, transparent 62%);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  animation: fx-slash 240ms var(--ease) 1 both;
+}
+
+@keyframes fx-ignite {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fx) 60%, transparent), 0 0 0 0 transparent; }
+  to { box-shadow: 0 0 0 8px color-mix(in srgb, var(--fx) 0%, transparent), 0 0 16px -4px color-mix(in srgb, var(--fx) 45%, transparent); }
+}
+@keyframes fx-charge {
+  0% { filter: brightness(1.35) drop-shadow(0 0 3px color-mix(in srgb, var(--fx) 70%, transparent)); }
+  18% { filter: none; }
+  34% { filter: brightness(1.2) drop-shadow(0 0 2px color-mix(in srgb, var(--fx) 55%, transparent)); }
+  50%, 100% { filter: none; }
+}
+@keyframes fx-slash {
+  from { background-position: 120% 0; }
+  to { background-position: -20% 0; }
+}
+
+/* Text links: ordinary inline links in the page and footer. Cards, image links, icon-only links and
+   the header tabs (which have their own sliding underline) are left alone. */
+.site :is(main, footer) a:not(:where(.action, .orglink.border, .shot, .brand, .skip-link, [data-fx], .anime-powerup *, :has(img, picture, div, p, h2, h3, h4))),
+.site .skill-link,
+.site .link-btn {
+  background-image: linear-gradient(var(--green), var(--green));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 340ms var(--ease), color 160ms var(--ease), text-shadow 200ms var(--ease), text-decoration-color 160ms var(--ease);
+}
+.site :is(main, footer) a:not(:where(.action, .orglink.border, .shot, .brand, .skip-link, [data-fx], .anime-powerup *, :has(img, picture, div, p, h2, h3, h4))):hover,
+.site .skill-link:hover,
+.site .link-btn:hover {
+  background-size: 100% 1px;
+  color: var(--green);
+  text-decoration-color: transparent;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--green) 40%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site :is([data-fx="btn"], .action, .chip, .orglink.border, button[role="combobox"], .search-clear):not(.anime-powerup *) { animation: none !important; scale: none !important; background-image: none !important; }
+  .site :is(main, footer) a, .site .skill-link, .site .link-btn { transition: color 160ms var(--ease); }
+}
