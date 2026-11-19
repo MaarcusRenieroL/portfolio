@@ -69,7 +69,7 @@ Radii: 6px (buttons, inputs, tabs), 8px (media, search, icon tiles), 999px (chip
 - **Tabs (`.tabs`)**: 13px, `--fg-3`; the current page is `--fg` with a green underline that slides in.
 - **Timeline (`.tl`)**: experience list with date column, logo, org, bullets, tags; company renames are minor steps.
 - **Command palette (`CommandPalette`)**: `Ctrl/⌘ K` dialog with a combobox and listbox; pages, projects and actions; arrow keys, Enter, Esc; focus returns on close.
-- **Skill pills (`.skill-chips`) and filters**: skills are small bordered pills inside category cards; a search field and category chips narrow them.
+- **Skills evidence index (`.skills-index`)**: one hairline row per category (label and count left, skills set as text right). Each skill carries an evidence mark drawn in CSS (`.ev`): a filled green dot for used at work, a green ring for used in my own projects, nothing for learned or practised. Work-proven skills are `--fg` at weight 500; the rest `--fg-2`. Search and the All / At work / In my projects chips dim what does not match (rows to 0.35, skills to 0.28) instead of removing it, so nothing reflows; a category label narrows to its row. State lives in the URL (`q`, `show`, `cat`). Skills with recorded usage open the "where I used this" popover. Project and timeline tags still use `.skill-chips`.
 - **Portrait (`Portrait`)**: 4:5 frame that shows `public/me.jpg`, or a placeholder SVG until it exists.
 - **Status dot (`.dot`)**: 6px green dot with halo and a slow 3s opacity pulse; the only looping animation.
 - **Logo and avatar fallbacks (`Pic`)**: while an image is missing, a neutral tile with initials is shown.

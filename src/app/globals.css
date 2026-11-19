@@ -2849,6 +2849,138 @@ html {
 .skill-chips li > .skill-link { display: block; padding: 3px 10px; border-radius: inherit; }
 .skill-flat li > .skill-link { padding: 5px 14px; }
 
+/* ---------- Skills: evidence index ---------- */
+
+/* Where a skill is proven. Filled: used at work. Ring: used in my own projects. Drawn, never a glyph. */
+.ev {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.ev-work { background: var(--green); }
+.ev-project { box-shadow: inset 0 0 0 1px var(--green); }
+
+.skills-tools { display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 760px) {
+  .skills-tools { flex-direction: row; align-items: center; justify-content: space-between; }
+  .skills-tools .search { flex: 0 1 22rem; }
+}
+.skills-tools .chip .ev { margin-right: 2px; }
+.skills-tools .chip[aria-pressed="true"] .ev-work { background: var(--green-ink); }
+.skills-tools .chip[aria-pressed="true"] .ev-project { box-shadow: inset 0 0 0 1px var(--green-ink); }
+
+.search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: color 160ms var(--ease), background 160ms var(--ease);
+}
+.search-clear:hover { color: var(--fg); background: var(--hover); }
+.search .search-clear svg { width: 13px; height: 13px; }
+
+.link-btn {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  color: var(--fg-2);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 0.22em;
+  transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease);
+}
+.link-btn:hover { color: var(--green); text-decoration-color: var(--green); }
+
+.skills-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  color: var(--fg-3);
+}
+.skills-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.skills-legend > span { display: inline-flex; align-items: center; gap: 7px; }
+.skills-count { display: inline-flex; gap: 12px; font-variant-numeric: tabular-nums; }
+
+/* One row per category: label in a narrow column, the skills set as text. */
+.skills-index { border-top: 1px solid var(--line); }
+.skills-row {
+  display: grid;
+  grid-template-columns: 10.5rem minmax(0, 1fr);
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  transition: opacity 280ms var(--ease);
+}
+.skills-row[data-dim] { opacity: 0.35; }
+.skills-row[data-dim]:hover { opacity: 0.7; }
+
+.skills-cat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-3);
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms var(--ease);
+}
+.skills-cat:hover { color: var(--fg); }
+.skills-cat[aria-pressed="true"] { color: var(--green); }
+.skills-n { font-size: 12px; font-weight: 400; color: var(--fg-3); font-variant-numeric: tabular-nums; opacity: 0.8; }
+.skills-cat:focus-visible { outline: 1px solid var(--green); outline-offset: 3px; border-radius: 3px; }
+
+.skills-list { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.skills-list > li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--fg-2);
+  transition: opacity 280ms var(--ease), color 160ms var(--ease);
+}
+/* Proven at work reads first: brighter and a step heavier. */
+.skills-list > li[data-ev="work"] { color: var(--fg); font-weight: 500; }
+.skills-list > li[data-dim] { opacity: 0.28; }
+.skills-row[data-dim] .skills-list > li[data-dim] { opacity: 1; }
+.skills-list .skill-link { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.25em; transition: color 160ms var(--ease), text-decoration-color 160ms var(--ease); }
+.skills-list .skill-link:hover { text-decoration-color: color-mix(in srgb, var(--green) 50%, transparent); }
+
+.skills-empty { color: var(--fg-2); font-size: 14px; }
+
+@media (max-width: 560px) {
+  .skills-row { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 18px 0; }
+  .skills-list { gap: 10px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skills-row, .skills-list > li { transition: none; }
+}
+/* Touch: thumb-sized targets for the filters and category labels, without moving the layout. */
+@media (pointer: coarse) {
+  .skills-tools .chip { height: 40px; padding: 0 14px; }
+  .skills-cat { padding-block: 10px; margin-block: -10px; }
+  .search-clear { width: 36px; height: 36px; }
+}
+
 /* ---------- Certifications ---------- */
 
 .chip-n { color: inherit; opacity: 0.6; margin-left: 2px; font-variant-numeric: tabular-nums; }
