@@ -17,7 +17,7 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com${turnstile}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${assets.origin}`,
+  `img-src 'self' data: blob: ${assets.origin} https://images.dmca.com`,
   "font-src 'self' data:",
   `media-src 'self' ${assets.origin}`,
   // Uploads go browser → the private R2 bucket (signed URL); drafts' files are served from /media on this site.

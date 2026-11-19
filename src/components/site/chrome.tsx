@@ -14,6 +14,11 @@ import { SoundToggle } from "~/components/site/sound-toggle";
 import { Button } from "~/components/ui/button";
 
 /** Header: name left, tools right, underlined tabs below. */
+
+const DMCA_ID = "aa840857-5c9e-4fd3-a601-71cba57dc718";
+const DMCA_STATUS = `https://www.dmca.com/Protection/Status.aspx?ID=${DMCA_ID}`;
+const DMCA_BADGE = `https://images.dmca.com/Badges/dmca-badge-w150-5x1-09.png?ID=${DMCA_ID}`;
+
 export function Nav({ showWriting = true, showNotes = true }: { showWriting?: boolean; showNotes?: boolean }) {
   const rawPath = usePathname();
   const lang = useLang();
@@ -206,6 +211,17 @@ export function Footer() {
             <Link href={href("/legal")}>{t.legal}</Link>
             <a href="/feed.xml">RSS</a>
             <FooterShortcutsButton />
+            {/* DMCA.com registration. Their image only, no script; the image is the one third-party request on the page (see /privacy). */}
+            <a
+              href={DMCA_STATUS}
+              className="dmca-badge"
+              title="DMCA.com Protection Status"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- a fixed third-party badge; Next's optimizer would only proxy it */}
+              <img src={DMCA_BADGE} alt="DMCA.com Protection Status" width={120} height={24} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+            </a>
           </nav>
           {t.aiNote && <p className="footer-note">{t.aiNote}</p>}
         </div>

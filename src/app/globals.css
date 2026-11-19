@@ -3080,6 +3080,11 @@ html {
 .footer-meta { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin-top: 4px; color: var(--fg-3); font-size: 12px; }
 .footer-meta a, .footer-keys { color: var(--fg-3); transition: color 160ms var(--ease); }
 .footer-meta a:hover, .footer-keys:hover { color: var(--fg); }
+/* DMCA badge: last in the row, pushed right, dimmed until hovered so it reads as a footnote. */
+.footer-meta .dmca-badge { margin-left: auto; display: inline-flex; line-height: 0; opacity: 0.6; transition: opacity 200ms var(--ease); }
+.footer-meta .dmca-badge:hover, .footer-meta .dmca-badge:focus-visible { opacity: 1; }
+.footer-meta .dmca-badge img { width: 120px; height: 24px; border-radius: 3px; }
+@media (max-width: 560px) { .footer-meta .dmca-badge { margin-left: 0; flex-basis: 100%; margin-top: 8px; } .footer-meta .dmca-badge img { width: 120px; } }
 .footer-keys { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
 .footer-keys kbd { line-height: 16px; }
 

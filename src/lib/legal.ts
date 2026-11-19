@@ -10,7 +10,7 @@ import type { Lang } from "./i18n";
 export type Section = { id: string; h: string; p: string[]; list?: string[] };
 export type LegalDoc = { title: string; lead: string; updated: string; sections: Section[] };
 
-const UPDATED = "2026-11-17";
+const UPDATED = "2026-11-19";
 const MAIL = SITE.email;
 
 const privacy: Record<Lang, LegalDoc> = {
@@ -68,6 +68,8 @@ const privacy: Record<Lang, LegalDoc> = {
           "The home page shows my Discord status. My server fetches it from Lanyard; your browser never contacts Lanyard or Discord.",
           "The contribution graph is fetched by my server from GitHub. No visitor data goes to GitHub.",
           "Fonts are served from this site, not from Google.",
+          "Images, certificates and the résumé PDF load from assets.maarcus.dev, served by Cloudflare. Like any host, Cloudflare processes your IP address and browser details to deliver them.",
+          "The footer shows a DMCA.com protection badge. The image loads from dmca.com, which receives your IP address and browser details like any image host. It is loaded without telling dmca.com which page you are on, and without any script or cookie.",
         ],
       },
       {
@@ -82,10 +84,11 @@ const privacy: Record<Lang, LegalDoc> = {
         h: "Services involved",
         p: ["Each only gets what its job needs:"],
         list: [
-          "Vercel Inc. (USA): hosting, file storage, web analytics.",
+          "Vercel Inc. (USA): hosting, web analytics.",
           "Neon Inc. (USA): the database for messages, bookings and site content.",
           "Resend (USA): delivering emails.",
-          "Cloudflare Inc. (USA): the spam check, when it's on.",
+          "Cloudflare Inc. (USA): file storage and delivery (assets.maarcus.dev), the spam check when it's on.",
+          "DMCA.com (USA): the protection badge image in the footer.",
         ],
       },
       {
@@ -162,6 +165,8 @@ const privacy: Record<Lang, LegalDoc> = {
           "Die Startseite zeigt meinen Discord-Status. Mein Server ruft ihn bei Lanyard ab; Ihr Browser kontaktiert weder Lanyard noch Discord.",
           "Die Beitragsgrafik ruft mein Server bei GitHub ab. Es gehen keine Besucherdaten an GitHub.",
           "Schriften werden von dieser Seite geladen, nicht von Google.",
+          "Bilder, Zertifikate und das Lebenslauf-PDF werden von assets.maarcus.dev geladen und von Cloudflare ausgeliefert. Wie jeder Hoster verarbeitet Cloudflare dabei Ihre IP-Adresse und Browserdaten.",
+          "Die Fußzeile zeigt ein DMCA.com-Schutzsiegel. Das Bild wird von dmca.com geladen, das dabei wie jeder Bildhoster Ihre IP-Adresse und Browserdaten erhält. Es wird ohne Angabe der besuchten Seite und ohne Skript oder Cookie geladen.",
         ],
       },
       {
@@ -176,10 +181,11 @@ const privacy: Record<Lang, LegalDoc> = {
         h: "Beteiligte Dienste",
         p: ["Jeder erhält nur, was er für seine Aufgabe braucht:"],
         list: [
-          "Vercel Inc. (USA): Hosting, Dateispeicher, Web Analytics.",
+          "Vercel Inc. (USA): Hosting, Web Analytics.",
           "Neon Inc. (USA): Datenbank für Nachrichten, Buchungen und Inhalte.",
           "Resend (USA): Versand von E-Mails.",
-          "Cloudflare Inc. (USA): Spam-Prüfung, wenn aktiv.",
+          "Cloudflare Inc. (USA): Dateispeicher und -auslieferung (assets.maarcus.dev), Spam-Prüfung, wenn aktiv.",
+          "DMCA.com (USA): das Schutzsiegel in der Fußzeile.",
         ],
       },
       {
